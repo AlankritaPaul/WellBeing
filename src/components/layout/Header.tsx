@@ -30,10 +30,11 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="bg-slate-900 border-b border-slate-800 px-4 py-3 sticky top-0 z-50 shadow-md">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-        {/* Brand Logo & Name */}
+        {/* Brand Logo & Name (Click to return to Landing Page) */}
         <div 
           onClick={onHomeClick}
-          className={`flex items-center gap-2.5 ${onHomeClick ? 'cursor-pointer hover:opacity-90' : ''}`}
+          className={`flex items-center gap-2.5 ${onHomeClick ? 'cursor-pointer hover:opacity-90 active:scale-98 transition-transform' : ''}`}
+          title="Return to Landing Page"
         >
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-950/40">
             W

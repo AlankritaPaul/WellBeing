@@ -4,7 +4,8 @@ import {
   Search, 
   Check, 
   X, 
-  ArrowRight
+  ArrowRight,
+  ArrowLeft
 } from 'lucide-react';
 
 interface LanguageSelectScreenProps {
@@ -12,6 +13,7 @@ interface LanguageSelectScreenProps {
   onSelectLanguage: (langCode: string) => void;
   isModal?: boolean;
   onClose?: () => void;
+  onBackToWelcome?: () => void;
 }
 
 export const LanguageSelectScreen: React.FC<LanguageSelectScreenProps> = ({
@@ -19,6 +21,7 @@ export const LanguageSelectScreen: React.FC<LanguageSelectScreenProps> = ({
   onSelectLanguage,
   isModal = false,
   onClose,
+  onBackToWelcome,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCode, setSelectedCode] = useState(currentLanguage || 'en');
@@ -53,11 +56,24 @@ export const LanguageSelectScreen: React.FC<LanguageSelectScreenProps> = ({
       {/* Dropdown-style Container Box as shown in Picture 2 */}
       <div className="w-full max-w-lg bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
         
-        {/* Header where 'Language' is written as requested */}
+        {/* Header where 'Language' is written with Back to Landing Page option */}
         <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 flex items-center justify-between">
-          <label className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 tracking-wide">
-            Language
-          </label>
+          <div className="flex items-center gap-3">
+            {!isModal && onBackToWelcome && (
+              <button
+                type="button"
+                onClick={onBackToWelcome}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition-all shadow-sm active:scale-95 cursor-pointer"
+                title="Back to Landing Page"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Landing Page</span>
+              </button>
+            )}
+            <label className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 tracking-wide">
+              Language
+            </label>
+          </div>
           {isModal && onClose && (
             <button
               onClick={onClose}

@@ -44,25 +44,8 @@ export const App: React.FC = () => {
     return list.length > 0 ? list[0] : null;
   });
 
-  // App Phase: Resume directly where user left off! Never restart if account already created.
-  // 1 Account -> Open that single account's prescription view directly!
-  // 2+ Accounts -> Open Accounts Hub so user selects which account to view!
-  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'accounts_hub' | 'vault' | 'lab' | 'pills_inventory' | 'reminders' | 'doctor_review' | 'page3_completed'>(() => {
-    const list = storageService.getPrescriptions();
-    if (list.length > 1) {
-      return 'accounts_hub';
-    } else if (list.length === 1) {
-      return 'scanner';
-    }
-    const savedLang = localStorage.getItem('wellbeing_language');
-    const savedName = localStorage.getItem('wellbeing_user_name');
-    if (savedLang && savedName) {
-      return 'tutorial';
-    } else if (savedLang && savedLang !== 'en') {
-      return 'preferred_name';
-    }
-    return 'welcome';
-  });
+  // App Phase: Always open directly onto the Welcome Landing Screen for anyone starting or reloading the app!
+  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'accounts_hub' | 'vault' | 'lab' | 'pills_inventory' | 'reminders' | 'doctor_review' | 'page3_completed'>('welcome');
 
   const [previousPhase, setPreviousPhase] = useState<'scanner' | 'accounts_hub' | 'lab' | 'vault' | 'pills_inventory' | 'reminders' | 'doctor_review'>('scanner');
   
@@ -127,14 +110,7 @@ export const App: React.FC = () => {
   }, [appPhase]);
 
   const handleHomeClick = () => {
-    if (prescriptions.length > 1) {
-      setAppPhase('accounts_hub');
-    } else if (prescriptions.length === 1) {
-      setSelectedPrescription(prescriptions[0]);
-      setAppPhase('scanner');
-    } else {
-      handleResetToWelcome();
-    }
+    handleResetToWelcome();
   };
 
   const handleStart = () => {
@@ -245,6 +221,7 @@ export const App: React.FC = () => {
               <LanguageSelectScreen
                 currentLanguage={currentLanguage}
                 onSelectLanguage={handleSelectLanguage}
+                onBackToWelcome={() => setAppPhase('welcome')}
               />
             </div>
           )}
