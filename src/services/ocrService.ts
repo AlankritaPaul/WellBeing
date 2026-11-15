@@ -1,4 +1,4 @@
-import type { ScannedPrescription, Medication, ContactPhone } from '../types/prescription';
+import type { ScannedPrescription, Medication, ContactPhone, DiagnosticTest } from '../types/prescription';
 
 export const ocrService = {
   /**
@@ -135,6 +135,61 @@ export const ocrService = {
         year: 'numeric',
       });
 
+      // Sample 2 Diagnostic Tests (Cardiology & Diabetes)
+      const extractedDiagnosticTestsSample2: DiagnosticTest[] = isBengali
+        ? [
+            {
+              id: 'test-apex-1',
+              prescriptionId: 'rx-sample-apex-dranirbanroy',
+              testName: 'লিপিড প্রোফাইল (সম্পূর্ণ কোলেস্টেরল প্যানেল)',
+              category: 'blood',
+              instructions: '১০-১২ ঘণ্টা রাতের অনাহারের পর সকালের খালি পেটে রক্তের নমুনা দিতে হবে (শুধু পানি পান করা যাবে)',
+              status: 'pending',
+            },
+            {
+              id: 'test-apex-2',
+              prescriptionId: 'rx-sample-apex-dranirbanroy',
+              testName: 'এইচবিএওয়ানসি (HbA1c - ৩ মাসের গড় রক্ত শর্করা)',
+              category: 'blood',
+              instructions: 'দিনের যেকোনো সময় রক্তের নমুনা দেওয়া যায়, অনাহারের প্রয়োজন নেই',
+              status: 'pending',
+            },
+            {
+              id: 'test-apex-3',
+              prescriptionId: 'rx-sample-apex-dranirbanroy',
+              testName: 'সিরাম ক্রিয়েটিনিন ও ইউরিয়া (কিডনি কার্যকারিতা)',
+              category: 'blood',
+              instructions: 'রক্তের নমুনা সংগ্রহের আগে অতিরিক্ত মাংসজাতীয় খাদ্য এড়িয়ে চলুন',
+              status: 'pending',
+            }
+          ]
+        : [
+            {
+              id: 'test-apex-1',
+              prescriptionId: 'rx-sample-apex-dranirbanroy',
+              testName: 'Lipid Profile (Complete Cholesterol Panel)',
+              category: 'blood',
+              instructions: '10-12 hours overnight fasting required (plain water allowed). No breakfast or tea before sample.',
+              status: 'pending',
+            },
+            {
+              id: 'test-apex-2',
+              prescriptionId: 'rx-sample-apex-dranirbanroy',
+              testName: 'HbA1c (Glycated Hemoglobin - 3 Months Average)',
+              category: 'blood',
+              instructions: 'Can be done at any time of day; fasting is not required.',
+              status: 'pending',
+            },
+            {
+              id: 'test-apex-3',
+              prescriptionId: 'rx-sample-apex-dranirbanroy',
+              testName: 'Serum Creatinine & Urea (Renal Function)',
+              category: 'blood',
+              instructions: 'Normal morning blood sample. Avoid excessive protein intake prior to test.',
+              status: 'pending',
+            }
+          ];
+
       return {
         id: 'rx-sample-apex-dranirbanroy',
         imageDataUrl: (imageDataUrl && !imageDataUrl.includes('tutorial') && !imageDataUrl.includes('scan_')) 
@@ -147,6 +202,7 @@ export const ocrService = {
         date: todayDate,
         medicines: extractedMedicinesSample2,
         phoneNumbers: extractedPhonesSample2,
+        diagnosticTests: extractedDiagnosticTestsSample2,
         allergies: isBengali ? ['এসপিরিন সংবেদনশীলতা'] : ['Aspirin Sensitivity'],
         notes: isBengali
           ? 'পরামর্শ: প্রতি মাসে লিপিড প্রোফাইল ও এইচবিএওয়ানসি পরীক্ষা, প্রতিদিন ৩০ মিনিট হাঁটা।'
@@ -303,6 +359,65 @@ export const ocrService = {
       year: 'numeric',
     });
 
+    // Sample 1 Diagnostic Tests (General Medicine & Infection)
+    const extractedDiagnosticTestsSample1: DiagnosticTest[] = isBengali
+      ? [
+          {
+            id: 'test-citycare-1',
+            prescriptionId: 'rx-sample-citycare-drskroy',
+            testName: 'রক্তের সম্পূর্ণ গণনা (CBC - Complete Blood Count)',
+            category: 'blood',
+            instructions: 'সংক্রমণ ও রক্তের কোষ নিরীক্ষণে সকালের নমুনা উপযুক্ত',
+            status: 'completed',
+            completedDate: todayDate,
+            resultSummary: 'স্বাভাবিক (HB: 13.8 g/dL, TLC: 7,400)',
+          },
+          {
+            id: 'test-citycare-2',
+            prescriptionId: 'rx-sample-citycare-drskroy',
+            testName: 'খালি পেটে রক্তের গ্লুকোজ (Fasting Blood Sugar - FBS)',
+            category: 'blood',
+            instructions: '৮-১০ ঘণ্টা অনাহারের পর সকালে খাবার গ্রহণের পূর্বে নমুনা দিন',
+            status: 'pending',
+          },
+          {
+            id: 'test-citycare-3',
+            prescriptionId: 'rx-sample-citycare-drskroy',
+            testName: 'মূত্রের রুটিন ও মাইক্রোস্কোপিক পরীক্ষা (Urine R/E)',
+            category: 'urine',
+            instructions: 'সকালের প্রথম প্রস্রাবের মধ্যবর্তী অংশ (Mid-stream sample) পরিষ্কার পাত্রে সংগ্রহ করুন',
+            status: 'pending',
+          }
+        ]
+      : [
+          {
+            id: 'test-citycare-1',
+            prescriptionId: 'rx-sample-citycare-drskroy',
+            testName: 'Complete Blood Count (CBC / Hemogram)',
+            category: 'blood',
+            instructions: 'Routine blood test to evaluate infection and cellular parameters.',
+            status: 'completed',
+            completedDate: todayDate,
+            resultSummary: 'Normal (Hb: 13.8 g/dL, TLC: 7,400)',
+          },
+          {
+            id: 'test-citycare-2',
+            prescriptionId: 'rx-sample-citycare-drskroy',
+            testName: 'Fasting Blood Sugar (FBS / Glucose)',
+            category: 'blood',
+            instructions: '8-10 hours overnight fasting required before morning blood sample collection.',
+            status: 'pending',
+          },
+          {
+            id: 'test-citycare-3',
+            prescriptionId: 'rx-sample-citycare-drskroy',
+            testName: 'Routine Urine Examination (Urine R/E)',
+            category: 'urine',
+            instructions: 'Collect the first morning clean-catch midstream urine sample in a sterile container.',
+            status: 'pending',
+          }
+        ];
+
     return {
       id: 'rx-sample-citycare-drskroy',
       imageDataUrl: (imageDataUrl && !imageDataUrl.includes('tutorial') && !imageDataUrl.includes('scan_')) 
@@ -315,6 +430,7 @@ export const ocrService = {
       date: todayDate,
       medicines: extractedMedicines,
       phoneNumbers: extractedPhonesSample1,
+      diagnosticTests: extractedDiagnosticTestsSample1,
       allergies: extractedAllergies,
       notes: isBengali
         ? 'পরামর্শ: নিয়মিত রক্তের রুটিন পরীক্ষা, খালি পেটে সুগার টেস্ট, ৩ দিন পূর্ণ বিশ্রাম।'

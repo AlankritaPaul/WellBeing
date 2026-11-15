@@ -150,24 +150,24 @@ export const PrescriptionVaultScreen: React.FC<PrescriptionVaultScreenProps> = (
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-6 sm:py-8 animate-in fade-in duration-300">
-      {/* Top Header & Navigation */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3">
+      {/* Top Navigation Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800/80 mb-5">
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             onClick={onBackToPrevious}
-            className="p-2 sm:px-3 sm:py-2 rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-300 text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shrink-0 shadow-sm"
+            className="px-3 py-2 rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-300 text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm"
             title={t.backToPrescriptionButton}
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">{t.backToPrescriptionButton}</span>
+            <span>{t.backToPrescriptionButton}</span>
           </button>
 
           {onBackToCabinet && allPrescriptions.length > 1 && (
             <button
               type="button"
               onClick={onBackToCabinet}
-              className="p-2 sm:px-3 sm:py-2 rounded-xl border border-blue-700/60 bg-blue-950/60 hover:bg-blue-900 text-blue-200 text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shrink-0 shadow-sm"
+              className="px-3 py-2 rounded-xl border border-blue-700/60 bg-blue-950/60 hover:bg-blue-900 text-blue-200 text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm"
               title={t.backToCabinetButton}
             >
               <Layers className="w-4 h-4 text-blue-400" />
@@ -176,18 +176,20 @@ export const PrescriptionVaultScreen: React.FC<PrescriptionVaultScreenProps> = (
           )}
         </div>
 
-        <div className="text-left sm:text-right">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-700/60 text-blue-300 text-xs font-bold mb-1">
-            <FileCheck2 className="w-3.5 h-3.5 text-blue-400" />
-            <span>{t.highQualityScanBadge}</span>
-          </div>
-          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-            {t.vaultTitle}
-          </h1>
-          <p className="text-xs text-slate-400">
-            {t.vaultSubtitle}
-          </p>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-700/60 text-blue-300 text-xs font-bold">
+          <FileCheck2 className="w-3.5 h-3.5 text-blue-400" />
+          <span>{t.highQualityScanBadge}</span>
         </div>
+      </div>
+
+      {/* Screen Title & Subtitle Banner */}
+      <div className="space-y-1 mb-5">
+        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          {t.vaultTitle}
+        </h1>
+        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl">
+          {t.vaultSubtitle}
+        </p>
       </div>
 
       {/* Multi-Prescription Tabs (If patient has multiple accounts) */}

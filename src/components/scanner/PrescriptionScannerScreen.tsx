@@ -32,7 +32,8 @@ import {
   HelpCircle,
   Info,
   Layers,
-  ChevronRight
+  ChevronRight,
+  FlaskConical
 } from 'lucide-react';
 
 interface PrescriptionScannerScreenProps {
@@ -43,6 +44,7 @@ interface PrescriptionScannerScreenProps {
   onBackToAccounts?: () => void;
   onBackToTutorial: () => void;
   onOpenVault?: () => void;
+  onOpenLabDesk?: () => void;
   onSavedToCabinet?: (prescription: ScannedPrescription) => void;
 }
 
@@ -54,6 +56,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
   onBackToAccounts,
   onBackToTutorial,
   onOpenVault,
+  onOpenLabDesk,
   onSavedToCabinet,
 }) => {
   const t = getTranslation(currentLanguage);
@@ -599,6 +602,16 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                       <span>{t.openVaultButton}</span>
                     </button>
                   )}
+                  {onOpenLabDesk && (
+                    <button
+                      type="button"
+                      onClick={onOpenLabDesk}
+                      className="text-[10px] font-bold text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-1"
+                    >
+                      <FlaskConical className="w-3 h-3" />
+                      <span>{t.openLabDeskButton}</span>
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -618,6 +631,24 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                 <span>{scannedData.date}</span>
               </div>
             </div>
+
+            {/* Quick Diagnostic Lab Desk Banner */}
+            {scannedData.diagnosticTests && scannedData.diagnosticTests.length > 0 && onOpenLabDesk && (
+              <div className="mt-3 pt-3 border-t border-slate-800 flex items-center justify-between">
+                <span className="text-xs text-slate-300 flex items-center gap-1.5 font-bold">
+                  <FlaskConical className="w-4 h-4 text-blue-400" />
+                  <span>{scannedData.diagnosticTests.length} {t.labDeskTitle}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={onOpenLabDesk}
+                  className="px-3 py-1.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 text-xs font-bold flex items-center gap-1.5 transition-colors"
+                >
+                  <span>{t.openLabDeskButton}</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* ALLERGY SHIELD ALERT BANNER */}

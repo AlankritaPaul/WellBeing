@@ -15,7 +15,8 @@ import {
   AlertTriangle,
   X,
   FileText,
-  Eye
+  Eye,
+  FlaskConical
 } from 'lucide-react';
 
 interface AccountsListScreenProps {
@@ -24,6 +25,7 @@ interface AccountsListScreenProps {
   prescriptions: ScannedPrescription[];
   onSelectAccount: (prescription: ScannedPrescription) => void;
   onOpenVault?: (prescription: ScannedPrescription) => void;
+  onOpenLabDesk?: (prescription: ScannedPrescription) => void;
   onAddNewPrescription: () => void;
   onDeleteAccount: (prescriptionId: string) => void;
 }
@@ -34,6 +36,7 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
   prescriptions,
   onSelectAccount,
   onOpenVault,
+  onOpenLabDesk,
   onAddNewPrescription,
   onDeleteAccount,
 }) => {
@@ -198,27 +201,45 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
                 </div>
               </div>
 
-              {/* Action Buttons: Open Account & View Vault */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              {/* Action Buttons: Open Account, Lab Tests & View Vault */}
+              <div className="flex flex-col gap-2 pt-1">
                 <button
                   type="button"
                   onClick={() => onSelectAccount(prescription)}
-                  className="py-3 px-4 rounded-2xl bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md group-hover:shadow-blue-900/50"
+                  className="w-full py-3 px-4 rounded-2xl bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md group-hover:shadow-blue-900/50"
                 >
                   <span>{t.openAccountButton}</span>
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
 
-                {onOpenVault && (
-                  <button
-                    type="button"
-                    onClick={() => onOpenVault(prescription)}
-                    className="py-3 px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all"
-                  >
-                    <FileText className="w-4 h-4 text-blue-400" />
-                    <span>{t.openVaultButton}</span>
-                  </button>
-                )}
+                <div className="grid grid-cols-2 gap-2">
+                  {onOpenLabDesk && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenLabDesk(prescription)}
+                      className="py-2.5 px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
+                    >
+                      <FlaskConical className="w-3.5 h-3.5 text-blue-400" />
+                      <span>{t.openLabDeskButton}</span>
+                      {prescription.diagnosticTests && prescription.diagnosticTests.length > 0 && (
+                        <span className="px-1.5 py-0.2 rounded-md bg-blue-950 text-blue-300 text-[10px] font-mono">
+                          {prescription.diagnosticTests.length}
+                        </span>
+                      )}
+                    </button>
+                  )}
+
+                  {onOpenVault && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenVault(prescription)}
+                      className="py-2.5 px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>{t.openVaultButton}</span>
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           );

@@ -20,6 +20,18 @@ export interface ContactPhone {
   label: string;
 }
 
+export interface DiagnosticTest {
+  id: string;
+  prescriptionId: string;
+  testName: string;
+  category: 'blood' | 'urine' | 'cardiac' | 'imaging' | 'general';
+  instructions?: string;
+  status: 'pending' | 'completed';
+  completedDate?: string;
+  resultSummary?: string;
+  notes?: string;
+}
+
 export interface ScannedPrescription {
   id: string;
   imageDataUrl?: string;
@@ -30,6 +42,7 @@ export interface ScannedPrescription {
   date: string;
   medicines: Medication[];
   phoneNumbers: ContactPhone[];
+  diagnosticTests?: DiagnosticTest[];
   allergies: string[];
   notes?: string;
   scannedAt: number;

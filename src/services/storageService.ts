@@ -1,4 +1,4 @@
-import type { ScannedPrescription } from '../types/prescription';
+import type { ScannedPrescription, DiagnosticTest } from '../types/prescription';
 
 // Local-First Device Storage Service
 // Zero account, zero email, zero phone number, 100% device persistence
@@ -165,6 +165,67 @@ export const storageService = {
         };
         const key = getPrescriptionAccountKey(p);
 
+        // Ensure diagnostic tests exist for existing accounts
+        if (!p.diagnosticTests || p.diagnosticTests.length === 0) {
+          if (key === 'rx_sample_citycare_drskroy') {
+            p.diagnosticTests = [
+              {
+                id: 'test-citycare-1',
+                prescriptionId: p.id,
+                testName: 'Complete Blood Count (CBC / Hemogram)',
+                category: 'blood',
+                instructions: 'Routine blood test to evaluate infection and cellular parameters.',
+                status: 'completed',
+                completedDate: p.date,
+                resultSummary: 'Normal (Hb: 13.8 g/dL, TLC: 7,400)',
+              },
+              {
+                id: 'test-citycare-2',
+                prescriptionId: p.id,
+                testName: 'Fasting Blood Sugar (FBS / Glucose)',
+                category: 'blood',
+                instructions: '8-10 hours overnight fasting required before morning blood sample collection.',
+                status: 'pending',
+              },
+              {
+                id: 'test-citycare-3',
+                prescriptionId: p.id,
+                testName: 'Routine Urine Examination (Urine R/E)',
+                category: 'urine',
+                instructions: 'Collect the first morning clean-catch midstream urine sample in a sterile container.',
+                status: 'pending',
+              }
+            ];
+          } else if (key === 'rx_sample_apex_dranirbanroy') {
+            p.diagnosticTests = [
+              {
+                id: 'test-apex-1',
+                prescriptionId: p.id,
+                testName: 'Lipid Profile (Complete Cholesterol Panel)',
+                category: 'blood',
+                instructions: '10-12 hours overnight fasting required (plain water allowed). No breakfast or tea before sample.',
+                status: 'pending',
+              },
+              {
+                id: 'test-apex-2',
+                prescriptionId: p.id,
+                testName: 'HbA1c (Glycated Hemoglobin - 3 Months Average)',
+                category: 'blood',
+                instructions: 'Can be done at any time of day; fasting is not required.',
+                status: 'pending',
+              },
+              {
+                id: 'test-apex-3',
+                prescriptionId: p.id,
+                testName: 'Serum Creatinine & Urea (Renal Function)',
+                category: 'blood',
+                instructions: 'Normal morning blood sample. Avoid excessive protein intake prior to test.',
+                status: 'pending',
+              }
+            ];
+          }
+        }
+
         if (!uniqueMap.has(key)) {
           uniqueMap.set(key, p);
         } else {
@@ -232,6 +293,79 @@ export const storageService = {
       window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: updated }));
     } catch (e) {
       console.warn('Could not delete prescription:', e);
+    }
+  },
+
+  updateDiagnosticTestStatus(
+    prescriptionId: string, 
+    testId: string, 
+    status: 'pending' | 'completed',
+    completedDate?: string,
+    resultSummary?: string
+  ): void {
+    try {
+      const current = this.getPrescriptions();
+      const updated = current.map((p) => {
+        if (p.id !== prescriptionId) return p;
+        const tests = (p.diagnosticTests || []).map((t) => {
+          if (t.id !== testId) return t;
+          return {
+            ...t,
+            status,
+            completedDate: status === 'completed' ? (completedDate || new Date().toLocaleDateString('en-GB')) : undefined,
+            resultSummary: status === 'completed' ? (resultSummary ?? t.resultSummary) : undefined,
+          };
+        });
+        return { ...p, diagnosticTests: tests };
+      });
+      localStorage.setItem(STORAGE_KEYS.PRESCRIPTIONS, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: updated }));
+    } catch (e) {
+      console.warn('Could not update diagnostic test status:', e);
+    }
+  },
+
+  addDiagnosticTest(
+    prescriptionId: string, 
+    newTest: Omit<DiagnosticTest, 'id' | 'prescriptionId'>
+  ): void {
+    try {
+      const current = this.getPrescriptions();
+      const testId = 'test-' + Math.random().toString(36).substring(2, 9);
+      const testObj: DiagnosticTest = {
+        ...newTest,
+        id: testId,
+        prescriptionId,
+      };
+
+      const updated = current.map((p) => {
+        if (p.id !== prescriptionId) return p;
+        return {
+          ...p,
+          diagnosticTests: [...(p.diagnosticTests || []), testObj],
+        };
+      });
+      localStorage.setItem(STORAGE_KEYS.PRESCRIPTIONS, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: updated }));
+    } catch (e) {
+      console.warn('Could not add diagnostic test:', e);
+    }
+  },
+
+  deleteDiagnosticTest(prescriptionId: string, testId: string): void {
+    try {
+      const current = this.getPrescriptions();
+      const updated = current.map((p) => {
+        if (p.id !== prescriptionId) return p;
+        return {
+          ...p,
+          diagnosticTests: (p.diagnosticTests || []).filter((t) => t.id !== testId),
+        };
+      });
+      localStorage.setItem(STORAGE_KEYS.PRESCRIPTIONS, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: updated }));
+    } catch (e) {
+      console.warn('Could not delete diagnostic test:', e);
     }
   },
 

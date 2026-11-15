@@ -10,6 +10,7 @@ import { ScanningTutorialScreen } from './components/onboarding/ScanningTutorial
 import { PrescriptionScannerScreen } from './components/scanner/PrescriptionScannerScreen';
 import { AccountsListScreen } from './components/cabinet/AccountsListScreen';
 import { PrescriptionVaultScreen } from './components/vault/PrescriptionVaultScreen';
+import { DiagnosticLabDeskScreen } from './components/lab/DiagnosticLabDeskScreen';
 import { NameChangeModal } from './components/onboarding/NameChangeModal';
 import type { ScannedPrescription } from './types/prescription';
 import { 
@@ -42,7 +43,7 @@ export const App: React.FC = () => {
   // App Phase: Resume directly where user left off! Never restart if account already created.
   // 1 Account -> Open that single account's prescription view directly!
   // 2+ Accounts -> Open Accounts Hub so user selects which account to view!
-  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'accounts_hub' | 'vault' | 'page3_completed'>(() => {
+  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'accounts_hub' | 'vault' | 'lab' | 'page3_completed'>(() => {
     const list = storageService.getPrescriptions();
     if (list.length > 1) {
       return 'accounts_hub';
@@ -59,7 +60,7 @@ export const App: React.FC = () => {
     return 'welcome';
   });
 
-  const [previousPhase, setPreviousPhase] = useState<'scanner' | 'accounts_hub'>('scanner');
+  const [previousPhase, setPreviousPhase] = useState<'scanner' | 'accounts_hub' | 'lab' | 'vault'>('scanner');
   
   // Theme state: 'dark' | 'light' | 'emerald'
   const [theme, setTheme] = useState<'dark' | 'light' | 'emerald'>('dark');
@@ -323,6 +324,12 @@ export const App: React.FC = () => {
                   setPreviousPhase('accounts_hub');
                   setAppPhase('vault');
                 }}
+                onOpenLabDesk={(prescription: ScannedPrescription) => {
+                  setSelectedPrescription(prescription);
+                  storageService.setActiveAccountId(prescription.id);
+                  setPreviousPhase('accounts_hub');
+                  setAppPhase('lab');
+                }}
                 onAddNewPrescription={() => {
                   setSelectedPrescription(null);
                   setAppPhase('scanner');
@@ -353,6 +360,10 @@ export const App: React.FC = () => {
                   setPreviousPhase('scanner');
                   setAppPhase('vault');
                 }}
+                onOpenLabDesk={() => {
+                  setPreviousPhase('scanner');
+                  setAppPhase('lab');
+                }}
                 onSavedToCabinet={(savedPrescription) => {
                   setSelectedPrescription(savedPrescription);
                   storageService.setActiveAccountId(savedPrescription.id);
@@ -381,6 +392,32 @@ export const App: React.FC = () => {
                   setAppPhase(previousPhase || (prescriptions.length > 1 ? 'accounts_hub' : 'scanner'));
                 }}
                 onBackToCabinet={prescriptions.length > 1 ? () => setAppPhase('accounts_hub') : undefined}
+              />
+            </div>
+          )}
+
+          {/* Page 7: Diagnostic Lab Desk (Doctor-Advised Tests, Pre-Test Prep, Pending vs Completed) */}
+          {appPhase === 'lab' && (
+            <div className="flex-1 flex flex-col items-center justify-start py-4 sm:py-6 w-full">
+              <DiagnosticLabDeskScreen
+                currentLanguage={currentLanguage}
+                userName={userName}
+                activePrescription={selectedPrescription}
+                allPrescriptions={prescriptions}
+                onSelectPrescription={(p) => {
+                  setSelectedPrescription(p);
+                  storageService.setActiveAccountId(p.id);
+                }}
+                onBackToPrevious={() => {
+                  setAppPhase(previousPhase || (prescriptions.length > 1 ? 'accounts_hub' : 'scanner'));
+                }}
+                onBackToCabinet={prescriptions.length > 1 ? () => setAppPhase('accounts_hub') : undefined}
+                onOpenVault={(p) => {
+                  setSelectedPrescription(p);
+                  storageService.setActiveAccountId(p.id);
+                  setPreviousPhase('lab');
+                  setAppPhase('vault');
+                }}
               />
             </div>
           )}

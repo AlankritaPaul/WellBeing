@@ -129,4 +129,33 @@ export interface TranslationDictionary {
   backToCabinetButton: string;
   backToPrescriptionButton: string;
   openVaultButton: string;
+
+  // Page 7: Diagnostic Lab Desk
+  labDeskTitle: string;
+  labDeskSubtitle: string;
+  openLabDeskButton: string;
+  testsCompletedBadge: string;
+  testsPendingBadge: string;
+  statusPendingLabel: string;
+  statusCompletedLabel: string;
+  markAsCompletedButton: string;
+  markAsPendingButton: string;
+  testPreparationNoticeTitle: string;
+  fastingRequiredNotice: string;
+  testDateLabel: string;
+  addNewTestButton: string;
+  addTestModalTitle: string;
+  testNameInputLabel: string;
+  testCategoryLabel: string;
+  testCategoryBlood: string;
+  testCategoryUrine: string;
+  testCategoryImaging: string;
+  testCategoryCardiac: string;
+  testCategoryGeneral: string;
+  testInstructionsInputLabel: string;
+  saveTestButton: string;
+  deleteTestButton: string;
+  deleteTestConfirm: string;
+  noTestsFoundNotice: string;
+  allTestsCompletedCongrats: string;
 }
