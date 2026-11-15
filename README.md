@@ -127,6 +127,6 @@ npm run preview
 
 ## 📄 License & Credits
 
-*A Little More Care in Every Part of Life.*  
+*More Than Medicine, A Commitment to Care.*  
 Created with ❤️ by **Alankrita Paul**.  
 All rights reserved. Designed as a free, privacy-first healthcare utility.

@@ -81,7 +81,7 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
         </h1>
 
         {/* Medical Prescription Graphic Below WellBeing */}
-        <div className="mb-4 sm:mb-5 flex items-center justify-center">
+        <div className="mb-5 sm:mb-6 flex items-center justify-center">
           <img
             src="/images/medical_rx_icon.png"
             alt="WellBeing Medical Icon"
@@ -90,19 +90,10 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
           />
         </div>
 
-        {/* Slogan directly below picture */}
-        <p className={`text-xl sm:text-2xl md:text-3xl max-w-2xl mx-auto font-black tracking-tight mb-2 sm:mb-3 ${
+        {/* Tagline (Kept exactly as attached) */}
+        <p className={`text-lg sm:text-2xl max-w-2xl mx-auto leading-relaxed mb-10 ${
           theme === 'light'
-            ? 'text-slate-950 font-black'
-            : 'text-white'
-        }`}>
-          A Little More Care in Every Part of Life.
-        </p>
-
-        {/* Tagline */}
-        <p className={`text-base sm:text-xl max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10 ${
-          theme === 'light'
-            ? 'text-slate-800 font-bold'
+            ? 'text-slate-900 font-extrabold'
             : 'text-slate-300 font-medium'
         }`}>
           Your Personal Medical File Cabinet & Pill Accountability Companion.
@@ -136,7 +127,7 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
       }`}>
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm">
           <p className={`font-extrabold tracking-tight ${theme === 'light' ? 'text-slate-900 font-extrabold' : 'text-slate-300 font-semibold'}`}>
-            A Little More Care in Every Part of Life.
+            More Than Medicine, A Commitment to Care.
           </p>
           <p className={theme === 'light' ? 'font-bold text-slate-800' : 'font-medium text-slate-400'}>
             Designed &amp; Developed by <strong className={`font-black ${theme === 'light' ? 'text-slate-950' : 'text-slate-200'}`}>Alankrita Paul</strong>

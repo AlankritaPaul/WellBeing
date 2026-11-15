@@ -583,7 +583,7 @@ export const App: React.FC = () => {
         }`}>
           <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-2">
             <p className={`font-bold tracking-tight ${theme === 'light' ? 'text-slate-900 font-extrabold' : 'text-slate-300'}`}>
-              A Little More Care in Every Part of Life.
+              More Than Medicine, A Commitment to Care.
             </p>
             <p className={theme === 'light' ? 'text-slate-700' : 'text-slate-400'}>
               Designed &amp; Developed by <strong className={`font-black ${theme === 'light' ? 'text-slate-950' : 'text-slate-200'}`}>Alankrita Paul</strong>
