@@ -2,14 +2,6 @@
   <img src="./public/images/wellbeing_heart_logo.png" alt="WellBeing Heart Logo" width="160" />
   <br />
   <img src="./public/images/wellbeing_header.svg" alt="WellBeing - Thoughtful Technology. Meaningful Healthcare." width="820" />
-  <br /><br />
-  <img src="https://img.shields.io/badge/healthcare-0969da?style=flat-square" alt="Healthcare" />
-  <img src="https://img.shields.io/badge/local--first-0969da?style=flat-square" alt="Local First" />
-  <img src="https://img.shields.io/badge/privacy--focused-0969da?style=flat-square" alt="Privacy Focused" />
-  <img src="https://img.shields.io/badge/medical--ocr-0969da?style=flat-square" alt="Medical OCR" />
-  <img src="https://img.shields.io/badge/patient--care-0969da?style=flat-square" alt="Patient Care" />
-  <img src="https://img.shields.io/badge/react-0969da?style=flat-square" alt="React" />
-  <img src="https://img.shields.io/badge/typescript-0969da?style=flat-square" alt="TypeScript" />
 </div>
 
 ---
