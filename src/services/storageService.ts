@@ -167,7 +167,14 @@ export const storageService = {
         };
         const key = getPrescriptionAccountKey(p);
 
-        // Ensure diagnostic tests exist for existing accounts
+        // Ensure recheckInterval and diagnostic tests exist for existing accounts
+        if (!p.recheckInterval) {
+          if (key === 'rx_sample_citycare_drskroy') {
+            p.recheckInterval = 'After 2 weeks';
+          } else if (key === 'rx_sample_apex_dranirbanroy') {
+            p.recheckInterval = 'After 1 month';
+          }
+        }
         if (!p.diagnosticTests || p.diagnosticTests.length === 0) {
           if (key === 'rx_sample_citycare_drskroy') {
             p.diagnosticTests = [
@@ -422,6 +429,32 @@ export const storageService = {
       window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: updated }));
     } catch (e) {
       console.warn('Could not delete diagnostic test:', e);
+    }
+  },
+
+  updatePrescriptionAppointment(
+    prescriptionId: string,
+    appointmentData: {
+      dateOfVisit?: string;
+      nextAppointmentDate?: string;
+      recheckInterval?: string;
+    }
+  ): void {
+    try {
+      const current = this.getPrescriptions();
+      const updated = current.map((p) => {
+        if (p.id !== prescriptionId) return p;
+        return {
+          ...p,
+          date: appointmentData.dateOfVisit !== undefined ? appointmentData.dateOfVisit : p.date,
+          nextAppointmentDate: appointmentData.nextAppointmentDate !== undefined ? appointmentData.nextAppointmentDate : p.nextAppointmentDate,
+          recheckInterval: appointmentData.recheckInterval !== undefined ? appointmentData.recheckInterval : p.recheckInterval,
+        };
+      });
+      localStorage.setItem(STORAGE_KEYS.PRESCRIPTIONS, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: updated }));
+    } catch (e) {
+      console.warn('Could not update prescription appointment:', e);
     }
   },
 

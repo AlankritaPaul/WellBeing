@@ -59,6 +59,7 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
 
   // Skip Modal State
   const [skippingItem, setSkippingItem] = useState<{ med: Medication; slot: 'morning' | 'afternoon' | 'evening' | 'night'; scheduledTime: string } | null>(null);
+  const [customSkipReason, setCustomSkipReason] = useState<string>('');
 
   if (!currentDoc) {
     return (
@@ -618,6 +619,41 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
               >
                 • {t.skipReasonDoctorHold}
               </button>
+            </div>
+
+            {/* Custom Reason Box (When Option Is Not Mentioned) */}
+            <div className="pt-3 border-t border-slate-800 space-y-2">
+              <label className="text-[11px] font-bold text-slate-300 block">
+                Or write your own reason (if option is not mentioned above):
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={customSkipReason}
+                  onChange={(e) => setCustomSkipReason(e.target.value)}
+                  placeholder="Type your reason here..."
+                  className="flex-1 py-2.5 px-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs placeholder:text-slate-500 focus:outline-none focus:border-red-500 transition-colors"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && customSkipReason.trim()) {
+                      handleConfirmSkip(customSkipReason.trim());
+                      setCustomSkipReason('');
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  disabled={!customSkipReason.trim()}
+                  onClick={() => {
+                    if (customSkipReason.trim()) {
+                      handleConfirmSkip(customSkipReason.trim());
+                      setCustomSkipReason('');
+                    }
+                  }}
+                  className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold transition-all shadow-md shrink-0"
+                >
+                  Confirm Skip
+                </button>
+              </div>
             </div>
           </div>
         </div>

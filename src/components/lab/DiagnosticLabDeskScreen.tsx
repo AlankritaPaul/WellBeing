@@ -80,17 +80,12 @@ export const DiagnosticLabDeskScreen: React.FC<DiagnosticLabDeskScreenProps> = (
   }
 
   const testsList: DiagnosticTest[] = currentDoc.diagnosticTests || [];
-  const completedCount = testsList.filter((test) => test.status === 'completed').length;
-  const pendingCount = testsList.filter((test) => test.status === 'pending').length;
+  const completedTests = testsList.filter((test) => test.status === 'completed');
+  const pendingTests = testsList.filter((test) => test.status === 'pending');
+  const completedCount = completedTests.length;
+  const pendingCount = pendingTests.length;
   const totalCount = testsList.length;
   const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-
-  // Filtered view
-  const displayedTests = testsList.filter((test) => {
-    if (filterMode === 'pending') return test.status === 'pending';
-    if (filterMode === 'completed') return test.status === 'completed';
-    return true;
-  });
 
   // Category Icon & Label Helper
   const getCategoryMeta = (cat: DiagnosticTest['category']) => {
@@ -188,6 +183,121 @@ export const DiagnosticLabDeskScreen: React.FC<DiagnosticLabDeskScreenProps> = (
   const bookingPhone = currentDoc.phoneNumbers?.find(
     (p) => p.type === 'booking' || p.type === 'general'
   );
+
+  const renderTestCard = (test: DiagnosticTest) => {
+    const isCompleted = test.status === 'completed';
+    const catMeta = getCategoryMeta(test.category);
+    const CatIcon = catMeta.icon;
+
+    return (
+      <div
+        key={test.id}
+        className={`group p-5 rounded-3xl border transition-all flex flex-col justify-between gap-4 relative overflow-hidden ${
+          isCompleted
+            ? 'bg-slate-900/60 border-emerald-900/60 shadow-lg'
+            : 'bg-slate-900/90 border-slate-800 hover:border-amber-500/50 shadow-xl'
+        }`}
+      >
+        {/* Header: Category Badge & Status Badge & Delete */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-bold border ${catMeta.color}`}
+            >
+              <CatIcon className="w-3.5 h-3.5" />
+              <span>{catMeta.label}</span>
+            </span>
+
+            <span
+              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bold border ${
+                isCompleted
+                  ? 'bg-emerald-950/70 border-emerald-600/60 text-emerald-300'
+                  : 'bg-amber-950/70 border-amber-600/60 text-amber-300'
+              }`}
+            >
+              {isCompleted ? <Check className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+              <span>{isCompleted ? '✓ Done' : '⏳ NOT Done Yet'}</span>
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setConfirmDeleteId(test.id)}
+            className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-950/40 transition-colors"
+            title={t.deleteTestButton}
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Test Name & Description */}
+        <div className="space-y-2">
+          <h3
+            className={`text-base font-black leading-snug tracking-tight ${
+              isCompleted ? 'text-slate-300 line-through decoration-emerald-500/50' : 'text-white'
+            }`}
+          >
+            {test.testName}
+          </h3>
+
+          {/* Preparation Guidelines / Instructions */}
+          {test.instructions && (
+            <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800/80 flex items-start gap-2.5 text-xs text-slate-300">
+              <Clock className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-bold text-blue-300 block mb-0.5">
+                  Preparation / Instructions:
+                </span>
+                <span className="text-[11px] leading-relaxed">
+                  {test.instructions}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Completed Date & Result Summary (if present) */}
+          {isCompleted && (
+            <div className="p-3 rounded-2xl bg-emerald-950/30 border border-emerald-900/50 text-xs text-emerald-200 space-y-1">
+              {test.completedDate && (
+                <div className="flex items-center gap-1.5 text-[11px] text-emerald-300 font-semibold">
+                  <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Completed On: {test.completedDate}</span>
+                </div>
+              )}
+              {test.resultSummary && (
+                <p className="text-[11px] font-medium text-emerald-100 pl-5">
+                  ✓ Result / Summary: {test.resultSummary}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Primary Action Button: Toggle Complete vs Pending */}
+        <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-3">
+          {isCompleted ? (
+            <button
+              type="button"
+              onClick={() => handleToggleStatus(test)}
+              className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
+              <span>Move Back to NOT Done</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => handleToggleStatus(test)}
+              className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-950/50"
+            >
+              <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
+              <span>✓ Mark as Done (I Completed This Test)</span>
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-6 sm:py-8 animate-in fade-in duration-300 space-y-6">
@@ -324,6 +434,32 @@ export const DiagnosticLabDeskScreen: React.FC<DiagnosticLabDeskScreenProps> = (
         )}
       </div>
 
+      {/* Patient Clarity Banner: Explaining what tests are */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-blue-950/80 via-slate-900 to-indigo-950/70 border border-blue-700/60 shadow-xl flex items-start gap-4">
+        <div className="w-11 h-11 rounded-2xl bg-blue-600/20 border border-blue-500/50 flex items-center justify-center text-blue-400 shrink-0 mt-0.5">
+          <FlaskConical className="w-6 h-6" />
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-sm sm:text-base font-black text-white">
+            What is this section?
+          </h3>
+          <p className="text-xs text-slate-300 leading-relaxed">
+            These are the medical diagnostic tests, blood tests, or scans prescribed by <strong className="text-white">{currentDoc.doctorName}</strong>.
+            Below, they are clearly organized into two distinct sections:
+          </p>
+          <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+            <span className="px-2.5 py-1 rounded-xl bg-amber-950/80 border border-amber-600/70 text-amber-300 font-bold flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5" />
+              <span>1. Tests NOT Done Yet ({pendingCount})</span>
+            </span>
+            <span className="px-2.5 py-1 rounded-xl bg-emerald-950/80 border border-emerald-600/70 text-emerald-300 font-bold flex items-center gap-1">
+              <Check className="w-3.5 h-3.5" />
+              <span>2. Tests Already Done ({completedCount})</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Progress & Fasting Notice Banner */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
         {/* Progress Card */}
@@ -450,138 +586,73 @@ export const DiagnosticLabDeskScreen: React.FC<DiagnosticLabDeskScreenProps> = (
         </div>
       )}
 
-      {/* Grid of Diagnostic Tests */}
-      {displayedTests.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl bg-slate-900/60 border border-slate-800 space-y-3">
-          <FlaskConical className="w-12 h-12 mx-auto text-slate-600" />
-          <p className="text-sm font-semibold text-slate-400">
-            {t.noTestsFoundNotice}
-          </p>
-          <button
-            type="button"
-            onClick={() => setIsAddModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold"
-          >
-            <Plus className="w-4 h-4" />
-            <span>{t.addNewTestButton}</span>
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {displayedTests.map((test) => {
-            const isCompleted = test.status === 'completed';
-            const catMeta = getCategoryMeta(test.category);
-            const CatIcon = catMeta.icon;
-
-            return (
-              <div
-                key={test.id}
-                className={`group p-5 rounded-3xl border transition-all flex flex-col justify-between gap-4 relative overflow-hidden ${
-                  isCompleted
-                    ? 'bg-slate-900/60 border-emerald-900/60 shadow-lg'
-                    : 'bg-slate-900/90 border-slate-800 hover:border-blue-500/50 shadow-xl'
-                }`}
-              >
-                {/* Header: Category Badge & Status Badge & Delete */}
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-bold border ${catMeta.color}`}
-                    >
-                      <CatIcon className="w-3.5 h-3.5" />
-                      <span>{catMeta.label}</span>
-                    </span>
-
-                    <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bold border ${
-                        isCompleted
-                          ? 'bg-emerald-950/70 border-emerald-600/60 text-emerald-300'
-                          : 'bg-amber-950/70 border-amber-600/60 text-amber-300'
-                      }`}
-                    >
-                      {isCompleted ? <Check className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
-                      <span>{isCompleted ? t.statusCompletedLabel : t.statusPendingLabel}</span>
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setConfirmDeleteId(test.id)}
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-950/40 transition-colors"
-                    title={t.deleteTestButton}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Test Name & Description */}
-                <div className="space-y-1.5">
-                  <h3
-                    className={`text-base font-black leading-snug tracking-tight ${
-                      isCompleted ? 'text-slate-300 line-through decoration-emerald-500/50' : 'text-white'
-                    }`}
-                  >
-                    {test.testName}
-                  </h3>
-
-                  {/* Preparation Guidelines / Instructions */}
-                  {test.instructions && (
-                    <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800/80 flex items-start gap-2.5 text-xs text-slate-300">
-                      <Clock className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />
-                      <div>
-                        <span className="font-bold text-blue-300 block mb-0.5">
-                          {t.testPreparationNoticeTitle}:
-                        </span>
-                        <span className="text-[11px] leading-relaxed">
-                          {test.instructions}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Completed Date & Result Summary (if present) */}
-                  {isCompleted && (
-                    <div className="p-3 rounded-2xl bg-emerald-950/30 border border-emerald-900/50 text-xs text-emerald-200 space-y-1">
-                      {test.completedDate && (
-                        <div className="flex items-center gap-1.5 text-[11px] text-emerald-300 font-semibold">
-                          <Calendar className="w-3.5 h-3.5 text-emerald-400" />
-                          <span>{t.testDateLabel}: {test.completedDate}</span>
-                        </div>
-                      )}
-                      {test.resultSummary && (
-                        <p className="text-[11px] font-medium text-emerald-100 pl-5">
-                          ✓ {test.resultSummary}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Primary Action Button: Toggle Complete vs Pending */}
-                <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-3">
-                  {isCompleted ? (
-                    <button
-                      type="button"
-                      onClick={() => handleToggleStatus(test)}
-                      className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
-                      <span>{t.markAsPendingButton}</span>
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => handleToggleStatus(test)}
-                      className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md shadow-emerald-950/50"
-                    >
-                      <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
-                      <span>{t.markAsCompletedButton}</span>
-                    </button>
-                  )}
-                </div>
+      {/* SECTION 1: Tests That Have NOT Been Done Yet */}
+      {(filterMode === 'all' || filterMode === 'pending') && (
+        <div className="space-y-4 pt-2">
+          <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-950/60 via-slate-900 to-amber-950/40 border-2 border-amber-500/60 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-amber-600/20 border border-amber-500/50 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+                <Clock className="w-5 h-5" />
               </div>
-            );
-          })}
+              <div>
+                <h2 className="text-base sm:text-lg font-black text-amber-300 flex items-center gap-2">
+                  <span>1. Tests NOT Done Yet</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-900/80 border border-amber-600 text-amber-200 text-xs font-mono font-bold">
+                    {pendingTests.length}
+                  </span>
+                </h2>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  These diagnostic tests have not been carried out yet. Take this list to the diagnostic lab/pathology center. Once you complete the test, tap <strong>"✓ Mark as Done"</strong>.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {pendingTests.length === 0 ? (
+            <div className="p-8 text-center rounded-3xl bg-slate-900/40 border border-slate-800 text-slate-400 space-y-2">
+              <CheckCircle2 className="w-10 h-10 mx-auto text-emerald-400" />
+              <p className="text-sm font-bold text-white">All prescribed tests have been done! None are pending.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {pendingTests.map(renderTestCard)}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* SECTION 2: Tests That Have Been Done */}
+      {(filterMode === 'all' || filterMode === 'completed') && (
+        <div className="space-y-4 pt-4">
+          <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-emerald-950/40 border-2 border-emerald-500/60 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-600/20 border border-emerald-500/50 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+                <Check className="w-5 h-5 stroke-[2.5]" />
+              </div>
+              <div>
+                <h2 className="text-base sm:text-lg font-black text-emerald-300 flex items-center gap-2">
+                  <span>2. Tests Already Done</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-900/80 border border-emerald-600 text-emerald-200 text-xs font-mono font-bold">
+                    {completedTests.length}
+                  </span>
+                </h2>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  These medical tests have already been performed and verified. Their completion dates and summaries are saved below.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {completedTests.length === 0 ? (
+            <div className="p-8 text-center rounded-3xl bg-slate-900/40 border border-slate-800 text-slate-400 space-y-2">
+              <Clock className="w-10 h-10 mx-auto text-slate-600" />
+              <p className="text-sm font-bold text-slate-400">No tests marked as done yet. Tap "✓ Mark as Done" above once you finish a test.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {completedTests.map(renderTestCard)}
+            </div>
+          )}
         </div>
       )}
 

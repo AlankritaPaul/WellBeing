@@ -60,7 +60,9 @@ export interface ScannedPrescription {
   doctorName: string;
   doctorSpecialty?: string;
   patientName: string;
-  date: string;
+  date: string; // Date of visit
+  nextAppointmentDate?: string; // e.g. "15 Dec 2024" or "2024-12-15"
+  recheckInterval?: string; // e.g. "After 2 weeks", "After 1 month", "After 10 days"
   medicines: Medication[];
   phoneNumbers: ContactPhone[];
   diagnosticTests?: DiagnosticTest[];
