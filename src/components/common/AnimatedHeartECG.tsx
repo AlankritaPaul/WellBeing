@@ -35,15 +35,6 @@ export const AnimatedHeartECG: React.FC<AnimatedHeartECGProps> = ({ className = 
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
-
-          {/* Tracer Spark Glow */}
-          <filter id="spark-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="2.5" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
         </defs>
 
         {/* 1. Base ECG Paths: Always visible in exact sequence, NO vibration */}
@@ -88,29 +79,7 @@ export const AnimatedHeartECG: React.FC<AnimatedHeartECGProps> = ({ className = 
           filter="url(#ecg-glow)"
         />
 
-        {/* 3. Glowing Pulse Tracer: Follows the exact up-and-down sequence without vibrating */}
-        <circle r="4" fill="#ffffff" filter="url(#spark-glow)">
-          <animateMotion
-            dur="2.4s"
-            repeatCount="indefinite"
-            path={LEFT_PATH}
-            keyPoints="0;1;1"
-            keyTimes="0;0.44;1"
-            calcMode="linear"
-          />
-        </circle>
-        <circle r="4" fill="#ffffff" filter="url(#spark-glow)">
-          <animateMotion
-            dur="2.4s"
-            repeatCount="indefinite"
-            path={RIGHT_PATH}
-            keyPoints="0;0;1"
-            keyTimes="0;0.52;0.92"
-            calcMode="linear"
-          />
-        </circle>
-
-        {/* 4. Center Anatomical Heart: Only the heart will beat in the middle */}
+        {/* 3. Center Anatomical Heart: Beats continuously in the middle */}
         <g transform="translate(192, 121)">
           <image
             href={heartCenterImg}

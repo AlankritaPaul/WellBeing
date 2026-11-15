@@ -50,25 +50,25 @@
   }
 }
 
-/* Anatomical Heart Beating Animation (Synchronized Lub-Dub Pulse in middle) */
-@keyframes heartBeatPulse {
-  0%, 42% {
+/* Anatomical Heart Continuous Beating Animation (Constant living pulse) */
+@keyframes heartBeatContinuous {
+  0% {
     transform: scale(1);
     filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.45));
   }
-  46% {
+  14% {
     transform: scale(1.18);
-    filter: drop-shadow(0 0 28px rgba(244, 63, 94, 1.0)) drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+    filter: drop-shadow(0 0 28px rgba(244, 63, 94, 1.0)) drop-shadow(0 0 8px rgba(255, 120, 150, 0.7));
   }
-  50% {
+  28% {
     transform: scale(1.03);
     filter: drop-shadow(0 0 14px rgba(244, 63, 94, 0.6));
   }
-  54% {
+  42% {
     transform: scale(1.22);
-    filter: drop-shadow(0 0 32px rgba(244, 63, 94, 1.0)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+    filter: drop-shadow(0 0 32px rgba(244, 63, 94, 1.0)) drop-shadow(0 0 10px rgba(255, 120, 150, 0.8));
   }
-  64% {
+  58% {
     transform: scale(1);
     filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.45));
   }
@@ -93,80 +93,81 @@
   }
   50% {
     stroke-dashoffset: 0;
-    opacity: 0.5;
+    opacity: 0.6;
   }
-  60% {
-    opacity: 0.15;
+  58% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+  98% {
+    opacity: 0;
+    stroke-dashoffset: 504;
   }
   100% {
-    stroke-dashoffset: 0;
-    opacity: 0.15;
+    stroke-dashoffset: 504;
+    opacity: 0;
   }
 }
 
 /* ECG Line Flow: Right stream moves out from heart towards right (no vibration, exact sequence) */
 @keyframes ecgFlowRight {
-  0%, 48% {
+  0%, 46% {
     stroke-dashoffset: 505;
     opacity: 0;
   }
-  52% {
+  50% {
     opacity: 1;
   }
-  92% {
+  90% {
     stroke-dashoffset: 0;
     opacity: 1;
   }
   96% {
     stroke-dashoffset: 0;
-    opacity: 0.5;
+    opacity: 0.6;
   }
   100% {
-    stroke-dashoffset: 0;
-    opacity: 0.15;
+    opacity: 0;
+    stroke-dashoffset: 505;
   }
 }
 
-/* Glowing Ambient Cardiac Aura */
-@keyframes cardiacAura {
-  0%, 42% {
-    opacity: 0.3;
+/* Glowing Ambient Cardiac Aura (Continuous living pulse) */
+@keyframes cardiacAuraContinuous {
+  0%, 100% {
+    opacity: 0.25;
     transform: scale(0.95);
   }
-  46%, 54% {
-    opacity: 0.85;
-    transform: scale(1.22);
+  14%, 42% {
+    opacity: 0.75;
+    transform: scale(1.2);
   }
-  64% {
-    opacity: 0.35;
-    transform: scale(1.0);
-  }
-  100% {
-    opacity: 0.3;
+  58% {
+    opacity: 0.25;
     transform: scale(0.95);
   }
 }
 
 .animate-heart-beat {
-  animation: heartBeatPulse 2.4s ease-in-out infinite;
+  animation: heartBeatContinuous 1.1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   transform-origin: center center;
   will-change: transform, filter;
 }
 
 .animate-ecg-stream-left {
   stroke-dasharray: 504;
-  animation: ecgFlowLeft 2.4s ease-in-out infinite;
+  animation: ecgFlowLeft 2.2s ease-in-out infinite;
   will-change: stroke-dashoffset, opacity;
 }
 
 .animate-ecg-stream-right {
   stroke-dasharray: 505;
-  animation: ecgFlowRight 2.4s ease-in-out infinite;
+  animation: ecgFlowRight 2.2s ease-in-out infinite;
   will-change: stroke-dashoffset, opacity;
 }
 
 .animate-cardiac-aura {
-  animation: cardiacAura 2.4s ease-in-out infinite;
+  animation: cardiacAuraContinuous 1.1s ease-in-out infinite;
   will-change: transform, opacity;
 }
 
