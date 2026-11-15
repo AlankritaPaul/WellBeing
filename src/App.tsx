@@ -342,6 +342,7 @@ export const App: React.FC = () => {
               <AccountsListScreen
                 currentLanguage={currentLanguage}
                 userName={userName}
+                theme={theme}
                 prescriptions={prescriptions}
                 onSelectAccount={(prescription) => {
                   setSelectedPrescription(prescription);
@@ -444,6 +445,7 @@ export const App: React.FC = () => {
               <PrescriptionVaultScreen
                 currentLanguage={currentLanguage}
                 userName={userName}
+                theme={theme}
                 activePrescription={selectedPrescription}
                 allPrescriptions={prescriptions}
                 onSelectPrescription={(p) => {
@@ -464,6 +466,7 @@ export const App: React.FC = () => {
               <DiagnosticLabDeskScreen
                 currentLanguage={currentLanguage}
                 userName={userName}
+                theme={theme}
                 activePrescription={selectedPrescription}
                 allPrescriptions={prescriptions}
                 onSelectPrescription={(p) => {
@@ -490,6 +493,7 @@ export const App: React.FC = () => {
               <PillsInventoryScreen
                 currentLanguage={currentLanguage}
                 userName={userName}
+                theme={theme}
                 activePrescription={selectedPrescription}
                 allPrescriptions={prescriptions}
                 onSelectPrescription={(p) => {
@@ -518,6 +522,7 @@ export const App: React.FC = () => {
               <DailyPillAccountabilityScreen
                 currentLanguage={currentLanguage}
                 userName={userName}
+                theme={theme}
                 activePrescription={selectedPrescription}
                 allPrescriptions={prescriptions}
                 onSelectPrescription={(p) => {
@@ -546,6 +551,7 @@ export const App: React.FC = () => {
               <DoctorReviewScreen
                 currentLanguage={currentLanguage}
                 userName={userName}
+                theme={theme}
                 activePrescription={selectedPrescription}
                 allPrescriptions={prescriptions}
                 onSelectPrescription={(p) => {

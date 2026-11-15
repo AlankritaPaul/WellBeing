@@ -22,6 +22,7 @@ import {
 interface DailyPillAccountabilityScreenProps {
   currentLanguage: string;
   userName?: string;
+  theme?: 'dark' | 'light';
   activePrescription: ScannedPrescription | null;
   allPrescriptions: ScannedPrescription[];
   onSelectPrescription: (prescription: ScannedPrescription) => void;
@@ -34,6 +35,7 @@ interface DailyPillAccountabilityScreenProps {
 export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScreenProps> = ({
   currentLanguage,
   userName = '',
+  theme = 'dark',
   activePrescription,
   allPrescriptions,
   onSelectPrescription,
@@ -42,6 +44,7 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
   onOpenPillsMenu,
   onOpenDoctorReview,
 }) => {
+  const isLight = theme === 'light';
   const t = getTranslation(currentLanguage);
   const currentLangObj = ALL_LANGUAGES.find((l) => l.code === currentLanguage) || ALL_LANGUAGES[0];
 
@@ -325,10 +328,14 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
 
       {/* Screen Title & Subtitle Banner */}
       <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+        <h1 className={`text-2xl sm:text-3xl font-black tracking-tight ${
+          isLight ? 'text-slate-950 font-black' : 'text-white'
+        }`}>
           {t.accountabilityTitle}
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl">
+        <p className={`text-xs sm:text-sm max-w-2xl font-semibold ${
+          isLight ? 'text-slate-700' : 'text-slate-400'
+        }`}>
           {userName ? `${userName} • ` : ''}{t.accountabilitySubtitle}
         </p>
       </div>

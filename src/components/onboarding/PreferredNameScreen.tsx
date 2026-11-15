@@ -150,37 +150,17 @@ export const PreferredNameScreen: React.FC<PreferredNameScreenProps> = ({
               </div>
             </div>
 
-            {/* Bottom Action Buttons: Back, Skip, Continue */}
-            <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 sm:gap-3">
+            {/* Bottom Action: Continue */}
+            <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end">
+              {/* Primary Continue button */}
               <button
-                type="button"
-                onClick={onBackToLanguage}
-                className="px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1"
+                type="submit"
+                disabled={!nameInput.trim()}
+                className="w-full sm:w-auto px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
               >
-                <ArrowLeft className="w-4 h-4" />
-                <span>{t.backButton}</span>
+                <span>{currentLangObj.continueText || t.saveAndContinue || 'Continue'}</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
-
-              <div className="flex items-center gap-2">
-                {/* Secondary Skip button at bottom */}
-                <button
-                  type="button"
-                  onClick={onSkip}
-                  className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold transition-colors"
-                >
-                  {t.skipButton}
-                </button>
-
-                {/* Primary Continue button */}
-                <button
-                  type="submit"
-                  disabled={!nameInput.trim()}
-                  className="px-5 sm:px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-2 text-xs sm:text-sm"
-                >
-                  <span>{currentLangObj.continueText || t.saveAndContinue || 'Continue'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
             </div>
           </form>
         </div>

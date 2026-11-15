@@ -26,6 +26,7 @@ import {
 interface AccountsListScreenProps {
   currentLanguage: string;
   userName?: string;
+  theme?: 'dark' | 'light';
   prescriptions: ScannedPrescription[];
   onSelectAccount: (prescription: ScannedPrescription) => void;
   onOpenVault?: (prescription: ScannedPrescription) => void;
@@ -41,6 +42,7 @@ interface AccountsListScreenProps {
 export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
   currentLanguage,
   userName = '',
+  theme = 'dark',
   prescriptions,
   onSelectAccount,
   onOpenVault,
@@ -52,6 +54,7 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
   onAddNewPrescription,
   onDeleteAccount,
 }) => {
+  const isLight = theme === 'light';
   const t = getTranslation(currentLanguage);
   const currentLangObj = ALL_LANGUAGES.find((l) => l.code === currentLanguage) || ALL_LANGUAGES[0];
 
@@ -75,11 +78,15 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
           </span>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+        <h1 className={`text-2xl sm:text-3xl font-black tracking-tight ${
+          isLight ? 'text-slate-950 font-black' : 'text-white'
+        }`}>
           {userName ? `${currentLangObj.greeting}, ${userName}!` : t.accountsHubTitle}
         </h1>
 
-        <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
+        <p className={`text-xs sm:text-sm max-w-md mx-auto font-semibold ${
+          isLight ? 'text-slate-700' : 'text-slate-400'
+        }`}>
           {t.accountsHubSubtitle}
         </p>
       </div>

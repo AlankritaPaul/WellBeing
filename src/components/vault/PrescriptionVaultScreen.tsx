@@ -25,6 +25,7 @@ import {
 interface PrescriptionVaultScreenProps {
   currentLanguage: string;
   userName?: string;
+  theme?: 'dark' | 'light';
   activePrescription: ScannedPrescription | null;
   allPrescriptions: ScannedPrescription[];
   onSelectPrescription: (prescription: ScannedPrescription) => void;
@@ -35,12 +36,14 @@ interface PrescriptionVaultScreenProps {
 export const PrescriptionVaultScreen: React.FC<PrescriptionVaultScreenProps> = ({
   currentLanguage,
   userName = '',
+  theme = 'dark',
   activePrescription,
   allPrescriptions,
   onSelectPrescription,
   onBackToPrevious,
   onBackToCabinet,
 }) => {
+  const isLight = theme === 'light';
   const t = getTranslation(currentLanguage);
   const currentLangObj = ALL_LANGUAGES.find((l) => l.code === currentLanguage) || ALL_LANGUAGES[0];
 
@@ -184,10 +187,14 @@ export const PrescriptionVaultScreen: React.FC<PrescriptionVaultScreenProps> = (
 
       {/* Screen Title & Subtitle Banner */}
       <div className="space-y-1 mb-5">
-        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+        <h1 className={`text-2xl sm:text-3xl font-black tracking-tight ${
+          isLight ? 'text-slate-950 font-black' : 'text-white'
+        }`}>
           {t.vaultTitle}
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl">
+        <p className={`text-xs sm:text-sm max-w-2xl font-semibold ${
+          isLight ? 'text-slate-700' : 'text-slate-400'
+        }`}>
           {t.vaultSubtitle}
         </p>
       </div>

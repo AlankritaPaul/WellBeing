@@ -30,6 +30,7 @@ import {
 interface DiagnosticLabDeskScreenProps {
   currentLanguage: string;
   userName?: string;
+  theme?: 'dark' | 'light';
   activePrescription: ScannedPrescription | null;
   allPrescriptions: ScannedPrescription[];
   onSelectPrescription: (prescription: ScannedPrescription) => void;
@@ -41,6 +42,7 @@ interface DiagnosticLabDeskScreenProps {
 export const DiagnosticLabDeskScreen: React.FC<DiagnosticLabDeskScreenProps> = ({
   currentLanguage,
   userName = '',
+  theme = 'dark',
   activePrescription,
   allPrescriptions,
   onSelectPrescription,
@@ -48,6 +50,7 @@ export const DiagnosticLabDeskScreen: React.FC<DiagnosticLabDeskScreenProps> = (
   onBackToCabinet,
   onOpenVault,
 }) => {
+  const isLight = theme === 'light';
   const t = getTranslation(currentLanguage);
   const currentLangObj = ALL_LANGUAGES.find((l) => l.code === currentLanguage) || ALL_LANGUAGES[0];
 
@@ -347,10 +350,14 @@ export const DiagnosticLabDeskScreen: React.FC<DiagnosticLabDeskScreenProps> = (
 
       {/* Screen Title & Subtitle Banner */}
       <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+        <h1 className={`text-2xl sm:text-3xl font-black tracking-tight ${
+          isLight ? 'text-slate-950 font-black' : 'text-white'
+        }`}>
           {t.labDeskTitle}
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl">
+        <p className={`text-xs sm:text-sm max-w-2xl font-semibold ${
+          isLight ? 'text-slate-700' : 'text-slate-400'
+        }`}>
           {t.labDeskSubtitle}
         </p>
       </div>
