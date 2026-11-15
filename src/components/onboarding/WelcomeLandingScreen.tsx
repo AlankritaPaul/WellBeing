@@ -81,11 +81,11 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
         </h1>
 
         {/* Medical Prescription Graphic Below WellBeing */}
-        <div className="mb-4 sm:mb-5 flex items-center justify-center">
+        <div className="mb-5 sm:mb-6 flex items-center justify-center">
           <img
             src="/images/medical_rx_icon.png"
             alt="WellBeing Medical Icon"
-            className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-lg select-none pointer-events-none"
+            className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 object-contain drop-shadow-xl select-none pointer-events-none transition-transform duration-300 hover:scale-105"
             draggable={false}
           />
         </div>
