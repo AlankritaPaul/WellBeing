@@ -331,10 +331,10 @@ export const storageService = {
     }
   },
 
-  getTheme(): 'dark' | 'emerald' | 'light' | 'contrast' {
+  getTheme(): 'dark' | 'light' {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.THEME);
-      if (saved === 'emerald' || saved === 'light' || saved === 'contrast' || saved === 'dark') {
+      if (saved === 'light' || saved === 'dark') {
         return saved;
       }
       return 'dark';
@@ -343,7 +343,7 @@ export const storageService = {
     }
   },
 
-  setTheme(theme: 'dark' | 'emerald' | 'light' | 'contrast'): void {
+  setTheme(theme: 'dark' | 'light'): void {
     try {
       localStorage.setItem(STORAGE_KEYS.THEME, theme);
       window.dispatchEvent(new CustomEvent('wellbeing_theme_changed', { detail: theme }));

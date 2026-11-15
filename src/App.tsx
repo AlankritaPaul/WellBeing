@@ -158,7 +158,7 @@ export const App: React.FC = () => {
   };
 
   const handleToggleTheme = () => {
-    const nextTheme: AppTheme = theme === 'dark' ? 'emerald' : theme === 'emerald' ? 'light' : theme === 'light' ? 'contrast' : 'dark';
+    const nextTheme: AppTheme = theme === 'dark' ? 'light' : 'dark';
     storageService.setTheme(nextTheme);
     setTheme(nextTheme);
   };
@@ -173,13 +173,9 @@ export const App: React.FC = () => {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 font-sans ${
-      theme === 'dark' 
-        ? 'bg-slate-950 text-slate-100' 
-        : theme === 'emerald'
-        ? 'bg-[#031d17] text-emerald-50'
-        : theme === 'contrast'
-        ? 'bg-[#0f0728] text-purple-100'
-        : 'bg-slate-100 text-slate-900'
+      theme === 'light' 
+        ? 'bg-slate-100 text-slate-900' 
+        : 'bg-slate-950 text-slate-100'
     } flex flex-col`}>
 
       {/* Show Persistent Header once user leaves welcome page */}

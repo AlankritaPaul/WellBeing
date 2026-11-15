@@ -40,7 +40,7 @@ import {
 interface PrescriptionScannerScreenProps {
   currentLanguage: string;
   userName?: string;
-  theme?: 'dark' | 'emerald' | 'light' | 'contrast';
+  theme?: 'dark' | 'light';
   initialPrescription?: ScannedPrescription | null;
   hasMultipleAccounts?: boolean;
   onBackToAccounts?: () => void;

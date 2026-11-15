@@ -15,8 +15,6 @@ import {
   Pill,
   Sun,
   Moon,
-  Sparkles,
-  Eye,
   CheckSquare,
   Square,
   Globe,
@@ -24,7 +22,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 
-export type AppTheme = 'dark' | 'emerald' | 'light' | 'contrast';
+export type AppTheme = 'dark' | 'light';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -337,34 +335,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </div>
                 </div>
 
-                {/* Theme 2: Calming Emerald */}
-                <div
-                  onClick={() => onSelectTheme('emerald')}
-                  className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start gap-3 text-left ${
-                    theme === 'emerald'
-                      ? 'bg-emerald-950/70 border-emerald-500 ring-2 ring-emerald-500/30'
-                      : 'bg-slate-950/70 border-slate-800 hover:border-slate-700'
-                  }`}
-                >
-                  <div className="w-9 h-9 rounded-xl bg-[#03231a] border border-emerald-700 flex items-center justify-center text-emerald-400 shrink-0">
-                    <Sparkles className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-white text-sm">
-                        {t.themeEmerald}
-                      </span>
-                      {theme === 'emerald' && (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                      )}
-                    </div>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
-                      Soothing healthcare green, comforting clinical ambiance.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Theme 3: Soft Daylight */}
+                {/* Theme 2: Soft Daylight */}
                 <div
                   onClick={() => onSelectTheme('light')}
                   className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start gap-3 text-left ${
@@ -387,33 +358,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     </div>
                     <p className={`text-[11px] mt-0.5 ${theme === 'light' ? 'text-slate-700' : 'text-slate-400'}`}>
                       High clarity daytime mode for bright room viewing.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Theme 4: High Contrast Iris */}
-                <div
-                  onClick={() => onSelectTheme('contrast')}
-                  className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start gap-3 text-left ${
-                    theme === 'contrast'
-                      ? 'bg-purple-950/80 border-purple-400 ring-2 ring-purple-400/30'
-                      : 'bg-slate-950/70 border-slate-800 hover:border-slate-700'
-                  }`}
-                >
-                  <div className="w-9 h-9 rounded-xl bg-purple-900 border border-purple-500 flex items-center justify-center text-purple-300 shrink-0">
-                    <Eye className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-white text-sm">
-                        {t.themeContrast}
-                      </span>
-                      {theme === 'contrast' && (
-                        <CheckCircle2 className="w-4 h-4 text-purple-400 shrink-0" />
-                      )}
-                    </div>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
-                      Vibrant high-contrast palette for elderly or low vision.
                     </p>
                   </div>
                 </div>

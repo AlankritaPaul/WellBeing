@@ -1,10 +1,10 @@
 import React from 'react';
-import { ArrowRight, Sun, Moon, Sparkles } from 'lucide-react';
+import { ArrowRight, Sun, Moon } from 'lucide-react';
 import { AnimatedHeartECG } from '../common/AnimatedHeartECG';
 
 interface WelcomeLandingScreenProps {
   onStart: () => void;
-  theme: 'dark' | 'light' | 'emerald' | 'contrast';
+  theme: 'dark' | 'light';
   onToggleTheme: () => void;
 }
 
@@ -34,25 +34,15 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
           }`}
           title="Change Theme"
         >
-          {theme === 'dark' ? (
-            <>
-              <Moon className="w-4 h-4 text-amber-300" />
-              <span>Theme: Dark</span>
-            </>
-          ) : theme === 'light' ? (
+          {theme === 'light' ? (
             <>
               <Sun className="w-4 h-4 text-amber-500" />
               <span>Theme: Light</span>
             </>
-          ) : theme === 'emerald' ? (
-            <>
-              <Sparkles className="w-4 h-4 text-emerald-400" />
-              <span>Theme: Emerald</span>
-            </>
           ) : (
             <>
-              <Sparkles className="w-4 h-4 text-purple-400" />
-              <span>Theme: Contrast</span>
+              <Moon className="w-4 h-4 text-amber-300" />
+              <span>Theme: Dark</span>
             </>
           )}
         </button>
