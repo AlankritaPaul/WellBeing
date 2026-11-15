@@ -69,25 +69,18 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
         {/* Animated Beating Heart & Oscillating ECG Wave (Background Removed) */}
         <AnimatedHeartECG className="mb-4 sm:mb-6" theme={theme} />
 
-        {/* Title: WellBeing (Focused hero size with animated dual color contrast, word stays completely still) */}
-        <h1 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight mb-2 sm:mb-3 select-none">
-          <span className={theme === 'light' ? 'animate-dual-color-light' : 'animate-dual-color-dark'}>
-            WellBeing
-          </span>
-        </h1>
-
-        {/* Medical Prescription Graphic Below WellBeing */}
-        <div className="mb-4 sm:mb-5 flex items-center justify-center">
+        {/* Medical Prescription Graphic */}
+        <div className="mb-5 sm:mb-6 flex items-center justify-center">
           <img
             src="/images/medical_rx_icon.png"
             alt="WellBeing Medical Icon"
-            className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 object-contain drop-shadow-xl select-none pointer-events-none transition-transform duration-300 hover:scale-105"
+            className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 object-contain drop-shadow-xl select-none pointer-events-none transition-transform duration-300 hover:scale-105"
             draggable={false}
           />
         </div>
 
         {/* Slogan directly on Landing Page */}
-        <h2 className={`text-xl sm:text-2xl md:text-3xl max-w-2xl mx-auto font-black tracking-tight mb-2 sm:mb-3 ${
+        <h2 className={`text-2xl sm:text-3xl md:text-4xl max-w-2xl mx-auto font-black tracking-tight mb-3 ${
           theme === 'light' ? 'text-slate-950 font-black' : 'text-white font-black'
         }`}>
           More Than Medicine, A Commitment to Care
