@@ -20,10 +20,10 @@ import type { ScannedPrescription } from './types/prescription';
 import { 
   RotateCcw, 
   Globe2, 
-  CheckCircle2,
   Scan,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  AlertCircle
 } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -290,15 +290,28 @@ export const App: React.FC = () => {
                 <span>{currentLangObj.nativeName}</span>
               </div>
 
-              {/* Checklist Verified Cards */}
-              <div className="w-full bg-slate-900/90 border border-slate-800 rounded-2xl p-4 mb-6 space-y-3 text-left">
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-blue-400 shrink-0" />
-                  <span className="text-xs sm:text-sm font-semibold text-slate-200">{t.properAngleTitle}</span>
+              {/* Final Note Before Taking / Uploading Picture */}
+              <div className="w-full bg-blue-950/40 border-2 border-blue-500/40 rounded-2xl p-4 mb-6 text-left space-y-2.5">
+                <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{t.finalNoteTitle}</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-blue-400 shrink-0" />
-                  <span className="text-xs sm:text-sm font-semibold text-slate-200">{t.photoAcceptedTitle}</span>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  {t.finalNoteDesc}
+                </p>
+                <div className="pt-2 border-t border-blue-900/50 space-y-1.5 text-xs text-slate-300">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                    <span>{t.finalNoteFlat}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                    <span>{t.finalNoteLight}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                    <span>{t.finalNoteClear}</span>
+                  </div>
                 </div>
               </div>
 

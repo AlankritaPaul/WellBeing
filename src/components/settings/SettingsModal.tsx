@@ -442,11 +442,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                   <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5">
                     <ShieldCheck className="w-4 h-4 text-blue-400 shrink-0" />
-                    <span className="text-xs text-slate-300 font-semibold">{t.properAngleTitle}</span>
+                    <span className="text-xs text-slate-300 font-semibold">{t.finalNoteFlat}</span>
                   </div>
                   <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5">
                     <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span className="text-xs text-slate-300 font-semibold">{t.photoAcceptedTitle}</span>
+                    <span className="text-xs text-slate-300 font-semibold">{t.finalNoteLight}</span>
                   </div>
                 </div>
 

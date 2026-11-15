@@ -394,6 +394,31 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
       {/* VIEW 1: EMPTY CAPTURE STATE (Before Image Selected) */}
       {!previewImage && !isScanning && !scannedData && (
         <div className="space-y-6">
+          {/* Final Note Before Taking / Uploading Picture */}
+          <div className="p-4 sm:p-5 rounded-3xl bg-blue-950/30 border-2 border-blue-500/40 text-left space-y-2">
+            <div className="flex items-center gap-2 text-blue-400 font-bold text-sm sm:text-base">
+              <AlertCircle className="w-5 h-5 shrink-0" />
+              <span>{t.finalNoteTitle}</span>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              {t.finalNoteDesc}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 border-t border-blue-900/50 text-xs text-slate-300">
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                <span>{t.finalNoteFlat}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                <span>{t.finalNoteLight}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                <span>{t.finalNoteClear}</span>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Action 1: Open Camera Button */}
             <button
@@ -409,7 +434,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                   {t.openCameraButton}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-xs">
-                  {t.properAngleTitle}
+                  {t.openCameraSub}
                 </p>
               </div>
             </button>
@@ -428,7 +453,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                   {t.uploadPhotoBtn}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-xs">
-                  {t.photoAcceptedTitle}
+                  {t.uploadPhotoSub}
                 </p>
               </div>
             </button>

@@ -63,7 +63,14 @@ export interface TranslationDictionary {
   scannerTitle: string;
   scannerSubtitle: string;
   openCameraButton: string;
+  openCameraSub: string;
   uploadPhotoBtn: string;
+  uploadPhotoSub: string;
+  finalNoteTitle: string;
+  finalNoteDesc: string;
+  finalNoteFlat: string;
+  finalNoteLight: string;
+  finalNoteClear: string;
   orUseSample: string;
   scanningInProgress: string;
   allergyShieldTitle: string;

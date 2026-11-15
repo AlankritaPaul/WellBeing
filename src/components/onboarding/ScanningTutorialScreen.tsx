@@ -12,8 +12,7 @@ import {
   XCircle, 
   Check, 
   Maximize2, 
-  Minimize2, 
-  Loader2 
+  Minimize2
 } from 'lucide-react';
 
 interface ScanningTutorialScreenProps {
@@ -174,7 +173,7 @@ export const ScanningTutorialScreen: React.FC<ScanningTutorialScreenProps> = ({
                 {isScene3Accepted && (
                   <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-600/95 text-white font-extrabold text-xs sm:text-sm shadow-xl border border-blue-400 backdrop-blur-sm">
                     <Check className="w-4 h-4 stroke-[3]" />
-                    <span>{t.photoAcceptedTitle}</span>
+                    <span>{t.finalNoteTitle}</span>
                   </div>
                 )}
               </div>
@@ -224,38 +223,43 @@ export const ScanningTutorialScreen: React.FC<ScanningTutorialScreenProps> = ({
                 </div>
               )}
 
-              {/* Scene 3: Photo Accepted Successfully Message */}
+              {/* Scene 3: Final Note Before Taking Photo */}
               {isScene3Accepted && (
-                <div className="relative w-full h-full flex items-center justify-center animate-in fade-in duration-500">
+                <div className="relative w-full h-full flex items-center justify-center animate-in fade-in duration-500 p-4">
                   {/* Background Clean Image Preview */}
                   <img
                     src="/images/tutorial_clean.jpg"
-                    alt="Clean accepted prescription"
-                    className="max-w-full max-h-full object-contain rounded-xl opacity-40 blur-xs"
+                    alt="Prescription guidance"
+                    className="max-w-full max-h-full object-contain rounded-xl opacity-30 blur-xs"
                   />
                   
-                  {/* Foreground Modal / Confirmation Card */}
+                  {/* Foreground Card: Final Note */}
                   <div className="absolute inset-0 flex items-center justify-center p-4">
-                    {elapsedTime < 13500 ? (
-                      <div className="flex flex-col items-center gap-3 bg-slate-900/90 border border-slate-700 px-6 py-4 rounded-2xl shadow-2xl">
-                        <Loader2 className="w-10 h-10 text-blue-400 animate-spin" />
-                        <span className="text-sm font-bold text-white tracking-wide">
-                          ...
-                        </span>
+                    <div className="bg-slate-900/95 border-2 border-blue-500 rounded-3xl p-5 sm:p-7 shadow-2xl max-w-md flex flex-col items-center text-center animate-in zoom-in-95 duration-300">
+                      <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg mb-3">
+                        <Check className="w-7 h-7 stroke-[3]" />
                       </div>
-                    ) : (
-                      <div className="bg-slate-900/95 border-2 border-blue-500 rounded-3xl p-6 sm:p-8 shadow-2xl max-w-md flex flex-col items-center text-center animate-in zoom-in-95 duration-300">
-                        <div className="w-16 h-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg mb-4">
-                          <Check className="w-10 h-10 stroke-[3]" />
+                      <h3 className="text-base sm:text-xl font-black text-white mb-2">
+                        {t.finalNoteTitle}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-3">
+                        {t.finalNoteDesc}
+                      </p>
+                      <div className="w-full text-left space-y-1.5 pt-2 border-t border-slate-800 text-[11px] sm:text-xs text-slate-300">
+                        <div className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                          <span>{t.finalNoteFlat}</span>
                         </div>
-                        <h3 className="text-lg sm:text-2xl font-black text-white mb-2">
-                          {t.photoAcceptedTitle}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                          {t.photoAcceptedDesc}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                          <span>{t.finalNoteLight}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                          <span>{t.finalNoteClear}</span>
+                        </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
               )}
@@ -324,7 +328,7 @@ export const ScanningTutorialScreen: React.FC<ScanningTutorialScreenProps> = ({
                     }`}
                   >
                     <Check className="w-3.5 h-3.5" />
-                    <span>{t.photoAcceptedTitle.split('!')[0]}</span>
+                    <span>{t.finalNoteTitle.split('—')[0].split(':')[0]}</span>
                   </button>
                 </div>
               </div>
@@ -334,10 +338,10 @@ export const ScanningTutorialScreen: React.FC<ScanningTutorialScreenProps> = ({
           {/* Clean Captions Card in Selected Language */}
           <div className="w-full mt-4 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700 transition-all text-left">
             <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
-              {isScene1Shadow ? t.shadowWrongTitle : isScene2ProperAngle ? t.properAngleTitle : t.photoAcceptedTitle}
+              {isScene1Shadow ? t.shadowWrongTitle : isScene2ProperAngle ? t.properAngleTitle : t.finalNoteTitle}
             </h3>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-              {isScene1Shadow ? t.shadowWrongDesc : isScene2ProperAngle ? t.properAngleDesc : t.photoAcceptedDesc}
+              {isScene1Shadow ? t.shadowWrongDesc : isScene2ProperAngle ? t.properAngleDesc : t.finalNoteDesc}
             </p>
           </div>
 
