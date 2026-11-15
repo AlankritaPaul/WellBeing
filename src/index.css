@@ -50,31 +50,31 @@
   }
 }
 
-/* Anatomical Heart Continuous Beating Animation (Constant living pulse) */
+/* Anatomical Heart Continuous Beating Animation (Slow, soft, realistic physiological pulse) */
 @keyframes heartBeatContinuous {
   0% {
     transform: scale(1);
-    filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.45));
+    filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.35));
   }
-  14% {
-    transform: scale(1.18);
-    filter: drop-shadow(0 0 28px rgba(244, 63, 94, 1.0)) drop-shadow(0 0 8px rgba(255, 120, 150, 0.7));
+  16% {
+    transform: scale(1.035);
+    filter: drop-shadow(0 0 14px rgba(244, 63, 94, 0.55));
   }
   28% {
-    transform: scale(1.03);
-    filter: drop-shadow(0 0 14px rgba(244, 63, 94, 0.6));
+    transform: scale(1.01);
+    filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.4));
   }
-  42% {
-    transform: scale(1.22);
-    filter: drop-shadow(0 0 32px rgba(244, 63, 94, 1.0)) drop-shadow(0 0 10px rgba(255, 120, 150, 0.8));
+  44% {
+    transform: scale(1.055);
+    filter: drop-shadow(0 0 18px rgba(244, 63, 94, 0.65));
   }
-  58% {
+  64% {
     transform: scale(1);
-    filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.45));
+    filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.35));
   }
   100% {
     transform: scale(1);
-    filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.45));
+    filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.35));
   }
 }
 
@@ -132,42 +132,42 @@
   }
 }
 
-/* Glowing Ambient Cardiac Aura (Continuous living pulse) */
+/* Glowing Ambient Cardiac Aura (Soft, subtle living glow) */
 @keyframes cardiacAuraContinuous {
   0%, 100% {
-    opacity: 0.25;
-    transform: scale(0.95);
+    opacity: 0.15;
+    transform: scale(0.98);
   }
-  14%, 42% {
-    opacity: 0.75;
-    transform: scale(1.2);
+  16%, 44% {
+    opacity: 0.35;
+    transform: scale(1.04);
   }
-  58% {
-    opacity: 0.25;
-    transform: scale(0.95);
+  64% {
+    opacity: 0.15;
+    transform: scale(0.98);
   }
 }
 
 .animate-heart-beat {
-  animation: heartBeatContinuous 1.1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: heartBeatContinuous 1.6s ease-in-out infinite;
   transform-origin: center center;
   will-change: transform, filter;
 }
 
 .animate-ecg-stream-left {
   stroke-dasharray: 504;
-  animation: ecgFlowLeft 2.2s ease-in-out infinite;
+  animation: ecgFlowLeft 3.2s ease-in-out infinite;
   will-change: stroke-dashoffset, opacity;
 }
 
 .animate-ecg-stream-right {
   stroke-dasharray: 505;
-  animation: ecgFlowRight 2.2s ease-in-out infinite;
+  animation: ecgFlowRight 3.2s ease-in-out infinite;
   will-change: stroke-dashoffset, opacity;
 }
 
 .animate-cardiac-aura {
-  animation: cardiacAuraContinuous 1.1s ease-in-out infinite;
+  animation: cardiacAuraContinuous 1.6s ease-in-out infinite;
   will-change: transform, opacity;
 }
 
