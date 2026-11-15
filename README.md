@@ -1,7 +1,11 @@
-# WellBeing
-
-> **Personal Medical File Cabinet & Pill Accountability Companion**  
-> **Designed & Developed by [Alankrita Paul](https://github.com/AlankritaPaul)**
+<div align="center">
+  <img src="./public/images/wellbeing_heart_logo.png" alt="WellBeing Logo" width="180" />
+  <h1>WellBeing</h1>
+  <p>
+    <strong>Personal Medical File Cabinet &amp; Pill Accountability Companion</strong><br />
+    Designed &amp; Developed by <a href="https://github.com/AlankritaPaul"><strong>Alankrita Paul</strong></a>
+  </p>
+</div>
 
 ---
 
