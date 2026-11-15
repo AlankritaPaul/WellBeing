@@ -574,6 +574,24 @@ export const App: React.FC = () => {
         </div>
       </div>
 
+      {/* Global Footer (Visible across all views) */}
+      {appPhase !== 'welcome' && (
+        <footer className={`w-full py-3 px-6 text-center border-t text-xs transition-colors backdrop-blur-md shrink-0 ${
+          theme === 'light'
+            ? 'border-slate-200 bg-white/95 text-slate-800 shadow-sm'
+            : 'border-slate-800/80 bg-slate-950/80 text-slate-400'
+        }`}>
+          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-2">
+            <p className={`font-bold tracking-tight ${theme === 'light' ? 'text-slate-900 font-extrabold' : 'text-slate-300'}`}>
+              A Little More Care in Every Part of Life.
+            </p>
+            <p className={theme === 'light' ? 'text-slate-700' : 'text-slate-400'}>
+              Designed &amp; Developed by <strong className={`font-black ${theme === 'light' ? 'text-slate-950' : 'text-slate-200'}`}>Alankrita Paul</strong>
+            </p>
+          </div>
+        </footer>
+      )}
+
       {/* Language Change Modal (Changeable Anytime) */}
       {showLanguageModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">

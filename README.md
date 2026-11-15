@@ -2,7 +2,7 @@
   <img src="./public/images/wellbeing_heart_logo.png" alt="WellBeing Logo" width="180" />
   <h1>WellBeing</h1>
   <p>
-    <strong>Personal Medical File Cabinet &amp; Pill Accountability Companion</strong><br />
+    <strong>Thoughtful Technology. Meaningful Healthcare.</strong><br />
     Designed &amp; Developed by <a href="https://github.com/AlankritaPaul"><strong>Alankrita Paul</strong></a>
   </p>
 </div>
@@ -127,5 +127,6 @@ npm run preview
 
 ## 📄 License & Credits
 
+*A Little More Care in Every Part of Life.*  
 Created with ❤️ by **Alankrita Paul**.  
 All rights reserved. Designed as a free, privacy-first healthcare utility.
