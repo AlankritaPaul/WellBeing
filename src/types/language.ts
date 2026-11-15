@@ -58,4 +58,42 @@ export interface TranslationDictionary {
   doctorName: string;
   startScanningButton: string;
   replayButton: string;
+
+  // Page 4: Prescription Camera & Medical OCR
+  scannerTitle: string;
+  scannerSubtitle: string;
+  openCameraButton: string;
+  uploadPhotoBtn: string;
+  orUseSample: string;
+  scanningInProgress: string;
+  allergyShieldTitle: string;
+  bookingPhoneTitle: string;
+  emergencyPhoneTitle: string;
+  medicinesFoundTitle: string;
+  dosageLabel: string;
+  frequencyLabel: string;
+  timingBeforeFood: string;
+  timingAfterFood: string;
+  addMedicineButton: string;
+  saveToCabinetButton: string;
+  retakeButton: string;
+
+  // Medicine Purpose & Multi-Prescription Options
+  medicinePurposeTitle: string;
+  scheduleTimingTitle: string;
+  shortNameLabel: string;
+  fullNameLabel: string;
+  usePurposeLabel: string;
+  whyPrescribedLabel: string;
+  howItWorksLabel: string;
+  addAnotherPrescription: string;
+  allPrescriptionsCount: string;
+  sample1Title: string;
+  sample1Desc: string;
+  sample2Button: string;
+  sample2Title: string;
+  sample2Desc: string;
+  addAnotherPrescriptionSubtitle: string;
+  formTabletText: string;
+  formCapsuleText: string;
 }

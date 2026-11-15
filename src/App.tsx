@@ -7,21 +7,23 @@ import { WelcomeLandingScreen } from './components/onboarding/WelcomeLandingScre
 import { LanguageSelectScreen } from './components/onboarding/LanguageSelectScreen';
 import { PreferredNameScreen } from './components/onboarding/PreferredNameScreen';
 import { ScanningTutorialScreen } from './components/onboarding/ScanningTutorialScreen';
+import { PrescriptionScannerScreen } from './components/scanner/PrescriptionScannerScreen';
 import { NameChangeModal } from './components/onboarding/NameChangeModal';
 import { 
   RotateCcw, 
   Globe2, 
   CheckCircle2,
   Scan,
-  Sparkles
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [currentLanguage, setCurrentLanguage] = useState<string>(() => storageService.getLanguage());
   const [userName, setUserName] = useState<string>(() => storageService.getUserName());
   
-  // App Phase: 'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'page3_completed'
-  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'page3_completed'>('welcome');
+  // App Phase: 'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'page3_completed'
+  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'page3_completed'>('welcome');
   
   // Theme state: 'dark' | 'light' | 'emerald'
   const [theme, setTheme] = useState<'dark' | 'light' | 'emerald'>('dark');
@@ -84,11 +86,11 @@ export const App: React.FC = () => {
   };
 
   const handleCompleteTutorial = () => {
-    setAppPhase('page3_completed');
+    setAppPhase('scanner');
   };
 
   const handleSkipTutorial = () => {
-    setAppPhase('page3_completed');
+    setAppPhase('scanner');
   };
 
   const handleResetToWelcome = () => {
@@ -207,28 +209,52 @@ export const App: React.FC = () => {
               </div>
 
               {/* Action Buttons to Replay Tutorial or Edit Name / Language */}
-              <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
+              <div className="flex flex-col gap-3 w-full">
                 <button
-                  onClick={() => setAppPhase('tutorial')}
-                  className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
+                  onClick={() => setAppPhase('scanner')}
+                  className="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg transition-all"
                 >
-                  <RotateCcw className="w-4 h-4 text-emerald-400" />
-                  <span>{t.replayButton}</span>
+                  <span>{t.startScanningButton}</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
-                <button
-                  onClick={handleBackToName}
-                  className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
-                >
-                  <span>{t.changeName}</span>
-                </button>
-                <button
-                  onClick={handleBackToLanguage}
-                  className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
-                >
-                  <Globe2 className="w-4 h-4 text-amber-400" />
-                  <span>{t.changeLanguage}</span>
-                </button>
+
+                <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full">
+                  <button
+                    onClick={() => setAppPhase('tutorial')}
+                    className="w-full sm:flex-1 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <RotateCcw className="w-4 h-4 text-emerald-400" />
+                    <span>{t.replayButton}</span>
+                  </button>
+                  <button
+                    onClick={handleBackToName}
+                    className="w-full sm:flex-1 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <span>{t.changeName}</span>
+                  </button>
+                  <button
+                    onClick={handleBackToLanguage}
+                    className="w-full sm:flex-1 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <Globe2 className="w-4 h-4 text-amber-400" />
+                    <span>{t.changeLanguage}</span>
+                  </button>
+                </div>
               </div>
+            </div>
+          )}
+
+          {/* Page 4: Prescription Camera & Handwriting Medical OCR */}
+          {appPhase === 'scanner' && (
+            <div className="flex-1 flex flex-col items-center justify-start py-4 sm:py-6 w-full">
+              <PrescriptionScannerScreen
+                currentLanguage={currentLanguage}
+                userName={userName}
+                onBackToTutorial={() => setAppPhase('tutorial')}
+                onSavedToCabinet={(savedPrescription) => {
+                  console.log('Saved prescription to local cabinet:', savedPrescription);
+                }}
+              />
             </div>
           )}
         </div>
