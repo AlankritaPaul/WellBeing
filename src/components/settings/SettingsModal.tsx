@@ -10,7 +10,6 @@ import {
   Palette,
   Video,
   CheckCircle2,
-  AlertTriangle,
   Building2,
   Calendar,
   Pill,
@@ -179,16 +178,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {/* TAB 1: ACCOUNTS MANAGEMENT & PERMANENT DELETION */}
           {activeTab === 'accounts' && (
             <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-red-950/20 border border-red-900/40 text-left space-y-1">
-                <div className="flex items-center gap-2 text-red-400 font-bold text-xs sm:text-sm">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
-                  <span>{t.deleteAccountsDesc}</span>
-                </div>
-                <p className="text-[11px] text-slate-400 pl-6">
-                  {t.deleteAccountConfirmSingle}
-                </p>
-              </div>
-
               {/* Action Toolbar for Batch Selection */}
               {prescriptions.length > 0 && (
                 <div className="flex items-center justify-between gap-2 pb-2 border-b border-slate-800">
@@ -503,10 +492,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <span>{userName || t.changeName}</span>
               </button>
             </div>
-
-            <span className="text-[11px] text-slate-500">
-              WellBeing 100% On-Device
-            </span>
           </div>
         </div>
       </div>
