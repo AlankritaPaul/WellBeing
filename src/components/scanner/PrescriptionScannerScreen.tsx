@@ -429,14 +429,9 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
               <div className="w-20 h-20 rounded-2xl bg-blue-600/20 border border-blue-500/50 flex items-center justify-center text-blue-400 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-lg shadow-blue-950/50">
                 <Camera className="w-10 h-10" />
               </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                  {t.openCameraButton}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-xs">
-                  {t.openCameraSub}
-                </p>
-              </div>
+              <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                {t.openCameraButton}
+              </h3>
             </button>
 
             {/* Action 2: Upload from Device Button */}
@@ -448,14 +443,9 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
               <div className="w-20 h-20 rounded-2xl bg-indigo-600/20 border border-indigo-500/50 flex items-center justify-center text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-lg shadow-indigo-950/50">
                 <Upload className="w-10 h-10" />
               </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                  {t.uploadPhotoBtn}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-xs">
-                  {t.uploadPhotoSub}
-                </p>
-              </div>
+              <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                {t.uploadPhotoBtn}
+              </h3>
             </button>
           </div>
 
