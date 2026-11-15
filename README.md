@@ -1,10 +1,7 @@
 <div align="center">
-  <img src="./public/images/wellbeing_heart_logo.png" alt="WellBeing Logo" width="180" />
-  <h1>WellBeing</h1>
-  <p>
-    <strong>Thoughtful Technology. Meaningful Healthcare.</strong><br />
-    Designed &amp; Developed by <a href="https://github.com/AlankritaPaul"><strong>Alankrita Paul</strong></a>
-  </p>
+  <img src="./public/images/wellbeing_heart_logo.png" alt="WellBeing Heart Logo" width="160" />
+  <br />
+  <img src="./public/images/wellbeing_header.svg" alt="WellBeing - Thoughtful Technology. Meaningful Healthcare." width="720" />
 </div>
 
 ---

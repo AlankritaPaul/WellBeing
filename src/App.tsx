@@ -586,7 +586,7 @@ export const App: React.FC = () => {
               More Than Medicine, A Commitment to Care.
             </p>
             <p className={theme === 'light' ? 'text-slate-700' : 'text-slate-400'}>
-              Designed &amp; Developed by <strong className={`font-black ${theme === 'light' ? 'text-slate-950' : 'text-slate-200'}`}>Alankrita Paul</strong>
+              100% On-Device Medical Utility
             </p>
           </div>
         </footer>

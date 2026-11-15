@@ -69,13 +69,9 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
         {/* Animated Beating Heart & Oscillating ECG Wave (Background Removed) */}
         <AnimatedHeartECG className="mb-4 sm:mb-6" theme={theme} />
 
-        {/* Title: WellBeing */}
-        <h1 className="text-5xl sm:text-7xl font-black tracking-tight mb-3">
-          <span className={`bg-clip-text text-transparent ${
-            theme === 'light'
-              ? 'bg-gradient-to-r from-emerald-950 via-teal-900 to-slate-950 font-black'
-              : 'bg-gradient-to-r from-emerald-300 via-teal-200 to-cyan-300'
-          }`}>
+        {/* Title: WellBeing (Big with animated dual color contrast, word stays completely still) */}
+        <h1 className="text-6xl sm:text-8xl md:text-9xl font-black tracking-tight mb-3 select-none">
+          <span className={theme === 'light' ? 'animate-dual-color-light' : 'animate-dual-color-dark'}>
             WellBeing
           </span>
         </h1>
@@ -90,11 +86,11 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
           />
         </div>
 
-        {/* Tagline (Kept exactly as attached) */}
-        <p className={`text-lg sm:text-2xl max-w-2xl mx-auto leading-relaxed mb-10 ${
+        {/* Tagline (Bigger with distinct contrasting color, not same as WellBeing) */}
+        <p className={`text-xl sm:text-2xl md:text-3xl max-w-3xl mx-auto font-black tracking-tight leading-relaxed mb-10 ${
           theme === 'light'
-            ? 'text-slate-900 font-extrabold'
-            : 'text-slate-300 font-medium'
+            ? 'text-amber-950 font-black'
+            : 'text-amber-400 font-extrabold'
         }`}>
           Your Personal Medical File Cabinet & Pill Accountability Companion.
         </p>
@@ -129,8 +125,8 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
           <p className={`font-extrabold tracking-tight ${theme === 'light' ? 'text-slate-900 font-extrabold' : 'text-slate-300 font-semibold'}`}>
             More Than Medicine, A Commitment to Care.
           </p>
-          <p className={theme === 'light' ? 'font-bold text-slate-800' : 'font-medium text-slate-400'}>
-            Designed &amp; Developed by <strong className={`font-black ${theme === 'light' ? 'text-slate-950' : 'text-slate-200'}`}>Alankrita Paul</strong>
+          <p className={theme === 'light' ? 'font-bold text-slate-700' : 'font-medium text-slate-400'}>
+            100% On-Device Medical Utility
           </p>
         </div>
       </footer>

@@ -171,3 +171,35 @@
   will-change: transform, opacity;
 }
 
+/* Animated Dual-Color Gradient Shift (Only the color animates smoothly, word stays completely still) */
+@keyframes dualColorShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-dual-color-dark {
+  background: linear-gradient(90deg, #10b981, #06b6d4, #3b82f6, #10b981);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: dualColorShift 6s ease-in-out infinite;
+}
+
+.animate-dual-color-light {
+  background: linear-gradient(90deg, #047857, #0284c7, #1e3a8a, #047857);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: dualColorShift 6s ease-in-out infinite;
+}
+
+
