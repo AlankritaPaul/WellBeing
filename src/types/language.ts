@@ -158,4 +158,85 @@ export interface TranslationDictionary {
   deleteTestConfirm: string;
   noTestsFoundNotice: string;
   allTestsCompletedCongrats: string;
+
+  // Page 8: Current Pills Menu & Refill Inventory
+  pillsMenuTitle: string;
+  pillsMenuSubtitle: string;
+  openPillsMenuButton: string;
+  refillAlertBadge: string;
+  daysRemainingLabel: string;
+  pillsRemainingLabel: string;
+  dailyConsumptionLabel: string;
+  refillButton: string;
+  refillModalTitle: string;
+  refillQuantityInputLabel: string;
+  currentStockLabel: string;
+  safeStockBadge: string;
+  lowStockAlertNotice: string;
+  shoppingListTitle: string;
+  shoppingListSubtitle: string;
+
+  // Page 9: Daily Pill Accountability & 3-Button Smart Alarm
+  accountabilityTitle: string;
+  accountabilitySubtitle: string;
+  openRemindersButton: string;
+  morningBlueprintTitle: string;
+  morningSlotLabel: string;
+  afternoonSlotLabel: string;
+  eveningSlotLabel: string;
+  nightSlotLabel: string;
+  takePillButton: string;
+  delayAlarmButton: string;
+  skipDoseButton: string;
+  snoozeModalTitle: string;
+  snooze15Min: string;
+  snooze30Min: string;
+  snooze1Hour: string;
+  skipReasonModalTitle: string;
+  skipReasonFasting: string;
+  skipReasonUpset: string;
+  skipReasonForgot: string;
+  skipReasonDoctorHold: string;
+  nightlySummaryTitle: string;
+  adherenceScoreLabel: string;
+  stripPackingListTitle: string;
+
+  // Page 10: Doctor Review Mode & Compliance Export
+  doctorReviewTitle: string;
+  doctorReviewSubtitle: string;
+  openDoctorReviewButton: string;
+  nextVisitCountdownTitle: string;
+  daysUntilVisitLabel: string;
+  adherenceOverviewTitle: string;
+  adherenceRate7Days: string;
+  adherenceRate30Days: string;
+  totalScheduledDosesLabel: string;
+  takenOnTimeDosesLabel: string;
+  delayedDosesLabel: string;
+  skippedDosesLabel: string;
+  doctorProofTableTitle: string;
+  printDoctorReportButton: string;
+  exportCsvButton: string;
+
+  // Settings & Account Management
+  settingsTitle: string;
+  settingsSubtitle: string;
+  openSettingsButton: string;
+  deleteAccountsTitle: string;
+  deleteAccountsDesc: string;
+  courseCompletedTag: string;
+  noLongerNeededTag: string;
+  deleteSelectedButton: string;
+  deleteAccountConfirmSingle: string;
+  deleteAccountConfirmMultiple: string;
+  themeSettingsTitle: string;
+  themeMidnight: string;
+  themeEmerald: string;
+  themeLight: string;
+  themeContrast: string;
+  tutorialSettingsTitle: string;
+  watchTutorialButton: string;
+  selectAllAccounts: string;
+  deselectAllAccounts: string;
+  noAccountsToDelete: string;
 }

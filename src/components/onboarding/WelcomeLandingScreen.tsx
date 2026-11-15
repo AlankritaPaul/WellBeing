@@ -3,7 +3,7 @@ import { ArrowRight, Sun, Moon, Sparkles, HeartPulse } from 'lucide-react';
 
 interface WelcomeLandingScreenProps {
   onStart: () => void;
-  theme: 'dark' | 'light' | 'emerald';
+  theme: 'dark' | 'light' | 'emerald' | 'contrast';
   onToggleTheme: () => void;
 }
 
@@ -43,10 +43,15 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
               <Sun className="w-4 h-4 text-amber-500" />
               <span>Theme: Light</span>
             </>
-          ) : (
+          ) : theme === 'emerald' ? (
             <>
               <Sparkles className="w-4 h-4 text-emerald-400" />
               <span>Theme: Emerald</span>
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4 text-purple-400" />
+              <span>Theme: Contrast</span>
             </>
           )}
         </button>

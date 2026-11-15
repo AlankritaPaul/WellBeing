@@ -33,7 +33,8 @@ import {
   Info,
   Layers,
   ChevronRight,
-  FlaskConical
+  FlaskConical,
+  FileCheck2
 } from 'lucide-react';
 
 interface PrescriptionScannerScreenProps {
@@ -45,6 +46,9 @@ interface PrescriptionScannerScreenProps {
   onBackToTutorial: () => void;
   onOpenVault?: () => void;
   onOpenLabDesk?: () => void;
+  onOpenPillsMenu?: () => void;
+  onOpenReminders?: () => void;
+  onOpenDoctorReview?: () => void;
   onSavedToCabinet?: (prescription: ScannedPrescription) => void;
 }
 
@@ -57,6 +61,9 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
   onBackToTutorial,
   onOpenVault,
   onOpenLabDesk,
+  onOpenPillsMenu,
+  onOpenReminders,
+  onOpenDoctorReview,
   onSavedToCabinet,
 }) => {
   const t = getTranslation(currentLanguage);
@@ -649,6 +656,53 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                 </button>
               </div>
             )}
+
+            {/* Quick Feature Navigation Shortcuts */}
+            <div className="mt-3 pt-3 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {onOpenLabDesk && (
+                <button
+                  type="button"
+                  onClick={onOpenLabDesk}
+                  className="py-2 px-2 rounded-xl bg-slate-950/80 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-[11px] flex items-center justify-center gap-1 transition-colors"
+                >
+                  <FlaskConical className="w-3.5 h-3.5 text-blue-400" />
+                  <span>{t.openLabDeskButton}</span>
+                </button>
+              )}
+
+              {onOpenPillsMenu && (
+                <button
+                  type="button"
+                  onClick={onOpenPillsMenu}
+                  className="py-2 px-2 rounded-xl bg-slate-950/80 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-[11px] flex items-center justify-center gap-1 transition-colors"
+                >
+                  <Pill className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{t.openPillsMenuButton}</span>
+                </button>
+              )}
+
+              {onOpenReminders && (
+                <button
+                  type="button"
+                  onClick={onOpenReminders}
+                  className="py-2 px-2 rounded-xl bg-slate-950/80 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-[11px] flex items-center justify-center gap-1 transition-colors"
+                >
+                  <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>{t.openRemindersButton}</span>
+                </button>
+              )}
+
+              {onOpenDoctorReview && (
+                <button
+                  type="button"
+                  onClick={onOpenDoctorReview}
+                  className="py-2 px-2 rounded-xl bg-slate-950/80 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-[11px] flex items-center justify-center gap-1 transition-colors"
+                >
+                  <FileCheck2 className="w-3.5 h-3.5 text-blue-300" />
+                  <span>{t.openDoctorReviewButton}</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* ALLERGY SHIELD ALERT BANNER */}

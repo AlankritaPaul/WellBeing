@@ -12,6 +12,27 @@ export interface Medication {
   timing: 'before_food' | 'after_food' | 'with_food' | 'as_needed';
   duration: string; // e.g. "5 days", "14 days", "1 month"
   instructions?: string;
+  // Page 8: Inventory & Refill Tracking
+  totalQuantity?: number;
+  remainingQuantity?: number;
+  refillThresholdDays?: number;
+  lastRefillDate?: string;
+}
+
+export interface DoseLogEntry {
+  id: string;
+  prescriptionId: string;
+  medicationId: string;
+  medicationName: string;
+  dosage: string;
+  date: string;
+  timeSlot: 'morning' | 'afternoon' | 'evening' | 'night';
+  scheduledTime: string;
+  status: 'taken' | 'delayed' | 'skipped' | 'pending';
+  actionTimestamp?: number;
+  delayedUntil?: string;
+  skipReason?: string;
+  notes?: string;
 }
 
 export interface ContactPhone {

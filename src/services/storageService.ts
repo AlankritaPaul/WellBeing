@@ -1,4 +1,4 @@
-import type { ScannedPrescription, DiagnosticTest } from '../types/prescription';
+import type { ScannedPrescription, DiagnosticTest, DoseLogEntry } from '../types/prescription';
 
 // Local-First Device Storage Service
 // Zero account, zero email, zero phone number, 100% device persistence
@@ -9,6 +9,8 @@ const STORAGE_KEYS = {
   ONBOARDING_STEP: 'wellbeing_onboarding_step',
   PRESCRIPTIONS: 'wellbeing_prescriptions',
   ACTIVE_ACCOUNT_ID: 'wellbeing_active_account_id',
+  DOSE_LOGS: 'wellbeing_dose_logs',
+  THEME: 'wellbeing_theme',
 };
 
 // Generates a canonical account key for medical deduplication.
@@ -226,6 +228,23 @@ export const storageService = {
           }
         }
 
+        // Initialize pill stock inventory if missing
+        if (p.medicines && p.medicines.length > 0) {
+          p.medicines = p.medicines.map((m, mIdx) => {
+            if (m.remainingQuantity !== undefined && m.totalQuantity !== undefined) {
+              return m;
+            }
+            const lowStockIndices = key === 'rx_sample_citycare_drskroy' ? [1, 3] : [1, 2];
+            const isLow = lowStockIndices.includes(mIdx);
+            return {
+              ...m,
+              totalQuantity: m.totalQuantity || (m.form === 'capsule' ? 14 : 30),
+              remainingQuantity: m.remainingQuantity !== undefined ? m.remainingQuantity : (isLow ? 2 : 16),
+              refillThresholdDays: m.refillThresholdDays || 3,
+            };
+          });
+        }
+
         if (!uniqueMap.has(key)) {
           uniqueMap.set(key, p);
         } else {
@@ -280,19 +299,56 @@ export const storageService = {
   },
 
   deletePrescription(id: string): void {
+    this.deletePrescriptions([id]);
+  },
+
+  deletePrescriptions(ids: string[]): void {
     try {
+      const idSet = new Set(ids);
       const current = this.getPrescriptions();
-      const updated = current.filter((p) => p.id !== id);
+      const updated = current.filter((p) => !idSet.has(p.id));
       localStorage.setItem(STORAGE_KEYS.PRESCRIPTIONS, JSON.stringify(updated));
       
-      // If deleted account was active, clear active selection
-      if (this.getActiveAccountId() === id) {
+      // Clean associated dose logs
+      try {
+        const logs = this.getDoseLogs();
+        const updatedLogs = logs.filter((l) => !idSet.has(l.prescriptionId));
+        localStorage.setItem(STORAGE_KEYS.DOSE_LOGS, JSON.stringify(updatedLogs));
+        window.dispatchEvent(new CustomEvent('wellbeing_dose_logs_changed', { detail: updatedLogs }));
+      } catch (e) {
+        console.warn('Could not clean dose logs on delete:', e);
+      }
+
+      // If active account was deleted, reset active selection
+      const activeId = this.getActiveAccountId();
+      if (activeId && idSet.has(activeId)) {
         this.setActiveAccountId(null);
       }
 
       window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: updated }));
     } catch (e) {
-      console.warn('Could not delete prescription:', e);
+      console.warn('Could not delete prescriptions:', e);
+    }
+  },
+
+  getTheme(): 'dark' | 'emerald' | 'light' | 'contrast' {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.THEME);
+      if (saved === 'emerald' || saved === 'light' || saved === 'contrast' || saved === 'dark') {
+        return saved;
+      }
+      return 'dark';
+    } catch {
+      return 'dark';
+    }
+  },
+
+  setTheme(theme: 'dark' | 'emerald' | 'light' | 'contrast'): void {
+    try {
+      localStorage.setItem(STORAGE_KEYS.THEME, theme);
+      window.dispatchEvent(new CustomEvent('wellbeing_theme_changed', { detail: theme }));
+    } catch (e) {
+      console.warn('Could not set theme:', e);
     }
   },
 
@@ -366,6 +422,103 @@ export const storageService = {
       window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: updated }));
     } catch (e) {
       console.warn('Could not delete diagnostic test:', e);
+    }
+  },
+
+  refillMedication(prescriptionId: string, medicationId: string, addedQuantity: number): void {
+    try {
+      const current = this.getPrescriptions();
+      const todayDate = new Date().toLocaleDateString('en-GB');
+      const updated = current.map((p) => {
+        if (p.id !== prescriptionId) return p;
+        const meds = (p.medicines || []).map((m) => {
+          if (m.id !== medicationId) return m;
+          const currentRemaining = m.remainingQuantity || 0;
+          return {
+            ...m,
+            remainingQuantity: currentRemaining + addedQuantity,
+            lastRefillDate: todayDate,
+          };
+        });
+        return { ...p, medicines: meds };
+      });
+      localStorage.setItem(STORAGE_KEYS.PRESCRIPTIONS, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: updated }));
+    } catch (e) {
+      console.warn('Could not refill medication:', e);
+    }
+  },
+
+  updateMedicationStock(prescriptionId: string, medicationId: string, newRemaining: number): void {
+    try {
+      const current = this.getPrescriptions();
+      const updated = current.map((p) => {
+        if (p.id !== prescriptionId) return p;
+        const meds = (p.medicines || []).map((m) => {
+          if (m.id !== medicationId) return m;
+          return {
+            ...m,
+            remainingQuantity: Math.max(0, newRemaining),
+          };
+        });
+        return { ...p, medicines: meds };
+      });
+      localStorage.setItem(STORAGE_KEYS.PRESCRIPTIONS, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: updated }));
+    } catch (e) {
+      console.warn('Could not update medication stock:', e);
+    }
+  },
+
+  getDoseLogs(): DoseLogEntry[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.DOSE_LOGS);
+      if (!data) return [];
+      return JSON.parse(data);
+    } catch {
+      return [];
+    }
+  },
+
+  logDoseAction(entry: Omit<DoseLogEntry, 'id'>): void {
+    try {
+      const currentLogs = this.getDoseLogs();
+      const newEntry: DoseLogEntry = {
+        ...entry,
+        id: 'log-' + Math.random().toString(36).substring(2, 9),
+        actionTimestamp: Date.now(),
+      };
+      
+      // If taken, decrement medication remaining quantity by 1
+      if (entry.status === 'taken') {
+        const prescriptions = this.getPrescriptions();
+        const targetPrescription = prescriptions.find((p) => p.id === entry.prescriptionId);
+        const targetMed = targetPrescription?.medicines?.find((m) => m.id === entry.medicationId);
+        if (targetMed && (targetMed.remainingQuantity || 0) > 0) {
+          this.updateMedicationStock(
+            entry.prescriptionId, 
+            entry.medicationId, 
+            (targetMed.remainingQuantity || 0) - 1
+          );
+        }
+      }
+
+      // Check if entry for this date, prescription, med and timeSlot already exists
+      const existingIdx = currentLogs.findIndex(
+        (l) => l.date === entry.date && l.medicationId === entry.medicationId && l.timeSlot === entry.timeSlot
+      );
+
+      let updatedLogs: DoseLogEntry[];
+      if (existingIdx >= 0) {
+        updatedLogs = currentLogs.map((l, idx) => (idx === existingIdx ? newEntry : l));
+      } else {
+        updatedLogs = [newEntry, ...currentLogs];
+      }
+
+      localStorage.setItem(STORAGE_KEYS.DOSE_LOGS, JSON.stringify(updatedLogs));
+      window.dispatchEvent(new CustomEvent('wellbeing_dose_logs_changed', { detail: updatedLogs }));
+    } catch (e) {
+      console.warn('Could not log dose action:', e);
     }
   },
 

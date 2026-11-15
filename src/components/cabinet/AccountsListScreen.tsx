@@ -14,9 +14,11 @@ import {
   ShieldAlert,
   AlertTriangle,
   X,
-  FileText,
   Eye,
-  FlaskConical
+  FlaskConical,
+  Clock,
+  FileCheck2,
+  Settings
 } from 'lucide-react';
 
 interface AccountsListScreenProps {
@@ -26,6 +28,10 @@ interface AccountsListScreenProps {
   onSelectAccount: (prescription: ScannedPrescription) => void;
   onOpenVault?: (prescription: ScannedPrescription) => void;
   onOpenLabDesk?: (prescription: ScannedPrescription) => void;
+  onOpenPillsMenu?: (prescription: ScannedPrescription) => void;
+  onOpenReminders?: (prescription: ScannedPrescription) => void;
+  onOpenDoctorReview?: (prescription: ScannedPrescription) => void;
+  onOpenSettings?: () => void;
   onAddNewPrescription: () => void;
   onDeleteAccount: (prescriptionId: string) => void;
 }
@@ -37,6 +43,10 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
   onSelectAccount,
   onOpenVault,
   onOpenLabDesk,
+  onOpenPillsMenu,
+  onOpenReminders,
+  onOpenDoctorReview,
+  onOpenSettings,
   onAddNewPrescription,
   onDeleteAccount,
 }) => {
@@ -68,6 +78,31 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
         <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
           {t.accountsHubSubtitle}
         </p>
+      </div>
+
+      {/* Settings & Add Prescription Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-3 border-b border-slate-800">
+        <div className="flex items-center gap-2">
+          {onOpenSettings && (
+            <button
+              type="button"
+              onClick={onOpenSettings}
+              className="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 hover:border-blue-500/50 hover:bg-slate-800 text-slate-200 text-xs sm:text-sm font-bold flex items-center gap-2 shadow-sm transition-all"
+            >
+              <Settings className="w-4 h-4 text-blue-400" />
+              <span>{t.settingsTitle}</span>
+            </button>
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={onAddNewPrescription}
+          className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-slate-950 font-black text-xs sm:text-sm flex items-center gap-1.5 shadow-md shadow-emerald-950/40 transition-all"
+        >
+          <Plus className="w-4 h-4 stroke-[3]" />
+          <span>{t.addNewAccountButton}</span>
+        </button>
       </div>
 
       {/* Grid of Real Accounts (One Account per Prescription) */}
@@ -212,31 +247,48 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {onOpenLabDesk && (
                     <button
                       type="button"
                       onClick={() => onOpenLabDesk(prescription)}
-                      className="py-2.5 px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
+                      className="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-[11px] flex items-center justify-center gap-1 transition-all"
                     >
                       <FlaskConical className="w-3.5 h-3.5 text-blue-400" />
                       <span>{t.openLabDeskButton}</span>
-                      {prescription.diagnosticTests && prescription.diagnosticTests.length > 0 && (
-                        <span className="px-1.5 py-0.2 rounded-md bg-blue-950 text-blue-300 text-[10px] font-mono">
-                          {prescription.diagnosticTests.length}
-                        </span>
-                      )}
                     </button>
                   )}
 
-                  {onOpenVault && (
+                  {onOpenPillsMenu && (
                     <button
                       type="button"
-                      onClick={() => onOpenVault(prescription)}
-                      className="py-2.5 px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
+                      onClick={() => onOpenPillsMenu(prescription)}
+                      className="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-[11px] flex items-center justify-center gap-1 transition-all"
                     >
-                      <FileText className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>{t.openVaultButton}</span>
+                      <Pill className="w-3.5 h-3.5 text-amber-400" />
+                      <span>{t.openPillsMenuButton}</span>
+                    </button>
+                  )}
+
+                  {onOpenReminders && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenReminders(prescription)}
+                      className="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-[11px] flex items-center justify-center gap-1 transition-all"
+                    >
+                      <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>{t.openRemindersButton}</span>
+                    </button>
+                  )}
+
+                  {onOpenDoctorReview && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenDoctorReview(prescription)}
+                      className="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-[11px] flex items-center justify-center gap-1 transition-all"
+                    >
+                      <FileCheck2 className="w-3.5 h-3.5 text-blue-300" />
+                      <span>{t.openDoctorReviewButton}</span>
                     </button>
                   )}
                 </div>

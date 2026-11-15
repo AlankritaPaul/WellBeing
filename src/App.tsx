@@ -11,7 +11,11 @@ import { PrescriptionScannerScreen } from './components/scanner/PrescriptionScan
 import { AccountsListScreen } from './components/cabinet/AccountsListScreen';
 import { PrescriptionVaultScreen } from './components/vault/PrescriptionVaultScreen';
 import { DiagnosticLabDeskScreen } from './components/lab/DiagnosticLabDeskScreen';
+import { PillsInventoryScreen } from './components/pills/PillsInventoryScreen';
+import { DailyPillAccountabilityScreen } from './components/reminders/DailyPillAccountabilityScreen';
+import { DoctorReviewScreen } from './components/review/DoctorReviewScreen';
 import { NameChangeModal } from './components/onboarding/NameChangeModal';
+import { SettingsModal, type AppTheme } from './components/settings/SettingsModal';
 import type { ScannedPrescription } from './types/prescription';
 import { 
   RotateCcw, 
@@ -43,7 +47,7 @@ export const App: React.FC = () => {
   // App Phase: Resume directly where user left off! Never restart if account already created.
   // 1 Account -> Open that single account's prescription view directly!
   // 2+ Accounts -> Open Accounts Hub so user selects which account to view!
-  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'accounts_hub' | 'vault' | 'lab' | 'page3_completed'>(() => {
+  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'accounts_hub' | 'vault' | 'lab' | 'pills_inventory' | 'reminders' | 'doctor_review' | 'page3_completed'>(() => {
     const list = storageService.getPrescriptions();
     if (list.length > 1) {
       return 'accounts_hub';
@@ -60,13 +64,14 @@ export const App: React.FC = () => {
     return 'welcome';
   });
 
-  const [previousPhase, setPreviousPhase] = useState<'scanner' | 'accounts_hub' | 'lab' | 'vault'>('scanner');
+  const [previousPhase, setPreviousPhase] = useState<'scanner' | 'accounts_hub' | 'lab' | 'vault' | 'pills_inventory' | 'reminders' | 'doctor_review'>('scanner');
   
-  // Theme state: 'dark' | 'light' | 'emerald'
-  const [theme, setTheme] = useState<'dark' | 'light' | 'emerald'>('dark');
+  // Theme state: 'dark' | 'emerald' | 'light' | 'contrast'
+  const [theme, setTheme] = useState<AppTheme>(() => storageService.getTheme());
 
   const [showLanguageModal, setShowLanguageModal] = useState<boolean>(false);
   const [showNameModal, setShowNameModal] = useState<boolean>(false);
+  const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [isMobileFrame, setIsMobileFrame] = useState<boolean>(false);
 
   // Sync state when storage events occur
@@ -81,8 +86,16 @@ export const App: React.FC = () => {
       setUserName(customEvent.detail);
     };
 
+    const handleThemeChange = (e: Event) => {
+      const customEvent = e as CustomEvent<AppTheme>;
+      if (customEvent.detail) {
+        setTheme(customEvent.detail);
+      }
+    };
+
     window.addEventListener('wellbeing_language_changed', handleLangChange);
     window.addEventListener('wellbeing_name_changed', handleNameChange);
+    window.addEventListener('wellbeing_theme_changed', handleThemeChange);
 
     const handlePrescriptionsChange = (e: Event) => {
       const customEvent = e as CustomEvent<ScannedPrescription[]>;
@@ -90,8 +103,16 @@ export const App: React.FC = () => {
       setPrescriptions(updated);
       if (updated.length === 0) {
         setSelectedPrescription(null);
-      } else if (updated.length === 1) {
-        setSelectedPrescription(updated[0]);
+        setAppPhase('welcome');
+      } else {
+        setSelectedPrescription((prev) => {
+          if (!prev) return updated[0];
+          const found = updated.find((p) => p.id === prev.id);
+          return found || updated[0];
+        });
+        if (updated.length === 1 && appPhase === 'accounts_hub') {
+          setAppPhase('scanner');
+        }
       }
     };
 
@@ -100,9 +121,10 @@ export const App: React.FC = () => {
     return () => {
       window.removeEventListener('wellbeing_language_changed', handleLangChange);
       window.removeEventListener('wellbeing_name_changed', handleNameChange);
+      window.removeEventListener('wellbeing_theme_changed', handleThemeChange);
       window.removeEventListener('wellbeing_prescriptions_changed', handlePrescriptionsChange);
     };
-  }, []);
+  }, [appPhase]);
 
   const handleHomeClick = () => {
     if (prescriptions.length > 1) {
@@ -160,7 +182,14 @@ export const App: React.FC = () => {
   };
 
   const handleToggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'emerald' : prev === 'emerald' ? 'light' : 'dark'));
+    const nextTheme: AppTheme = theme === 'dark' ? 'emerald' : theme === 'emerald' ? 'light' : theme === 'light' ? 'contrast' : 'dark';
+    storageService.setTheme(nextTheme);
+    setTheme(nextTheme);
+  };
+
+  const handleSelectTheme = (newTheme: AppTheme) => {
+    storageService.setTheme(newTheme);
+    setTheme(newTheme);
   };
 
   const currentLangObj = ALL_LANGUAGES.find((l) => l.code === currentLanguage) || ALL_LANGUAGES[0];
@@ -171,7 +200,9 @@ export const App: React.FC = () => {
       theme === 'dark' 
         ? 'bg-slate-950 text-slate-100' 
         : theme === 'emerald'
-        ? 'bg-[#041a14] text-emerald-50'
+        ? 'bg-[#031d17] text-emerald-50'
+        : theme === 'contrast'
+        ? 'bg-[#0f0728] text-purple-100'
         : 'bg-slate-100 text-slate-900'
     } flex flex-col`}>
 
@@ -182,6 +213,7 @@ export const App: React.FC = () => {
           userName={userName}
           onOpenLanguageModal={() => setShowLanguageModal(true)}
           onOpenNameModal={() => setShowNameModal(true)}
+          onOpenSettings={() => setShowSettingsModal(true)}
           isMobileFrame={isMobileFrame}
           onToggleMobileFrame={() => setIsMobileFrame((prev) => !prev)}
           onHomeClick={handleHomeClick}
@@ -330,6 +362,25 @@ export const App: React.FC = () => {
                   setPreviousPhase('accounts_hub');
                   setAppPhase('lab');
                 }}
+                onOpenPillsMenu={(prescription: ScannedPrescription) => {
+                  setSelectedPrescription(prescription);
+                  storageService.setActiveAccountId(prescription.id);
+                  setPreviousPhase('accounts_hub');
+                  setAppPhase('pills_inventory');
+                }}
+                onOpenReminders={(prescription: ScannedPrescription) => {
+                  setSelectedPrescription(prescription);
+                  storageService.setActiveAccountId(prescription.id);
+                  setPreviousPhase('accounts_hub');
+                  setAppPhase('reminders');
+                }}
+                onOpenDoctorReview={(prescription: ScannedPrescription) => {
+                  setSelectedPrescription(prescription);
+                  storageService.setActiveAccountId(prescription.id);
+                  setPreviousPhase('accounts_hub');
+                  setAppPhase('doctor_review');
+                }}
+                onOpenSettings={() => setShowSettingsModal(true)}
                 onAddNewPrescription={() => {
                   setSelectedPrescription(null);
                   setAppPhase('scanner');
@@ -363,6 +414,18 @@ export const App: React.FC = () => {
                 onOpenLabDesk={() => {
                   setPreviousPhase('scanner');
                   setAppPhase('lab');
+                }}
+                onOpenPillsMenu={() => {
+                  setPreviousPhase('scanner');
+                  setAppPhase('pills_inventory');
+                }}
+                onOpenReminders={() => {
+                  setPreviousPhase('scanner');
+                  setAppPhase('reminders');
+                }}
+                onOpenDoctorReview={() => {
+                  setPreviousPhase('scanner');
+                  setAppPhase('doctor_review');
                 }}
                 onSavedToCabinet={(savedPrescription) => {
                   setSelectedPrescription(savedPrescription);
@@ -421,6 +484,90 @@ export const App: React.FC = () => {
               />
             </div>
           )}
+
+          {/* Page 8: Current Pills Menu & Refill Inventory */}
+          {appPhase === 'pills_inventory' && (
+            <div className="flex-1 flex flex-col items-center justify-start py-4 sm:py-6 w-full">
+              <PillsInventoryScreen
+                currentLanguage={currentLanguage}
+                userName={userName}
+                activePrescription={selectedPrescription}
+                allPrescriptions={prescriptions}
+                onSelectPrescription={(p) => {
+                  setSelectedPrescription(p);
+                  storageService.setActiveAccountId(p.id);
+                }}
+                onBackToPrevious={() => {
+                  setAppPhase(previousPhase || (prescriptions.length > 1 ? 'accounts_hub' : 'scanner'));
+                }}
+                onBackToCabinet={prescriptions.length > 1 ? () => setAppPhase('accounts_hub') : undefined}
+                onOpenReminders={() => {
+                  setPreviousPhase('pills_inventory');
+                  setAppPhase('reminders');
+                }}
+                onOpenDoctorReview={() => {
+                  setPreviousPhase('pills_inventory');
+                  setAppPhase('doctor_review');
+                }}
+              />
+            </div>
+          )}
+
+          {/* Page 9: Daily Pill Accountability & 3-Button Smart Delayed Alarms */}
+          {appPhase === 'reminders' && (
+            <div className="flex-1 flex flex-col items-center justify-start py-4 sm:py-6 w-full">
+              <DailyPillAccountabilityScreen
+                currentLanguage={currentLanguage}
+                userName={userName}
+                activePrescription={selectedPrescription}
+                allPrescriptions={prescriptions}
+                onSelectPrescription={(p) => {
+                  setSelectedPrescription(p);
+                  storageService.setActiveAccountId(p.id);
+                }}
+                onBackToPrevious={() => {
+                  setAppPhase(previousPhase || (prescriptions.length > 1 ? 'accounts_hub' : 'scanner'));
+                }}
+                onBackToCabinet={prescriptions.length > 1 ? () => setAppPhase('accounts_hub') : undefined}
+                onOpenPillsMenu={() => {
+                  setPreviousPhase('reminders');
+                  setAppPhase('pills_inventory');
+                }}
+                onOpenDoctorReview={() => {
+                  setPreviousPhase('reminders');
+                  setAppPhase('doctor_review');
+                }}
+              />
+            </div>
+          )}
+
+          {/* Page 10: Doctor Review Mode & Adherence Proof Report */}
+          {appPhase === 'doctor_review' && (
+            <div className="flex-1 flex flex-col items-center justify-start py-4 sm:py-6 w-full">
+              <DoctorReviewScreen
+                currentLanguage={currentLanguage}
+                userName={userName}
+                activePrescription={selectedPrescription}
+                allPrescriptions={prescriptions}
+                onSelectPrescription={(p) => {
+                  setSelectedPrescription(p);
+                  storageService.setActiveAccountId(p.id);
+                }}
+                onBackToPrevious={() => {
+                  setAppPhase(previousPhase || (prescriptions.length > 1 ? 'accounts_hub' : 'scanner'));
+                }}
+                onBackToCabinet={prescriptions.length > 1 ? () => setAppPhase('accounts_hub') : undefined}
+                onOpenReminders={() => {
+                  setPreviousPhase('doctor_review');
+                  setAppPhase('reminders');
+                }}
+                onOpenPillsMenu={() => {
+                  setPreviousPhase('doctor_review');
+                  setAppPhase('pills_inventory');
+                }}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -449,6 +596,23 @@ export const App: React.FC = () => {
         onSaveName={(name) => {
           storageService.setUserName(name);
           setUserName(name);
+        }}
+      />
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+        currentLanguage={currentLanguage}
+        userName={userName}
+        theme={theme}
+        onSelectTheme={handleSelectTheme}
+        prescriptions={prescriptions}
+        onOpenLanguageModal={() => setShowLanguageModal(true)}
+        onOpenNameModal={() => setShowNameModal(true)}
+        onReplayTutorial={() => {
+          setPreviousPhase(appPhase as any);
+          setAppPhase('tutorial');
         }}
       />
     </div>

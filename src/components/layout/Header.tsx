@@ -1,5 +1,5 @@
 import React from 'react';
-import { Globe, User, Smartphone, Monitor } from 'lucide-react';
+import { Globe, User, Smartphone, Monitor, Settings } from 'lucide-react';
 import { ALL_LANGUAGES } from '../../i18n/languages';
 import { getTranslation } from '../../i18n/translations';
 
@@ -8,6 +8,7 @@ interface HeaderProps {
   userName: string;
   onOpenLanguageModal: () => void;
   onOpenNameModal: () => void;
+  onOpenSettings?: () => void;
   isMobileFrame: boolean;
   onToggleMobileFrame: () => void;
   onHomeClick?: () => void;
@@ -18,6 +19,7 @@ export const Header: React.FC<HeaderProps> = ({
   userName,
   onOpenLanguageModal,
   onOpenNameModal,
+  onOpenSettings,
   isMobileFrame,
   onToggleMobileFrame,
   onHomeClick,
@@ -50,6 +52,19 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Change Language & Name Action Buttons (Changeable Anytime) */}
         <div className="flex items-center gap-2">
+          {/* Settings Button */}
+          {onOpenSettings && (
+            <button
+              type="button"
+              onClick={onOpenSettings}
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-blue-500/50 text-xs sm:text-sm font-semibold transition-all shadow-sm"
+              title={t.settingsTitle}
+            >
+              <Settings className="w-4 h-4 text-blue-400 shrink-0" />
+              <span className="hidden sm:inline">{t.openSettingsButton}</span>
+            </button>
+          )}
+
           {/* Change Language Button */}
           <button
             onClick={onOpenLanguageModal}
