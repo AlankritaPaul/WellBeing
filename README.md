@@ -125,4 +125,5 @@ npm run preview
 ## 📄 License & Credits
 
 *Thoughtful Technology. Meaningful Healthcare.*  
+Developed by **Alankrita Paul**.  
 All rights reserved. Designed as a free, privacy-first healthcare utility.

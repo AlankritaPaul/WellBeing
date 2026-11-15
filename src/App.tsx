@@ -585,8 +585,8 @@ export const App: React.FC = () => {
             <p className={`font-bold tracking-tight ${theme === 'light' ? 'text-slate-900 font-extrabold' : 'text-slate-300'}`}>
               A Little More Care in Every Part of Life
             </p>
-            <p className={theme === 'light' ? 'text-slate-700' : 'text-slate-400'}>
-              100% On-Device Medical Utility
+            <p className={theme === 'light' ? 'text-slate-700 font-medium' : 'text-slate-400 font-medium'}>
+              Developed by <span className={`font-semibold ${theme === 'light' ? 'text-slate-900' : 'text-slate-200'}`}>Alankrita Paul</span>
             </p>
           </div>
         </footer>

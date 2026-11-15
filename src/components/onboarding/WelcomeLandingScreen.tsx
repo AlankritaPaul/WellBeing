@@ -133,9 +133,9 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
             A Little More Care in Every Part of Life
           </p>
           <p className={`text-sm sm:text-base font-semibold ${
-            theme === 'light' ? 'text-slate-600' : 'text-slate-400'
+            theme === 'light' ? 'text-slate-700' : 'text-slate-400'
           }`}>
-            100% On-Device Medical Utility
+            Developed by <span className={`font-bold ${theme === 'light' ? 'text-slate-900' : 'text-slate-200'}`}>Alankrita Paul</span>
           </p>
         </div>
       </footer>
