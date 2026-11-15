@@ -22,7 +22,7 @@ export const NameChangeModal: React.FC<NameChangeModalProps> = ({
 
   if (!isOpen) return null;
 
-  const quickPresets = ['Grandpa', 'Grandma', 'Dad', 'Mom', 'Uncle', 'Aunty', 'Dadu', 'Amma', 'Baba'];
+  const presets = t.presets || ['Dad', 'Mom', 'Grandpa', 'Grandma', 'Uncle', 'Aunty'];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,20 +49,17 @@ export const NameChangeModal: React.FC<NameChangeModalProps> = ({
           </div>
           <div>
             <h2 className="text-xl font-bold text-white">{t.changeName}</h2>
-            <p className="text-xs text-slate-400">Update how you would like the app to call you</p>
+            <p className="text-xs text-slate-400">{t.nameScreenTitle}</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-              Your Preferred Name
-            </label>
             <input
               type="text"
               value={nameInput}
               onChange={(e) => setNameInput(e.target.value)}
-              placeholder="e.g. John, Grandpa, Dadu, Dr. Roy..."
+              placeholder={t.nameInputPlaceholder}
               className="w-full px-4 py-3 bg-slate-800 border-2 border-slate-700 focus:border-emerald-500 rounded-2xl text-white outline-none focus:ring-4 focus:ring-emerald-500/20 text-lg transition-all"
               autoFocus
             />
@@ -70,10 +67,10 @@ export const NameChangeModal: React.FC<NameChangeModalProps> = ({
 
           <div>
             <p className="text-xs text-slate-400 font-medium mb-2 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Quick suggestions:
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> {t.quickSuggestions}
             </p>
             <div className="flex flex-wrap gap-2">
-              {quickPresets.map((preset) => (
+              {presets.map((preset) => (
                 <button
                   key={preset}
                   type="button"
@@ -96,7 +93,7 @@ export const NameChangeModal: React.FC<NameChangeModalProps> = ({
               onClick={onClose}
               className="flex-1 py-3 px-4 rounded-xl bg-slate-800 text-slate-300 font-semibold hover:bg-slate-700 transition-colors"
             >
-              Cancel
+              {t.backButton}
             </button>
             <button
               type="submit"
@@ -104,7 +101,7 @@ export const NameChangeModal: React.FC<NameChangeModalProps> = ({
               className="flex-1 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-950"
             >
               <Check className="w-4 h-4 stroke-[3]" />
-              Save Name
+              <span>{t.saveAndContinue}</span>
             </button>
           </div>
         </form>

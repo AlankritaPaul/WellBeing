@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { storageService } from './services/storageService';
 import { ALL_LANGUAGES } from './i18n/languages';
+import { getTranslation } from './i18n/translations';
 import { Header } from './components/layout/Header';
 import { WelcomeLandingScreen } from './components/onboarding/WelcomeLandingScreen';
 import { LanguageSelectScreen } from './components/onboarding/LanguageSelectScreen';
+import { PreferredNameScreen } from './components/onboarding/PreferredNameScreen';
 import { NameChangeModal } from './components/onboarding/NameChangeModal';
 import { 
-  CheckCircle2, 
   RotateCcw, 
   Globe2, 
-  Sparkles
+  UserCheck
 } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [currentLanguage, setCurrentLanguage] = useState<string>(() => storageService.getLanguage());
   const [userName, setUserName] = useState<string>(() => storageService.getUserName());
   
-  // App Phase: 'welcome' | 'language_select' | 'page1_completed'
-  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'page1_completed'>('welcome');
+  // App Phase: 'welcome' | 'language_select' | 'preferred_name' | 'page2_completed'
+  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'page2_completed'>('welcome');
   
   // Theme state: 'dark' | 'light' | 'emerald'
   const [theme, setTheme] = useState<'dark' | 'light' | 'emerald'>('dark');
@@ -51,15 +52,28 @@ export const App: React.FC = () => {
     setAppPhase('language_select');
   };
 
+  // When Page 1 (Language) is completed -> move to Page 2 (Preferred Name)
   const handleSelectLanguage = (code: string) => {
     storageService.setLanguage(code);
     setCurrentLanguage(code);
-    setAppPhase('page1_completed');
+    setAppPhase('preferred_name');
   };
 
+  // When Page 2 (Name) is completed -> save and show summary review
   const handleSaveName = (name: string) => {
     storageService.setUserName(name);
     setUserName(name);
+    setAppPhase('page2_completed');
+  };
+
+  const handleSkipName = () => {
+    storageService.setUserName('');
+    setUserName('');
+    setAppPhase('page2_completed');
+  };
+
+  const handleBackToLanguage = () => {
+    setAppPhase('language_select');
   };
 
   const handleResetToWelcome = () => {
@@ -71,6 +85,7 @@ export const App: React.FC = () => {
   };
 
   const currentLangObj = ALL_LANGUAGES.find((l) => l.code === currentLanguage) || ALL_LANGUAGES[0];
+  const t = getTranslation(currentLanguage);
 
   return (
     <div className={`min-h-screen transition-colors duration-300 font-sans ${
@@ -81,7 +96,7 @@ export const App: React.FC = () => {
         : 'bg-slate-100 text-slate-900'
     } flex flex-col`}>
 
-      {/* Show Persistent Header only once started or in completed view */}
+      {/* Show Persistent Header once user leaves welcome page */}
       {appPhase !== 'welcome' && (
         <Header
           currentLanguage={currentLanguage}
@@ -90,6 +105,7 @@ export const App: React.FC = () => {
           onOpenNameModal={() => setShowNameModal(true)}
           isMobileFrame={isMobileFrame}
           onToggleMobileFrame={() => setIsMobileFrame((prev) => !prev)}
+          onHomeClick={handleResetToWelcome}
         />
       )}
 
@@ -103,7 +119,7 @@ export const App: React.FC = () => {
             : 'flex-1 flex flex-col'
         }`}>
 
-          {/* Phase 1: First Welcome / Landing Page */}
+          {/* Welcome / Landing Page */}
           {appPhase === 'welcome' && (
             <WelcomeLandingScreen
               onStart={handleStart}
@@ -112,7 +128,7 @@ export const App: React.FC = () => {
             />
           )}
 
-          {/* Phase 2: Language Selection in a Dropdown Box matching Picture 2 */}
+          {/* Page 1: Language Selection in Dropdown Box */}
           {appPhase === 'language_select' && (
             <div className="flex-1 flex flex-col items-center justify-center py-6 px-4">
               <LanguageSelectScreen
@@ -122,45 +138,49 @@ export const App: React.FC = () => {
             </div>
           )}
 
-          {/* Phase 3: Language Selected & Verified State */}
-          {appPhase === 'page1_completed' && (
-            <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-10 text-center max-w-2xl mx-auto">
-              <div className="w-20 h-20 rounded-3xl bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center text-emerald-400 mb-6 shadow-xl shadow-emerald-950/50 animate-bounce">
-                <CheckCircle2 className="w-10 h-10" />
-              </div>
+          {/* Page 2: Preferred Name Screen ("In what name you want us to call you?") */}
+          {appPhase === 'preferred_name' && (
+            <div className="flex-1 flex flex-col items-center justify-center py-6 px-4">
+              <PreferredNameScreen
+                currentLanguage={currentLanguage}
+                initialName={userName}
+                onSaveName={handleSaveName}
+                onSkip={handleSkipName}
+                onBackToLanguage={handleBackToLanguage}
+              />
+            </div>
+          )}
 
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950 border border-emerald-700/60 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-3">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                Language Selected
+          {/* Page 2 Completed & Verified View */}
+          {appPhase === 'page2_completed' && (
+            <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-10 text-center max-w-lg mx-auto animate-in fade-in zoom-in-95 duration-200">
+              <div className="w-20 h-20 rounded-3xl bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center text-emerald-400 mb-6 shadow-xl shadow-emerald-950/50">
+                <UserCheck className="w-10 h-10" />
               </div>
 
               <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-2">
-                {currentLangObj.greeting}
+                {userName ? `${currentLangObj.greeting}, ${userName}!` : `${currentLangObj.greeting}!`}
               </h2>
               
-              <p className="text-lg text-emerald-400 font-bold mb-3">
-                {currentLangObj.nativeName} ({currentLangObj.name})
-              </p>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-700/60 text-emerald-300 text-sm font-bold mb-6">
+                <span>{currentLangObj.nativeName}</span>
+              </div>
 
-              <p className="text-sm sm:text-base text-slate-300 max-w-md mx-auto mb-6 leading-relaxed">
-                Selected <strong className="text-white">{currentLangObj.name} ({currentLangObj.nativeName})</strong>.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md mx-auto">
+              {/* Action Buttons to Edit or Continue */}
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
                 <button
-                  onClick={() => setShowLanguageModal(true)}
+                  onClick={() => setAppPhase('preferred_name')}
                   className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
                 >
-                  <Globe2 className="w-4 h-4 text-emerald-400" />
-                  Change Language
+                  <RotateCcw className="w-4 h-4 text-emerald-400" />
+                  <span>{t.changeName}</span>
                 </button>
                 <button
-                  onClick={handleResetToWelcome}
+                  onClick={handleBackToLanguage}
                   className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
                 >
-                  <RotateCcw className="w-4 h-4 text-amber-400" />
-                  Back
+                  <Globe2 className="w-4 h-4 text-amber-400" />
+                  <span>{t.changeLanguage}</span>
                 </button>
               </div>
             </div>
@@ -174,7 +194,8 @@ export const App: React.FC = () => {
           <LanguageSelectScreen
             currentLanguage={currentLanguage}
             onSelectLanguage={(code) => {
-              handleSelectLanguage(code);
+              storageService.setLanguage(code);
+              setCurrentLanguage(code);
               setShowLanguageModal(false);
             }}
             isModal={true}
@@ -189,7 +210,10 @@ export const App: React.FC = () => {
         currentLanguage={currentLanguage}
         isOpen={showNameModal}
         onClose={() => setShowNameModal(false)}
-        onSaveName={handleSaveName}
+        onSaveName={(name) => {
+          storageService.setUserName(name);
+          setUserName(name);
+        }}
       />
     </div>
   );

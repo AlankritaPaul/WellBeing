@@ -33,4 +33,14 @@ export interface TranslationDictionary {
   alphabeticalOrder: string;
   totalLanguages: string;
   greetingPreview: string;
+
+  // Page 2: Preferred Name Screen
+  nameScreenTitle: string;
+  nameInputPlaceholder: string;
+  quickSuggestions: string;
+  backButton: string;
+  skipButton: string;
+  saveAndContinue: string;
+  page2Badge: string;
+  presets: string[];
 }

@@ -10,6 +10,7 @@ interface HeaderProps {
   onOpenNameModal: () => void;
   isMobileFrame: boolean;
   onToggleMobileFrame: () => void;
+  onHomeClick?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,6 +20,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenNameModal,
   isMobileFrame,
   onToggleMobileFrame,
+  onHomeClick,
 }) => {
   const t = getTranslation(currentLanguage);
   const currentLangObj = ALL_LANGUAGES.find((l) => l.code === currentLanguage) || ALL_LANGUAGES[0];
@@ -27,7 +29,10 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="bg-slate-900 border-b border-slate-800 px-4 py-3 sticky top-0 z-50 shadow-md">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
         {/* Brand Logo & Name */}
-        <div className="flex items-center gap-2.5">
+        <div 
+          onClick={onHomeClick}
+          className={`flex items-center gap-2.5 ${onHomeClick ? 'cursor-pointer hover:opacity-90' : ''}`}
+        >
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-950/40">
             W
           </div>
@@ -71,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={onToggleMobileFrame}
             className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs transition-colors"
-            title={isMobileFrame ? "Switch to Fullscreen Responsive View" : "Switch to Smartphone Mockup Frame"}
+            aria-label="Toggle frame"
           >
             {isMobileFrame ? <Monitor className="w-4 h-4" /> : <Smartphone className="w-4 h-4 text-emerald-400" />}
           </button>

@@ -2,6 +2,7 @@ import type { Language } from '../types/language';
 
 // Complete database of languages in strict continuous alphabetical order
 // Each entry includes native continueText for instant button translation upon selection
+// Pure native script greetings without English transliterations
 export const ALL_LANGUAGES: Language[] = [
   {
     code: 'ar',
@@ -9,7 +10,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'العربية',
     region: 'Middle East & North Africa',
     script: 'Arabic',
-    greeting: 'مرحباً (Marhaban)',
+    greeting: 'مرحباً',
     continueText: 'متابعة',
   },
   {
@@ -18,7 +19,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'অসমীয়া',
     region: 'Assam, India',
     script: 'Bengali-Assamese',
-    greeting: 'নমস্কাৰ (Nomoskar)',
+    greeting: 'নমস্কাৰ',
     continueText: 'আগবাঢ়ক',
   },
   {
@@ -27,7 +28,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'বাংলা',
     region: 'West Bengal, Tripura, Assam, Bangladesh',
     script: 'Bengali',
-    greeting: 'নমস্কার (Nomoshkar)',
+    greeting: 'নমস্কার',
     continueText: 'এগিয়ে যান',
     popular: true,
   },
@@ -37,7 +38,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'भोजपुरी',
     region: 'Bihar, Uttar Pradesh, Jharkhand, Nepal',
     script: 'Devanagari',
-    greeting: 'प्रणाम (Pranaam)',
+    greeting: 'प्रणाम',
     continueText: 'आगे बढ़ीं',
     popular: true,
   },
@@ -47,16 +48,16 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'बड़ो',
     region: 'Assam & Bodoland, India',
     script: 'Devanagari',
-    greeting: 'खुलुमबाय (Khulumbai)',
+    greeting: 'खुलुमबाय',
     continueText: 'आगायलां',
   },
   {
     code: 'zh',
     name: 'Chinese (Mandarin)',
-    nativeName: '中文 (Zhōngwén)',
+    nativeName: '中文',
     region: 'East Asia & Global',
     script: 'Simplified Chinese',
-    greeting: '你好 (Nǐ hǎo)',
+    greeting: '你好',
     continueText: '继续',
   },
   {
@@ -65,7 +66,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'डोगरी',
     region: 'Jammu & Kashmir, India',
     script: 'Devanagari',
-    greeting: 'नमस्ते (Namaste)',
+    greeting: 'नमस्ते',
     continueText: 'अगें बद्घो',
   },
   {
@@ -102,7 +103,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'ગુજરાતી',
     region: 'Gujarat, India',
     script: 'Gujarati',
-    greeting: 'નમસ્તે (Namaste)',
+    greeting: 'નમસ્તે',
     continueText: 'આગળ વધો',
   },
   {
@@ -111,7 +112,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'हिन्दी',
     region: 'India (National)',
     script: 'Devanagari',
-    greeting: 'नमस्ते (Namaste)',
+    greeting: 'नमस्ते',
     continueText: 'आगे बढ़ें',
     popular: true,
   },
@@ -121,7 +122,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: '日本語',
     region: 'Japan',
     script: 'Kanji / Kana',
-    greeting: 'こんにちは (Konnichiwa)',
+    greeting: 'こんにちは',
     continueText: '続ける',
   },
   {
@@ -130,7 +131,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'ಕನ್ನಡ',
     region: 'Karnataka, India',
     script: 'Kannada',
-    greeting: 'ನಮಸ್ಕಾರ (Namaskara)',
+    greeting: 'ನಮಸ್ಕಾರ',
     continueText: 'ಮುಂದುವರಿಸಿ',
   },
   {
@@ -139,7 +140,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'कॉशुर / کٲشُر',
     region: 'Jammu & Kashmir, India',
     script: 'Perso-Arabic / Devanagari',
-    greeting: 'سلام (Salam) / नमस्कार',
+    greeting: 'سلام / नमस्कार',
     continueText: 'برونٛہہ کُن گژھِو',
   },
   {
@@ -148,7 +149,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'कोंकणी',
     region: 'Goa & Coastal Maharashtra/Karnataka',
     script: 'Devanagari / Romi',
-    greeting: 'नमस्कार (Namaskar)',
+    greeting: 'नमस्कार',
     continueText: 'मुखार वचात',
   },
   {
@@ -157,7 +158,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'मैथिली',
     region: 'Bihar & Nepal',
     script: 'Devanagari / Tirhuta',
-    greeting: 'प्रणाम (Pranam)',
+    greeting: 'प्रणाम',
     continueText: 'आगाँ बढ़ू',
   },
   {
@@ -166,16 +167,16 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'മലയാളം',
     region: 'Kerala, India',
     script: 'Malayalam',
-    greeting: 'നമസ്കാരം (Namaskaram)',
+    greeting: 'നമസ്കാരം',
     continueText: 'തുടരുക',
   },
   {
     code: 'mni',
     name: 'Manipuri (Meitei)',
-    nativeName: 'মৈতৈলোন্ / Meitei',
+    nativeName: 'মৈতৈলোন্',
     region: 'Manipur, India',
     script: 'Meetei Mayek / Bengali',
-    greeting: 'খুরুমজরি (Khurumjari)',
+    greeting: 'খুরুমজরি',
     continueText: 'মাখোং চংশিনবিয়ু',
   },
   {
@@ -184,7 +185,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'मराठी',
     region: 'Maharashtra, India',
     script: 'Devanagari',
-    greeting: 'नमस्कार (Namaskar)',
+    greeting: 'नमस्कार',
     continueText: 'पुढे जा',
   },
   {
@@ -193,7 +194,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'नेपाली',
     region: 'Sikkim, North Bengal, Nepal',
     script: 'Devanagari',
-    greeting: 'नमस्ते (Namaste)',
+    greeting: 'नमस्ते',
     continueText: 'जारी राख्नुहोस्',
   },
   {
@@ -202,7 +203,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'ଓଡ଼ିଆ',
     region: 'Odisha, India',
     script: 'Odia',
-    greeting: 'ନମସ୍କାର (Namaskara)',
+    greeting: 'ନମସ୍କାର',
     continueText: 'ଆଗକୁ ବଢ଼ନ୍ତୁ',
   },
   {
@@ -220,7 +221,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'ਪੰਜਾਬੀ',
     region: 'Punjab, India & Global',
     script: 'Gurmukhi',
-    greeting: 'ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ (Sat Sri Akal)',
+    greeting: 'ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ',
     continueText: 'ਜਾਰੀ ਰੱਖੋ',
   },
   {
@@ -229,7 +230,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'Русский',
     region: 'Eastern Europe & North Asia',
     script: 'Cyrillic',
-    greeting: 'Здравствуйте (Zdravstvuyte)',
+    greeting: 'Здравствуйте',
     continueText: 'Продолжить',
   },
   {
@@ -238,7 +239,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'संस्कृतम्',
     region: 'India (Classical)',
     script: 'Devanagari',
-    greeting: 'नमो नमः (Namo Namah)',
+    greeting: 'नमो नमः',
     continueText: 'अग्रसरतु',
   },
   {
@@ -247,7 +248,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'ᱥᱟᱱᱛᱟᱲᱤ',
     region: 'Jharkhand, Odisha, West Bengal',
     script: 'Ol Chiki',
-    greeting: 'ᱡᱚᱦᱟᱨ (Johar)',
+    greeting: 'ᱡᱚᱦᱟᱨ',
     continueText: 'ᱞᱟᱦᱟᱜ ᱢᱮ',
   },
   {
@@ -256,7 +257,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'सिन्धी / سنڌي',
     region: 'India & Sindh',
     script: 'Devanagari / Arabic',
-    greeting: 'नमस्ते (Namaste) / سلیم',
+    greeting: 'नमस्ते / سلیم',
     continueText: 'اڳتي وڌو',
   },
   {
@@ -274,7 +275,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'தமிழ்',
     region: 'Tamil Nadu, Puducherry, Sri Lanka',
     script: 'Tamil',
-    greeting: 'வணக்கம் (Vanakkam)',
+    greeting: 'வணக்கம்',
     continueText: 'தொடரவும்',
   },
   {
@@ -283,7 +284,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'తెలుగు',
     region: 'Andhra Pradesh & Telangana, India',
     script: 'Telugu',
-    greeting: 'నమస్కారం (Namaskaram)',
+    greeting: 'నమస్కారం',
     continueText: 'కొనసాగించండి',
   },
   {
@@ -292,7 +293,7 @@ export const ALL_LANGUAGES: Language[] = [
     nativeName: 'اردو',
     region: 'India & South Asia',
     script: 'Perso-Arabic (Nastaliq)',
-    greeting: 'آداب / السلام علیکم (Adaab / Salam)',
+    greeting: 'آداب / السلام علیکم',
     continueText: 'جاری رکھیں',
   },
 ];
