@@ -70,7 +70,7 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
         <AnimatedHeartECG className="mb-4 sm:mb-6" theme={theme} />
 
         {/* Title: WellBeing */}
-        <h1 className="text-5xl sm:text-7xl font-black tracking-tight mb-4">
+        <h1 className="text-5xl sm:text-7xl font-black tracking-tight mb-3">
           <span className={`bg-clip-text text-transparent ${
             theme === 'light'
               ? 'bg-gradient-to-r from-emerald-950 via-teal-900 to-slate-950 font-black'
@@ -79,6 +79,16 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
             WellBeing
           </span>
         </h1>
+
+        {/* Medical Prescription Graphic Below WellBeing */}
+        <div className="mb-4 sm:mb-5 flex items-center justify-center">
+          <img
+            src="/images/medical_rx_icon.png"
+            alt="WellBeing Medical Icon"
+            className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-lg select-none pointer-events-none"
+            draggable={false}
+          />
+        </div>
 
         {/* Tagline */}
         <p className={`text-lg sm:text-2xl max-w-2xl mx-auto leading-relaxed mb-10 ${
