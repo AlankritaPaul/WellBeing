@@ -281,7 +281,9 @@ export const App: React.FC = () => {
                 <Scan className="w-10 h-10" />
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
+              <h2 className={`text-2xl sm:text-3xl font-black tracking-tight mb-2 ${
+                theme === 'light' ? 'text-slate-950 font-black' : 'text-white'
+              }`}>
                 {userName ? `${currentLangObj.greeting}, ${userName}!` : `${currentLangObj.greeting}!`}
               </h2>
               
@@ -291,25 +293,35 @@ export const App: React.FC = () => {
               </div>
 
               {/* Final Note Before Taking / Uploading Picture */}
-              <div className="w-full bg-blue-950/40 border-2 border-blue-500/40 rounded-2xl p-4 mb-6 text-left space-y-2.5">
-                <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
+              <div className={`w-full rounded-2xl p-4 mb-6 text-left space-y-2.5 border-2 ${
+                theme === 'light'
+                  ? 'bg-blue-50/95 border-blue-400 text-slate-900 shadow-md ring-1 ring-blue-200'
+                  : 'bg-blue-950/40 border-blue-500/40'
+              }`}>
+                <div className={`flex items-center gap-2 font-black text-sm ${
+                  theme === 'light' ? 'text-blue-950' : 'text-blue-400'
+                }`}>
+                  <AlertCircle className={`w-4 h-4 shrink-0 ${theme === 'light' ? 'text-blue-700 stroke-[2.5]' : ''}`} />
                   <span>{t.finalNoteTitle}</span>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className={`text-xs leading-relaxed ${
+                  theme === 'light' ? 'text-slate-900 font-extrabold' : 'text-slate-300'
+                }`}>
                   {t.finalNoteDesc}
                 </p>
-                <div className="pt-2 border-t border-blue-900/50 space-y-1.5 text-xs text-slate-300">
+                <div className={`pt-2 border-t space-y-1.5 text-xs ${
+                  theme === 'light' ? 'border-blue-200 text-slate-900 font-bold' : 'border-blue-900/50 text-slate-300'
+                }`}>
                   <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${theme === 'light' ? 'bg-blue-700' : 'bg-blue-400'}`} />
                     <span>{t.finalNoteFlat}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${theme === 'light' ? 'bg-blue-700' : 'bg-blue-400'}`} />
                     <span>{t.finalNoteLight}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${theme === 'light' ? 'bg-blue-700' : 'bg-blue-400'}`} />
                     <span>{t.finalNoteClear}</span>
                   </div>
                 </div>
@@ -416,6 +428,7 @@ export const App: React.FC = () => {
               <PrescriptionScannerScreen
                 currentLanguage={currentLanguage}
                 userName={userName}
+                theme={theme}
                 initialPrescription={selectedPrescription}
                 hasMultipleAccounts={prescriptions.length > 1}
                 onBackToAccounts={() => setAppPhase('accounts_hub')}

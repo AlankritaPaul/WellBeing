@@ -40,6 +40,7 @@ import {
 interface PrescriptionScannerScreenProps {
   currentLanguage: string;
   userName?: string;
+  theme?: 'dark' | 'emerald' | 'light' | 'contrast';
   initialPrescription?: ScannedPrescription | null;
   hasMultipleAccounts?: boolean;
   onBackToAccounts?: () => void;
@@ -55,6 +56,7 @@ interface PrescriptionScannerScreenProps {
 export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps> = ({
   currentLanguage,
   userName = '',
+  theme = 'dark',
   initialPrescription = null,
   hasMultipleAccounts = false,
   onBackToAccounts,
@@ -66,6 +68,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
   onOpenDoctorReview,
   onSavedToCabinet,
 }) => {
+  const isLight = theme === 'light';
   const t = getTranslation(currentLanguage);
   const currentLangObj = ALL_LANGUAGES.find((l) => l.code === currentLanguage) || ALL_LANGUAGES[0];
 
@@ -322,7 +325,11 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
           <button
             type="button"
             onClick={onBackToTutorial}
-            className="p-2 sm:px-3 sm:py-1.5 rounded-xl border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300 text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5"
+            className={`p-2 sm:px-3 sm:py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 ${
+              isLight
+                ? 'bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-300 shadow-sm'
+                : 'border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300'
+            }`}
             title="Back"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -331,19 +338,20 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
         )}
 
         <div className="text-center flex-1">
-          <h1 className="text-xl sm:text-2xl font-black text-slate-100 tracking-tight">
+          <h1 className={`text-xl sm:text-2xl font-black tracking-tight ${
+            isLight ? 'text-slate-950 font-black' : 'text-slate-100'
+          }`}>
             {t.scannerTitle}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+          <p className={`text-xs sm:text-sm mt-0.5 ${
+            isLight ? 'text-slate-800 font-extrabold' : 'text-slate-400'
+          }`}>
             {t.scannerSubtitle}
           </p>
         </div>
 
-        <div className="w-12 sm:w-16 flex justify-end">
-          <span className="px-2.5 py-1 rounded-full bg-blue-950/80 border border-blue-700/60 text-blue-300 text-xs font-bold">
-            {currentLangObj.nativeName}
-          </span>
-        </div>
+        {/* Right spacing (removed redundant language pill per user instruction) */}
+        <div className="w-12 sm:w-16 flex justify-end" />
       </div>
 
       {/* MULTI-PRESCRIPTION SWITCHER BAR (ONLY IF USER HAS 2 OR MORE ACCOUNTS) */}
@@ -395,25 +403,37 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
       {!previewImage && !isScanning && !scannedData && (
         <div className="space-y-6">
           {/* Final Note Before Taking / Uploading Picture */}
-          <div className="p-4 sm:p-5 rounded-3xl bg-blue-950/30 border-2 border-blue-500/40 text-left space-y-2">
-            <div className="flex items-center gap-2 text-blue-400 font-bold text-sm sm:text-base">
-              <AlertCircle className="w-5 h-5 shrink-0" />
+          <div className={`p-4 sm:p-5 rounded-3xl text-left space-y-2 border-2 ${
+            isLight
+              ? 'bg-blue-50/95 border-blue-400 text-slate-900 shadow-md ring-1 ring-blue-200'
+              : 'bg-blue-950/30 border-blue-500/40'
+          }`}>
+            <div className={`flex items-center gap-2 font-black text-sm sm:text-base ${
+              isLight ? 'text-blue-950' : 'text-blue-400'
+            }`}>
+              <AlertCircle className={`w-5 h-5 shrink-0 ${isLight ? 'text-blue-700 stroke-[2.5]' : ''}`} />
               <span>{t.finalNoteTitle}</span>
             </div>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p className={`text-xs sm:text-sm leading-relaxed ${
+              isLight ? 'text-slate-900 font-extrabold' : 'text-slate-300'
+            }`}>
               {t.finalNoteDesc}
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 border-t border-blue-900/50 text-xs text-slate-300">
+            <div className={`grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 border-t text-xs ${
+              isLight 
+                ? 'border-blue-200 text-slate-900 font-bold' 
+                : 'border-blue-900/50 text-slate-300'
+            }`}>
               <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                <span className={`w-2 h-2 rounded-full shrink-0 ${isLight ? 'bg-blue-700' : 'bg-blue-400'}`} />
                 <span>{t.finalNoteFlat}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                <span className={`w-2 h-2 rounded-full shrink-0 ${isLight ? 'bg-blue-700' : 'bg-blue-400'}`} />
                 <span>{t.finalNoteLight}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                <span className={`w-2 h-2 rounded-full shrink-0 ${isLight ? 'bg-blue-700' : 'bg-blue-400'}`} />
                 <span>{t.finalNoteClear}</span>
               </div>
             </div>
@@ -424,12 +444,22 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
             <button
               type="button"
               onClick={() => cameraInputRef.current?.click()}
-              className="group p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-blue-900/40 via-slate-900 to-slate-950 border-2 border-blue-500/40 hover:border-blue-400 hover:shadow-2xl hover:shadow-blue-900/40 active:scale-[0.98] transition-all flex flex-col items-center text-center justify-center gap-4 cursor-pointer"
+              className={`group p-6 sm:p-8 rounded-3xl border-2 active:scale-[0.98] transition-all flex flex-col items-center text-center justify-center gap-4 cursor-pointer ${
+                isLight
+                  ? 'bg-white hover:bg-slate-50 border-blue-400 text-slate-900 shadow-xl ring-1 ring-blue-200'
+                  : 'bg-gradient-to-br from-blue-900/40 via-slate-900 to-slate-950 border-blue-500/40 hover:border-blue-400 hover:shadow-2xl hover:shadow-blue-900/40'
+              }`}
             >
-              <div className="w-20 h-20 rounded-2xl bg-blue-600/20 border border-blue-500/50 flex items-center justify-center text-blue-400 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-lg shadow-blue-950/50">
+              <div className={`w-20 h-20 rounded-2xl flex items-center justify-center transition-all shadow-md ${
+                isLight
+                  ? 'bg-blue-100/90 text-blue-700 border border-blue-300 group-hover:bg-blue-600 group-hover:text-white'
+                  : 'bg-blue-600/20 border border-blue-500/50 text-blue-400 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white shadow-blue-950/50'
+              }`}>
                 <Camera className="w-10 h-10" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+              <h3 className={`text-lg sm:text-xl font-black tracking-tight ${
+                isLight ? 'text-slate-950' : 'text-white'
+              }`}>
                 {t.openCameraButton}
               </h3>
             </button>
@@ -438,20 +468,36 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="group p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-indigo-900/40 via-slate-900 to-slate-950 border-2 border-indigo-500/40 hover:border-indigo-400 hover:shadow-2xl hover:shadow-indigo-900/40 active:scale-[0.98] transition-all flex flex-col items-center text-center justify-center gap-4 cursor-pointer"
+              className={`group p-6 sm:p-8 rounded-3xl border-2 active:scale-[0.98] transition-all flex flex-col items-center text-center justify-center gap-4 cursor-pointer ${
+                isLight
+                  ? 'bg-white hover:bg-slate-50 border-indigo-400 text-slate-900 shadow-xl ring-1 ring-indigo-200'
+                  : 'bg-gradient-to-br from-indigo-900/40 via-slate-900 to-slate-950 border-indigo-500/40 hover:border-indigo-400 hover:shadow-2xl hover:shadow-indigo-900/40'
+              }`}
             >
-              <div className="w-20 h-20 rounded-2xl bg-indigo-600/20 border border-indigo-500/50 flex items-center justify-center text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-lg shadow-indigo-950/50">
+              <div className={`w-20 h-20 rounded-2xl flex items-center justify-center transition-all shadow-md ${
+                isLight
+                  ? 'bg-indigo-100/90 text-indigo-700 border border-indigo-300 group-hover:bg-indigo-600 group-hover:text-white'
+                  : 'bg-indigo-600/20 border border-indigo-500/50 text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white shadow-indigo-950/50'
+              }`}>
                 <Upload className="w-10 h-10" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+              <h3 className={`text-lg sm:text-xl font-black tracking-tight ${
+                isLight ? 'text-slate-950' : 'text-white'
+              }`}>
                 {t.uploadPhotoBtn}
               </h3>
             </button>
           </div>
 
           {/* Quick 1-Click Samples for Immediate Testing */}
-          <div className="p-5 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-3">
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <div className={`p-5 rounded-3xl border-2 space-y-3 ${
+            isLight
+              ? 'bg-white border-slate-300 text-slate-900 shadow-md'
+              : 'bg-slate-900/90 border-slate-800'
+          }`}>
+            <h4 className={`text-xs font-black uppercase tracking-wider ${
+              isLight ? 'text-slate-900 font-black' : 'text-slate-400'
+            }`}>
               {t.orUseSample}
             </h4>
 
@@ -460,10 +506,16 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
               <button
                 type="button"
                 onClick={() => handleUseSample(1)}
-                className="p-3.5 rounded-2xl bg-slate-950/60 hover:bg-slate-800/80 border border-slate-800 hover:border-blue-500/50 text-left transition-all flex items-center justify-between gap-3 group"
+                className={`p-3.5 rounded-2xl text-left transition-all flex items-center justify-between gap-3 group border-2 ${
+                  isLight
+                    ? 'bg-slate-50 hover:bg-blue-50/80 border-slate-200 hover:border-blue-400 text-slate-900 shadow-sm'
+                    : 'bg-slate-950/60 hover:bg-slate-800/80 border-slate-800 hover:border-blue-500/50'
+                }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-700 shrink-0">
+                  <div className={`w-10 h-10 rounded-xl overflow-hidden border shrink-0 ${
+                    isLight ? 'border-slate-300' : 'border-slate-700'
+                  }`}>
                     <img
                       src="/images/prescription_citycare.jpg"
                       alt="Sample Prescription 1"
@@ -471,25 +523,37 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                     />
                   </div>
                   <div>
-                    <h5 className="text-xs sm:text-sm font-bold text-slate-200 group-hover:text-blue-300">
+                    <h5 className={`text-xs sm:text-sm font-black ${
+                      isLight ? 'text-slate-950 group-hover:text-blue-900' : 'text-slate-200 group-hover:text-blue-300'
+                    }`}>
                       {t.sample1Title}
                     </h5>
-                    <p className="text-[11px] text-slate-400">
+                    <p className={`text-[11px] ${
+                      isLight ? 'text-slate-800 font-bold' : 'text-slate-400'
+                    }`}>
                       {t.sample1Desc}
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform" />
+                <ChevronRight className={`w-4 h-4 transition-transform group-hover:translate-x-0.5 ${
+                  isLight ? 'text-slate-600 group-hover:text-blue-700' : 'text-slate-500 group-hover:text-blue-400'
+                }`} />
               </button>
 
               {/* Sample 2: Cardiology & Diabetes (Testing "Add Another Prescription") */}
               <button
                 type="button"
                 onClick={() => handleUseSample(2)}
-                className="p-3.5 rounded-2xl bg-slate-950/60 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 text-left transition-all flex items-center justify-between gap-3 group"
+                className={`p-3.5 rounded-2xl text-left transition-all flex items-center justify-between gap-3 group border-2 ${
+                  isLight
+                    ? 'bg-slate-50 hover:bg-emerald-50/80 border-slate-200 hover:border-emerald-400 text-slate-900 shadow-sm'
+                    : 'bg-slate-950/60 hover:bg-slate-800/80 border-slate-800 hover:border-emerald-500/50'
+                }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl overflow-hidden border border-emerald-700/60 shrink-0">
+                  <div className={`w-10 h-10 rounded-xl overflow-hidden border shrink-0 ${
+                    isLight ? 'border-emerald-300' : 'border-emerald-700/60'
+                  }`}>
                     <img
                       src="/images/prescription_apex.jpg"
                       alt="Sample Prescription 2"
@@ -497,15 +561,21 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                     />
                   </div>
                   <div>
-                    <h5 className="text-xs sm:text-sm font-bold text-slate-200 group-hover:text-emerald-300">
+                    <h5 className={`text-xs sm:text-sm font-black ${
+                      isLight ? 'text-slate-950 group-hover:text-emerald-900' : 'text-slate-200 group-hover:text-emerald-300'
+                    }`}>
                       {t.sample2Title}
                     </h5>
-                    <p className="text-[11px] text-slate-400">
+                    <p className={`text-[11px] ${
+                      isLight ? 'text-slate-800 font-bold' : 'text-slate-400'
+                    }`}>
                       {t.sample2Desc}
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
+                <ChevronRight className={`w-4 h-4 transition-transform group-hover:translate-x-0.5 ${
+                  isLight ? 'text-slate-600 group-hover:text-emerald-700' : 'text-slate-500 group-hover:text-emerald-400'
+                }`} />
               </button>
             </div>
           </div>
