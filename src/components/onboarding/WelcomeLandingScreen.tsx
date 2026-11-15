@@ -1,5 +1,6 @@
 import React from 'react';
-import { ArrowRight, Sun, Moon, Sparkles, HeartPulse } from 'lucide-react';
+import { ArrowRight, Sun, Moon, Sparkles } from 'lucide-react';
+import { AnimatedHeartECG } from '../common/AnimatedHeartECG';
 
 interface WelcomeLandingScreenProps {
   onStart: () => void;
@@ -59,13 +60,8 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
 
       {/* Center Hero Content */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 text-center max-w-4xl mx-auto my-auto">
-        {/* Pulsing Icon */}
-        <div className="relative mb-6">
-          <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-500 flex items-center justify-center text-slate-950 shadow-2xl shadow-emerald-500/25 ring-4 ring-emerald-500/20 animate-bounce duration-1000">
-            <HeartPulse className="w-12 h-12 text-slate-950 stroke-[2.5]" />
-          </div>
-          <div className="absolute -inset-2 bg-emerald-500/20 rounded-3xl blur-xl -z-10 animate-pulse"></div>
-        </div>
+        {/* Animated Beating Heart & Oscillating ECG Wave (Background Removed) */}
+        <AnimatedHeartECG className="mb-4 sm:mb-6" />
 
         {/* Title: WellBeing */}
         <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-white mb-4">

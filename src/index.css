@@ -50,3 +50,123 @@
   }
 }
 
+/* Anatomical Heart Beating Animation (Synchronized Lub-Dub Pulse in middle) */
+@keyframes heartBeatPulse {
+  0%, 42% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.45));
+  }
+  46% {
+    transform: scale(1.18);
+    filter: drop-shadow(0 0 28px rgba(244, 63, 94, 1.0)) drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+  }
+  50% {
+    transform: scale(1.03);
+    filter: drop-shadow(0 0 14px rgba(244, 63, 94, 0.6));
+  }
+  54% {
+    transform: scale(1.22);
+    filter: drop-shadow(0 0 32px rgba(244, 63, 94, 1.0)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+  }
+  64% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.45));
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.45));
+  }
+}
+
+/* ECG Line Flow: Left stream moves in from left towards heart (no vibration, exact sequence) */
+@keyframes ecgFlowLeft {
+  0% {
+    stroke-dashoffset: 504;
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  44% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  50% {
+    stroke-dashoffset: 0;
+    opacity: 0.5;
+  }
+  60% {
+    opacity: 0.15;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.15;
+  }
+}
+
+/* ECG Line Flow: Right stream moves out from heart towards right (no vibration, exact sequence) */
+@keyframes ecgFlowRight {
+  0%, 48% {
+    stroke-dashoffset: 505;
+    opacity: 0;
+  }
+  52% {
+    opacity: 1;
+  }
+  92% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  96% {
+    stroke-dashoffset: 0;
+    opacity: 0.5;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.15;
+  }
+}
+
+/* Glowing Ambient Cardiac Aura */
+@keyframes cardiacAura {
+  0%, 42% {
+    opacity: 0.3;
+    transform: scale(0.95);
+  }
+  46%, 54% {
+    opacity: 0.85;
+    transform: scale(1.22);
+  }
+  64% {
+    opacity: 0.35;
+    transform: scale(1.0);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(0.95);
+  }
+}
+
+.animate-heart-beat {
+  animation: heartBeatPulse 2.4s ease-in-out infinite;
+  transform-origin: center center;
+  will-change: transform, filter;
+}
+
+.animate-ecg-stream-left {
+  stroke-dasharray: 504;
+  animation: ecgFlowLeft 2.4s ease-in-out infinite;
+  will-change: stroke-dashoffset, opacity;
+}
+
+.animate-ecg-stream-right {
+  stroke-dasharray: 505;
+  animation: ecgFlowRight 2.4s ease-in-out infinite;
+  will-change: stroke-dashoffset, opacity;
+}
+
+.animate-cardiac-aura {
+  animation: cardiacAura 2.4s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
