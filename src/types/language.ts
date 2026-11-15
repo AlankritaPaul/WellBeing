@@ -108,4 +108,25 @@ export interface TranslationDictionary {
   deleteAccountConfirm: string;
   addNewAccountButton: string;
   singleAccountDirectNotice: string;
+
+  // Page 6: "Scanned Papers" Digital Vault
+  vaultTitle: string;
+  vaultSubtitle: string;
+  zoomInButton: string;
+  zoomOutButton: string;
+  resetZoomButton: string;
+  rotateButton: string;
+  downloadDocumentButton: string;
+  printDocumentButton: string;
+  documentDetailsTitle: string;
+  consultingDoctorLabel: string;
+  clinicalFacilityLabel: string;
+  scanDateLabel: string;
+  extractedMedicinesLabel: string;
+  documentQualityLabel: string;
+  highQualityScanBadge: string;
+  switchPrescriptionLabel: string;
+  backToCabinetButton: string;
+  backToPrescriptionButton: string;
+  openVaultButton: string;
 }

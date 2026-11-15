@@ -13,7 +13,9 @@ import {
   Trash2,
   ShieldAlert,
   AlertTriangle,
-  X
+  X,
+  FileText,
+  Eye
 } from 'lucide-react';
 
 interface AccountsListScreenProps {
@@ -21,6 +23,7 @@ interface AccountsListScreenProps {
   userName?: string;
   prescriptions: ScannedPrescription[];
   onSelectAccount: (prescription: ScannedPrescription) => void;
+  onOpenVault?: (prescription: ScannedPrescription) => void;
   onAddNewPrescription: () => void;
   onDeleteAccount: (prescriptionId: string) => void;
 }
@@ -30,6 +33,7 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
   userName = '',
   prescriptions,
   onSelectAccount,
+  onOpenVault,
   onAddNewPrescription,
   onDeleteAccount,
 }) => {
@@ -131,13 +135,24 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
                   </div>
 
                   {resolvePrescriptionImageUrl(prescription) && (
-                    <div className="w-12 h-14 rounded-xl overflow-hidden border border-slate-700/80 shrink-0 shadow-sm bg-slate-950 group-hover:border-blue-500/50 transition-colors">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOpenVault?.(prescription);
+                      }}
+                      className="group/thumb relative w-12 h-14 rounded-xl overflow-hidden border border-slate-700/80 shrink-0 shadow-sm bg-slate-950 hover:border-blue-400 hover:scale-105 transition-all cursor-pointer"
+                      title={t.openVaultButton}
+                    >
                       <img
                         src={resolvePrescriptionImageUrl(prescription)}
                         alt="Prescription Document"
                         className="w-full h-full object-cover"
                       />
-                    </div>
+                      <div className="absolute inset-0 bg-blue-950/40 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity">
+                        <Eye className="w-4 h-4 text-white" />
+                      </div>
+                    </button>
                   )}
                 </div>
               </div>
@@ -183,15 +198,28 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
                 </div>
               </div>
 
-              {/* Primary Action Button: Open Account */}
-              <button
-                type="button"
-                onClick={() => onSelectAccount(prescription)}
-                className="w-full py-3 px-4 rounded-2xl bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-md group-hover:shadow-blue-900/50"
-              >
-                <span>{t.openAccountButton}</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+              {/* Action Buttons: Open Account & View Vault */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => onSelectAccount(prescription)}
+                  className="py-3 px-4 rounded-2xl bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md group-hover:shadow-blue-900/50"
+                >
+                  <span>{t.openAccountButton}</span>
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+
+                {onOpenVault && (
+                  <button
+                    type="button"
+                    onClick={() => onOpenVault(prescription)}
+                    className="py-3 px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all"
+                  >
+                    <FileText className="w-4 h-4 text-blue-400" />
+                    <span>{t.openVaultButton}</span>
+                  </button>
+                )}
+              </div>
             </div>
           );
         })}

@@ -49,23 +49,18 @@ function getPrescriptionAccountKey(p: ScannedPrescription): string {
 }
 
 // Resolves the true prescription image for any record.
-// 1. If the user clicked/uploaded their own photo (data:image URL), that exact photo is strictly preserved.
-// 2. For sample prescriptions, strictly resolves to the authentic paper prescription document!
-// NEVER allows any tutorial illustration or hand-holding-phone photo to be displayed as a prescription.
+// 1. For sample prescriptions (Apex Heart, City Care), strictly resolves to the authentic paper prescription document!
+//    This prevents ANY historical cache or hand-holding-phone photo from ever appearing.
+// 2. If the user clicked/uploaded their own photo (data:image URL) with the camera, that exact photo is strictly preserved.
 export function resolvePrescriptionImageUrl(p: ScannedPrescription | null | undefined): string {
-  if (!p || !p.imageDataUrl) return '';
-  const url = p.imageDataUrl;
-
-  // Real user photo taken via camera or uploaded: strictly preserve!
-  if (url.startsWith('data:image')) {
-    return url;
-  }
-
-  // Sample 2: Apex Heart & Diabetes Institute (Dr. Anirban Roy)
+  if (!p) return '';
   const id = (p.id || '').toLowerCase();
   const doc = (p.doctorName || '').toLowerCase();
   const hosp = (p.hospitalName || '').toLowerCase();
+  const url = p.imageDataUrl || '';
 
+  // Sample 2: Apex Heart & Diabetes Institute (Dr. Anirban Roy)
+  // ALWAYS return official paper prescription document!
   if (
     id.includes('apex') ||
     id.includes('cardio') ||
@@ -78,7 +73,25 @@ export function resolvePrescriptionImageUrl(p: ScannedPrescription | null | unde
   }
 
   // Sample 1: City Care Hospital & Medical Research Centre (Dr. S. K. Roy)
-  return '/images/prescription_citycare.jpg';
+  // ALWAYS return official paper prescription document!
+  if (
+    id.includes('citycare') ||
+    id.includes('drskroy') ||
+    doc.includes('s. k. roy') ||
+    doc.includes('রায়') ||
+    doc.includes('roy') ||
+    hosp.includes('city care') ||
+    hosp.includes('সিটি কেয়ার')
+  ) {
+    return '/images/prescription_citycare.jpg';
+  }
+
+  // Real user photo taken via camera or uploaded: strictly preserve!
+  if (url.startsWith('data:image')) {
+    return url;
+  }
+
+  return url || '/images/prescription_citycare.jpg';
 }
 
 export const storageService = {

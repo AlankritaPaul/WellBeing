@@ -42,6 +42,7 @@ interface PrescriptionScannerScreenProps {
   hasMultipleAccounts?: boolean;
   onBackToAccounts?: () => void;
   onBackToTutorial: () => void;
+  onOpenVault?: () => void;
   onSavedToCabinet?: (prescription: ScannedPrescription) => void;
 }
 
@@ -52,6 +53,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
   hasMultipleAccounts = false,
   onBackToAccounts,
   onBackToTutorial,
+  onOpenVault,
   onSavedToCabinet,
 }) => {
   const t = getTranslation(currentLanguage);
@@ -563,23 +565,41 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                 </div>
               </div>
 
-              {/* Photo Thumbnail with Zoom Lightbox Trigger */}
+              {/* Photo Thumbnail with Digital Vault / Zoom Trigger */}
               {resolvePrescriptionImageUrl(scannedData) && (
-                <button
-                  type="button"
-                  onClick={() => setShowImageModal(true)}
-                  className="group relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-slate-700 hover:border-blue-400 transition-all shrink-0 shadow-md"
-                  title="View original scanned prescription"
-                >
-                  <img
-                    src={resolvePrescriptionImageUrl(scannedData)}
-                    alt="Prescription Thumbnail"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                  />
-                  <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                    <Eye className="w-5 h-5 text-white" />
-                  </div>
-                </button>
+                <div className="flex flex-col items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onOpenVault) {
+                        onOpenVault();
+                      } else {
+                        setShowImageModal(true);
+                      }
+                    }}
+                    className="group relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-slate-700 hover:border-blue-400 transition-all shadow-md cursor-pointer"
+                    title={t.openVaultButton}
+                  >
+                    <img
+                      src={resolvePrescriptionImageUrl(scannedData)}
+                      alt="Prescription Thumbnail"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    />
+                    <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                      <Eye className="w-5 h-5 text-white" />
+                    </div>
+                  </button>
+                  {onOpenVault && (
+                    <button
+                      type="button"
+                      onClick={onOpenVault}
+                      className="text-[10px] font-bold text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-1"
+                    >
+                      <FileText className="w-3 h-3" />
+                      <span>{t.openVaultButton}</span>
+                    </button>
+                  )}
+                </div>
               )}
             </div>
 
