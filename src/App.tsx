@@ -6,19 +6,22 @@ import { Header } from './components/layout/Header';
 import { WelcomeLandingScreen } from './components/onboarding/WelcomeLandingScreen';
 import { LanguageSelectScreen } from './components/onboarding/LanguageSelectScreen';
 import { PreferredNameScreen } from './components/onboarding/PreferredNameScreen';
+import { ScanningTutorialScreen } from './components/onboarding/ScanningTutorialScreen';
 import { NameChangeModal } from './components/onboarding/NameChangeModal';
 import { 
   RotateCcw, 
   Globe2, 
-  UserCheck
+  CheckCircle2,
+  Scan,
+  Sparkles
 } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [currentLanguage, setCurrentLanguage] = useState<string>(() => storageService.getLanguage());
   const [userName, setUserName] = useState<string>(() => storageService.getUserName());
   
-  // App Phase: 'welcome' | 'language_select' | 'preferred_name' | 'page2_completed'
-  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'page2_completed'>('welcome');
+  // App Phase: 'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'page3_completed'
+  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'page3_completed'>('welcome');
   
   // Theme state: 'dark' | 'light' | 'emerald'
   const [theme, setTheme] = useState<'dark' | 'light' | 'emerald'>('dark');
@@ -59,21 +62,33 @@ export const App: React.FC = () => {
     setAppPhase('preferred_name');
   };
 
-  // When Page 2 (Name) is completed -> save and show summary review
+  // When Page 2 (Name) is completed -> move directly to Page 3 (10-Second Guidance Video Tutorial)
   const handleSaveName = (name: string) => {
     storageService.setUserName(name);
     setUserName(name);
-    setAppPhase('page2_completed');
+    setAppPhase('tutorial');
   };
 
   const handleSkipName = () => {
     storageService.setUserName('');
     setUserName('');
-    setAppPhase('page2_completed');
+    setAppPhase('tutorial');
   };
 
   const handleBackToLanguage = () => {
     setAppPhase('language_select');
+  };
+
+  const handleBackToName = () => {
+    setAppPhase('preferred_name');
+  };
+
+  const handleCompleteTutorial = () => {
+    setAppPhase('page3_completed');
+  };
+
+  const handleSkipTutorial = () => {
+    setAppPhase('page3_completed');
   };
 
   const handleResetToWelcome = () => {
@@ -151,28 +166,59 @@ export const App: React.FC = () => {
             </div>
           )}
 
-          {/* Page 2 Completed & Verified View */}
-          {appPhase === 'page2_completed' && (
+          {/* Page 3: 10-Second Interactive Guidance Video Tutorial */}
+          {appPhase === 'tutorial' && (
+            <div className="flex-1 flex flex-col items-center justify-center py-6 px-4">
+              <ScanningTutorialScreen
+                currentLanguage={currentLanguage}
+                onCompleteTutorial={handleCompleteTutorial}
+                onSkip={handleSkipTutorial}
+                onBackToPrevious={handleBackToName}
+              />
+            </div>
+          )}
+
+          {/* Page 3 Completed & Ready for Page 4 View */}
+          {appPhase === 'page3_completed' && (
             <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-10 text-center max-w-lg mx-auto animate-in fade-in zoom-in-95 duration-200">
               <div className="w-20 h-20 rounded-3xl bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center text-emerald-400 mb-6 shadow-xl shadow-emerald-950/50">
-                <UserCheck className="w-10 h-10" />
+                <Scan className="w-10 h-10" />
               </div>
 
-              <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-2">
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
                 {userName ? `${currentLangObj.greeting}, ${userName}!` : `${currentLangObj.greeting}!`}
               </h2>
               
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-700/60 text-emerald-300 text-sm font-bold mb-6">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-700/60 text-emerald-300 text-xs font-bold mb-6">
+                <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
                 <span>{currentLangObj.nativeName}</span>
               </div>
 
-              {/* Action Buttons to Edit or Continue */}
+              {/* Checklist Verified Cards */}
+              <div className="w-full bg-slate-900/90 border border-slate-800 rounded-2xl p-4 mb-6 space-y-3 text-left">
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-blue-400 shrink-0" />
+                  <span className="text-xs sm:text-sm font-semibold text-slate-200">{t.properAngleTitle}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-blue-400 shrink-0" />
+                  <span className="text-xs sm:text-sm font-semibold text-slate-200">{t.photoAcceptedTitle}</span>
+                </div>
+              </div>
+
+              {/* Action Buttons to Replay Tutorial or Edit Name / Language */}
               <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
                 <button
-                  onClick={() => setAppPhase('preferred_name')}
+                  onClick={() => setAppPhase('tutorial')}
                   className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
                 >
                   <RotateCcw className="w-4 h-4 text-emerald-400" />
+                  <span>{t.replayButton}</span>
+                </button>
+                <button
+                  onClick={handleBackToName}
+                  className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
+                >
                   <span>{t.changeName}</span>
                 </button>
                 <button

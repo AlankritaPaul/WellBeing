@@ -43,4 +43,19 @@ export interface TranslationDictionary {
   saveAndContinue: string;
   page2Badge: string;
   presets: string[];
+
+  // Page 3: Interactive Guidance Video Tutorial (Shadow -> Proper Angle -> Photo Accepted)
+  tutorialTitle: string;
+  tutorialSubtitle: string;
+  shadowWrongTitle: string;
+  shadowWrongDesc: string;
+  properAngleTitle: string;
+  properAngleDesc: string;
+  photoAcceptedTitle: string;
+  photoAcceptedDesc: string;
+  hospitalName: string;
+  patientName: string;
+  doctorName: string;
+  startScanningButton: string;
+  replayButton: string;
 }

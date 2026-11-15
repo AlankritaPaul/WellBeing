@@ -29,9 +29,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'Continue',
     page2Badge: 'Page 2',
     presets: ['Dad', 'Mom', 'Grandpa', 'Grandma', 'Uncle', 'Aunty'],
-  },
 
-  bn: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'How to Take a Clear Prescription Photo',
+    tutorialSubtitle: 'Avoid shadows and hold the phone at a proper angle',
+    shadowWrongTitle: 'Shadow Appears — Not Acceptable',
+    shadowWrongDesc: 'Hand or phone shadow blocks doctor\'s handwriting. Please change angle.',
+    properAngleTitle: 'Proper Angle — Clear & Bright',
+    properAngleDesc: 'Hold phone directly above prescription paper with no shadows.',
+    photoAcceptedTitle: 'Photo Accepted Successfully!',
+    photoAcceptedDesc: 'Prescription is sharp and ready for complete medical reading.',
+    hospitalName: 'City Care General Hospital',
+    patientName: 'Patient: Rahul Sen (48 Y / M)',
+    doctorName: 'Dr. S. K. Roy, MD (Med)',
+    startScanningButton: 'Start Scanning',
+    replayButton: 'Watch Again',
+  }
+,  bn: {
     appName: 'WellBeing (ওয়েলবিয়িং)',
     appTagline: 'ব্যক্তিগত ডিজিটাল প্রেসক্রিপশন ও ঔষধ ট্র্যাকার',
     languageLabel: 'ভাষা',
@@ -59,9 +73,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'এগিয়ে যান',
     page2Badge: 'পৃষ্ঠা ২',
     presets: ['দাদু', 'দিদা', 'বাবা', 'মা', 'কাকা', 'মাসি'],
-  },
 
-  hi: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'প্রেসক্রিপশন ছবি তোলার সঠিক নিয়ম',
+    tutorialSubtitle: 'ছায়া এড়িয়ে সঠিক কোণ থেকে ছবি তুলুন',
+    shadowWrongTitle: 'ছায়া পড়েছে — গ্রহণযোগ্য নয়',
+    shadowWrongDesc: 'হাত বা ফোনের ছায়া পড়লে ডাক্তারের হাতের লেখা অস্পষ্ট হয়ে যায়।',
+    properAngleTitle: 'সঠিক কোণ — পরিষ্কার আলো',
+    properAngleDesc: 'ফোনের ক্যামেরা কোনো ছায়া ছাড়া প্রেসক্রিপশনের ঠিক উপরে সোজা রাখুন।',
+    photoAcceptedTitle: 'ছবি সফলভাবে গৃহীত হয়েছে!',
+    photoAcceptedDesc: 'প্রেসক্রিপশনটি পরিষ্কারভাবে সংরক্ষিত হয়েছে।',
+    hospitalName: 'সিটি কেয়ার হাসপাতাল',
+    patientName: 'রোগী: রাহুল সেন (৪৮ বছর)',
+    doctorName: 'ডাঃ এস. কে. রায়, এমডি',
+    startScanningButton: 'স্ক্যান শুরু করুন',
+    replayButton: 'পুনরায় দেখুন',
+  }
+,  hi: {
     appName: 'WellBeing (वेलबीइंग)',
     appTagline: 'व्यक्तिगत डिजिटल प्रिस्क्रिप्शन और दवा ट्रैकिंग सिस्टम',
     languageLabel: 'भाषा',
@@ -89,9 +117,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'आगे बढ़ें',
     page2Badge: 'पृष्ठ २',
     presets: ['दादाजी', 'दादीजी', 'पिताजी', 'माताजी', 'चाचाजी', 'बुआजी'],
-  },
 
-  bho: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'पर्चे की सही फोटो लेने का तरीका',
+    tutorialSubtitle: 'परछाई से बचें और सही कोण से फोटो खींचें',
+    shadowWrongTitle: 'परछाई आ रही है — यह सही नहीं है',
+    shadowWrongDesc: 'हाथ या फोन की परछाई से डॉक्टर की लिखावट छिप जाती है।',
+    properAngleTitle: 'सही कोण — साफ़ रोशनी',
+    properAngleDesc: 'फोन को बिना किसी परछाई के कागज़ के बिल्कुल ठीक ऊपर सीधा रखें।',
+    photoAcceptedTitle: 'फोटो सफलतापूर्वक स्वीकार हो गई!',
+    photoAcceptedDesc: 'पर्चा बिल्कुल साफ़ है और पढ़ने के लिए तैयार है।',
+    hospitalName: 'सिटी केयर अस्पताल',
+    patientName: 'मरीज़: राहुल सेन (48 वर्ष)',
+    doctorName: 'डॉ. एस. के. रॉय, एमडी',
+    startScanningButton: 'स्कैन शुरू करें',
+    replayButton: 'फिर से देखें',
+  }
+,  bho: {
     appName: 'WellBeing (वेलबीइंग)',
     appTagline: 'डिजिटल पर्चा आ दवाई ट्रैकिंग',
     languageLabel: 'भाषा',
@@ -119,9 +161,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'आगे बढ़ीं',
     page2Badge: 'पन्ना २',
     presets: ['बाबा', 'माई', 'बाबूजी', 'काका', 'दीदी', 'भैया'],
-  },
 
-  doi: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'पर्चा के सही फोटो लेवे के तरीका',
+    tutorialSubtitle: 'परछाईं से बचीं आ सही कोण से फोटो खींचीं',
+    shadowWrongTitle: 'परछाईं आ रहल बा — ई ठीक नइखे',
+    shadowWrongDesc: 'हाथ भा फोन के परछाईं से डाक्टर के लिखल छिप जाला।',
+    properAngleTitle: 'सही कोण — साफ़ अंजोर',
+    properAngleDesc: 'कागद के ठीक ऊपर फोन बिना परछाईं के सीधा राखीं।',
+    photoAcceptedTitle: 'फोटो स्वीकार हो गइल!',
+    photoAcceptedDesc: 'पर्चा एकदम साफ़ बा आ पढ़े खातिर तइयार बा।',
+    hospitalName: 'सिटी केयर अस्पताल',
+    patientName: 'मरीज: राहुल सेन (48 बरीस)',
+    doctorName: 'डॉ. एस. के. रॉय, एमडी',
+    startScanningButton: 'स्कैन शुरू करीं',
+    replayButton: 'दोबारा देखीं',
+  }
+,  doi: {
     appName: 'WellBeing (वेलबीइंग)',
     appTagline: 'डिजिटल पर्चा ते दवाई ट्रैकर',
     languageLabel: 'बोली',
@@ -149,9 +205,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'अगें बद्घो',
     page2Badge: 'सफ़ा २',
     presets: ['दादू', 'दादी', 'बापू', 'माँ', 'चाचा', 'भुआ'],
-  },
 
-  as: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'पर्चे दी सही फोटो लैने दा तरीका',
+    tutorialSubtitle: 'परछांवें थमां बचो ते सही कोणै कन्ने फोटो खींचो',
+    shadowWrongTitle: 'परछांवा पौंदा ऐ — ए मन्जूर नेईं',
+    shadowWrongDesc: 'हत्थ जां फोन दे परछांवें कन्ने डाक्टर दी लिखाई छपी जंदी ऐ।',
+    properAngleTitle: 'सही कोण — साफ़ रोशनी',
+    properAngleDesc: 'कागज़ दे ठीक उप्पर फोन बिना परछांवें दे सीधा रक्खो।',
+    photoAcceptedTitle: 'फोटो मन्जूर होई गेई!',
+    photoAcceptedDesc: 'पर्चा बिल्कुल साफ़ ऐ ते तैयार ऐ।',
+    hospitalName: 'सिटी केयर अस्पताल',
+    patientName: 'मरीज़: राहुल सेन (48 साल)',
+    doctorName: 'डॉ. एस. के. रॉय, एमडी',
+    startScanningButton: 'स्कैन शुरू करो',
+    replayButton: 'परतियै दिखो',
+  }
+,  as: {
     appName: 'WellBeing (ৱেলবিয়িং)',
     appTagline: 'ব্যক্তিগত ডিজিটেল প্ৰেছক্ৰিপশ্বন আৰু ঔষধ ট্ৰেকাৰ',
     languageLabel: 'ভাষা',
@@ -179,9 +249,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'আগবাঢ়ক',
     page2Badge: 'পৃষ্ঠা ২',
     presets: ['ককা', 'আইতা', 'দেউতা', 'মা', 'খুড়া', 'পেহা'],
-  },
 
-  brx: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'প্ৰেছক্ৰিপশ্বনৰ ফটো লোৱাৰ সঠিক নিয়ম',
+    tutorialSubtitle: 'ছাঁ নপৰাকৈ সঠিক কোণৰ পৰা ফটো তোলক',
+    shadowWrongTitle: 'ছাঁ পৰিছে — গ্ৰহণযোগ্য নহয়',
+    shadowWrongDesc: 'হাত বা ফোনৰ ছাঁ পৰিলে চিকিৎসকৰ হস্তাক্ষৰ বুজিব নোৱাৰি।',
+    properAngleTitle: 'সঠিক কোণ — উজ্জ্বল পোহৰ',
+    properAngleDesc: 'কাগজৰ ঠিক ওপৰত কেমেৰা ছাঁ নপৰাকৈ পোনকৈ ৰাখক।',
+    photoAcceptedTitle: 'ফটো সফলতাৰে গ্ৰহণ কৰা হ’ল!',
+    photoAcceptedDesc: 'প্ৰেছক্ৰিপশ্বনখন স্পষ্ট হৈছে আৰু সাজু হৈছে।',
+    hospitalName: 'চিটি কেয়াৰ হাস্পতাল',
+    patientName: 'ৰোগী: ৰাহুল সেন (৪৮ বছৰ)',
+    doctorName: 'ডাঃ এছ. কে. ৰয়, এমডি',
+    startScanningButton: 'স্কেন আৰম্ভ কৰক',
+    replayButton: 'পুনৰ চাওক',
+  }
+,  brx: {
     appName: 'WellBeing (वेलबीइंग)',
     appTagline: 'डिजिटेल प्रेस्क्रिपसन आरो मुलि नायगिरग्रा',
     languageLabel: 'राव',
@@ -209,9 +293,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'आगायलां',
     page2Badge: 'बिलाइ २',
     presets: ['आबौ', 'आबै', 'आफा', 'आइ', 'आदै', 'आनै'],
-  },
 
-  fr: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'प्रेस्क्रिपसननि मोजां फोटो लानाय नेम',
+    tutorialSubtitle: 'सायमा गनायनिफ्राय गोजानाव थाना मोजां खनाजों फोटो ला',
+    shadowWrongTitle: 'सायमा गोलैदों — गनायथाव नङा',
+    shadowWrongDesc: 'आखाय एबा मबाइलनि सायमाजों डाक्टरनि लिरनाया गोमोरना थायो।',
+    properAngleTitle: 'थि खना — रोखा सोरां',
+    properAngleDesc: 'बिलाइनि सायाव मबाइलखौ सायमा गैयैयै थोंजों लाखि।',
+    photoAcceptedTitle: 'फोटोखौ गनायनाय जाबाय!',
+    photoAcceptedDesc: 'प्रेस्क्रिपसना रोखा जाबाय आरो फरायनो हागोन।',
+    hospitalName: 'सिटि केयार हस्पिटाल',
+    patientName: 'बेरामि: राहुल सेन (48 बोसोर)',
+    doctorName: 'डा. एस. के. राय, एमडि',
+    startScanningButton: 'स्केन जागाय',
+    replayButton: 'फिन नाय',
+  }
+,  fr: {
     appName: 'WellBeing (Santé & Bien-être)',
     appTagline: 'Carnet de Santé & Suivi des Médicaments',
     languageLabel: 'Langue',
@@ -239,9 +337,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'Continuer',
     page2Badge: 'Page 2',
     presets: ['Papa', 'Maman', 'Papy', 'Mamie', 'Tonton', 'Tata'],
-  },
 
-  zh: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'Comment prendre une photo claire',
+    tutorialSubtitle: 'Évitez les ombres et placez le téléphone au bon angle',
+    shadowWrongTitle: 'Ombre détectée — Non recevable',
+    shadowWrongDesc: 'L\'ombre de la main masque l\'ordonnance. Ajustez la position.',
+    properAngleTitle: 'Angle parfait — Éclairage net',
+    properAngleDesc: 'Tenez le smartphone bien au-dessus sans projeter d\'ombre.',
+    photoAcceptedTitle: 'Photo acceptée avec succès !',
+    photoAcceptedDesc: 'L\'ordonnance est parfaitement lisible et validée.',
+    hospitalName: 'Hôpital Général City Care',
+    patientName: 'Patient : Rahul Sen (48 ans)',
+    doctorName: 'Dr S. K. Roy, Médecine',
+    startScanningButton: 'Commencer le scan',
+    replayButton: 'Revoir le guide',
+  }
+,  zh: {
     appName: 'WellBeing (健康伴侣)',
     appTagline: '个人病历档案与服药管理',
     languageLabel: '语言',
@@ -269,9 +381,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: '继续',
     page2Badge: '第 2 页',
     presets: ['爷爷', '奶奶', '爸爸', '妈妈', '叔叔', '阿姨'],
-  },
 
-  de: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: '如何拍摄清晰的处方照片',
+    tutorialSubtitle: '避免光线阴影遮挡，调整至正确拍摄角度',
+    shadowWrongTitle: '存在阴影遮挡 — 无法识别',
+    shadowWrongDesc: '手部或手机阴影遮盖了医生笔迹，请调整拍摄角度。',
+    properAngleTitle: '角度精准 — 光线充足',
+    properAngleDesc: '手机垂直平放于处方正上方，无任何手部阴影。',
+    photoAcceptedTitle: '照片已成功接收！',
+    photoAcceptedDesc: '处方字迹清晰锐利，准备进入智能解析。',
+    hospitalName: '城市中心综合医院',
+    patientName: '患者：拉胡尔·森 (48岁)',
+    doctorName: '罗伊 主任医师',
+    startScanningButton: '开始扫描',
+    replayButton: '重新播放',
+  }
+,  de: {
     appName: 'WellBeing (Gesundheit)',
     appTagline: 'Persönliche Medikamentenakte & Einnahme-Assistent',
     languageLabel: 'Sprache',
@@ -299,9 +425,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'Weiter',
     page2Badge: 'Seite 2',
     presets: ['Papa', 'Mama', 'Opa', 'Oma', 'Onkel', 'Tante'],
-  },
 
-  es: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'So gelingt ein klares Rezept-Foto',
+    tutorialSubtitle: 'Schatten vermeiden und den richtigen Winkel wählen',
+    shadowWrongTitle: 'Schatten sichtbar — Nicht lesbar',
+    shadowWrongDesc: 'Hand- oder Handyschatten verdeckt die Schrift. Bitte Winkel anpassen.',
+    properAngleTitle: 'Richtiger Winkel — Helles Licht',
+    properAngleDesc: 'Smartphone gerade über das Rezept halten, ganz ohne Schatten.',
+    photoAcceptedTitle: 'Foto erfolgreich akzeptiert!',
+    photoAcceptedDesc: 'Das Rezept ist scharf und bereit zur Verarbeitung.',
+    hospitalName: 'City Care Klinikum',
+    patientName: 'Patient: Rahul Sen (48 J.)',
+    doctorName: 'Dr. S. K. Roy, Facharzt',
+    startScanningButton: 'Scan starten',
+    replayButton: 'Erneut abspielen',
+  }
+,  es: {
     appName: 'WellBeing (Bienestar)',
     appTagline: 'Gabinete Médico y Control de Medicamentos',
     languageLabel: 'Idioma',
@@ -329,9 +469,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'Continuar',
     page2Badge: 'Página 2',
     presets: ['Papá', 'Mamá', 'Abuelo', 'Abuela', 'Tío', 'Tía'],
-  },
 
-  gu: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'Cómo tomar una foto clara de la receta',
+    tutorialSubtitle: 'Evite sombras y sostenga el teléfono en el ángulo correcto',
+    shadowWrongTitle: 'Sombra detectada — No aceptable',
+    shadowWrongDesc: 'La sombra de la mano cubre el texto. Por favor cambie el ángulo.',
+    properAngleTitle: 'Ángulo correcto — Buena luz',
+    properAngleDesc: 'Sostenga el móvil directamente arriba sin tapar la luz.',
+    photoAcceptedTitle: '¡Foto aceptada con éxito!',
+    photoAcceptedDesc: 'La receta está nítida y lista para su lectura médica.',
+    hospitalName: 'Hospital General City Care',
+    patientName: 'Paciente: Rahul Sen (48 años)',
+    doctorName: 'Dr. S. K. Roy, Médico',
+    startScanningButton: 'Iniciar escaneo',
+    replayButton: 'Repetir guía',
+  }
+,  gu: {
     appName: 'WellBeing (વેલબીઇંગ)',
     appTagline: 'ડિજિટલ પ્રિસ્ક્રિપ્શન અને દવા ટ્રેકર',
     languageLabel: 'ભાષા',
@@ -359,9 +513,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'આગળ વધો',
     page2Badge: 'પૃષ્ઠ ૨',
     presets: ['દાદા', 'દાદી', 'પપ્પા', 'મમ્મી', 'કાકા', 'માસી'],
-  },
 
-  ja: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'પ્રિસ્ક્રિપ્શનનો સાચો ફોટો લેવાની રીત',
+    tutorialSubtitle: 'પડછાયાથી બચો અને યોગ્ય ખૂણાથી ફોટો લો',
+    shadowWrongTitle: 'પડછાયો આવી રહ્યો છે — અમાન્ય',
+    shadowWrongDesc: 'હાથ કે ફોનનો પડછાયો ડૉક્ટરનું લખાણ ઢાંકી દે છે.',
+    properAngleTitle: 'યોગ્ય ખૂણો — સ્પષ્ટ પ્રકાશ',
+    properAngleDesc: 'પડછાયા વિના ફોન કાગળની બરાબર ઉપર સીધો રાખો.',
+    photoAcceptedTitle: 'ફોટો સફળતાપૂર્વક સ્વીકારાયો!',
+    photoAcceptedDesc: 'પ્રિસ્ક્રિપ્શન સ્પષ્ટ છે અને વાંચન માટે તૈયાર છે.',
+    hospitalName: 'સિટી કેર હૉસ્પિટલ',
+    patientName: 'દર્દી: રાહુલ સેન (48 વર્ષ)',
+    doctorName: 'ડૉ. એસ. કે. રૉય, એમડી',
+    startScanningButton: 'સ્કેન શરૂ કરો',
+    replayButton: 'ફરીથી જુઓ',
+  }
+,  ja: {
     appName: 'WellBeing (健康管理)',
     appTagline: '個人処方箋ファイル＆服薬トラッカー',
     languageLabel: '言語',
@@ -389,9 +557,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: '続ける',
     page2Badge: 'ページ 2',
     presets: ['お父さん', 'お母さん', 'おじいちゃん', 'おばあちゃん', 'おじさん', 'おばさん'],
-  },
 
-  kn: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: '鮮明な処方箋の撮り方',
+    tutorialSubtitle: '影を避け、正しい角度から撮影してください',
+    shadowWrongTitle: '影が映っています — 読み取れません',
+    shadowWrongDesc: '手やスマホの影で文字が隠れてしまいます。角度を変えてください。',
+    properAngleTitle: '正しい角度 — 影のない明るい光',
+    properAngleDesc: '紙の真上から影が入らないようにスマホを構えます。',
+    photoAcceptedTitle: '写真が承認されました！',
+    photoAcceptedDesc: '処方箋が鮮明に撮影され、解析の準備が整いました。',
+    hospitalName: 'シティケア総合病院',
+    patientName: '患者: ラフル・セン (48歳)',
+    doctorName: 'ロイ医師 (内科)',
+    startScanningButton: 'スキャンを開始',
+    replayButton: 'もう一度見る',
+  }
+,  kn: {
     appName: 'WellBeing (ವೆಲ್‌ಬೀಯಿಂಗ್)',
     appTagline: 'ವೈಯಕ್ತಿಕ ಡಿಜಿಟಲ್ ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ ಮತ್ತು ಔಷಧಿ ಟ್ರ್ಯಾಕರ್',
     languageLabel: 'ಭಾಷೆ',
@@ -419,9 +601,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'ಮುಂದುವರಿಸಿ',
     page2Badge: 'ಪುಟ ೨',
     presets: ['ತಾತಾ', 'ಅಜ್ಜಿ', 'ಅಪ್ಪ', 'ಅಮ್ಮ', 'ಚಿಕ್ಕಪ್ಪ', 'ದೊಡ್ಡಪ್ಪ'],
-  },
 
-  ks: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್‌ನ ಸರಿಯಾದ ಫೋಟೋ ತೆಗೆಯುವ ವಿಧಾನ',
+    tutorialSubtitle: 'ನೆರಳನ್ನು ತಪ್ಪಿಸಿ ಮತ್ತು ಸರಿಯಾದ ಕೋನದಿಂದ ಫೋಟೋ ತೆಗೆಯಿರಿ',
+    shadowWrongTitle: 'ನೆರಳು ಬೀಳುತ್ತಿದೆ — ಅಮಾನ್ಯ',
+    shadowWrongDesc: 'ಕೈ ಅಥವಾ ಫೋನ್‌ನ ನೆರಳು ವೈದ್ಯರ ಬರವಣಿಗೆಯನ್ನು ಮರೆಮಾಡುತ್ತದೆ.',
+    properAngleTitle: 'ಸರಿಯಾದ ಕೋನ — ಸ್ಪಷ್ಟ ಬೆಳಕು',
+    properAngleDesc: 'ಯಾವುದೇ ನೆರಳಿಲ್ಲದೆ ಕಾಗದದ ನೇರ ಮೇಲ್ಭಾಗದಲ್ಲಿ ಫೋನ್ ಹಿಡಿಯಿರಿ.',
+    photoAcceptedTitle: 'ಫೋಟೋ ಯಶಸ್ವಿಯಾಗಿ ಸ್ವೀಕರಿಸಲಾಗಿದೆ!',
+    photoAcceptedDesc: 'ಚೀಟಿಯು ಸ್ಪಷ್ಟವಾಗಿದೆ ಮತ್ತು ಓದಲು ಸಿದ್ಧವಾಗಿದೆ.',
+    hospitalName: 'ಸಿಟಿ ಕೇರ್ ಆಸ್ಪತ್ರೆ',
+    patientName: 'ರೋಗಿ: ರಾಹುಲ್ ಸೇನ್ (48 ವರ್ಷ)',
+    doctorName: 'ಡಾ. ಎಸ್. ಕೆ. ರಾಯ್, ಎಂಡಿ',
+    startScanningButton: 'ಸ್ಕ್ಯಾನ್ ಪ್ರಾರಂಭಿಸಿ',
+    replayButton: 'ಮತ್ತೊಮ್ಮೆ ನೋಡಿ',
+  }
+,  ks: {
     appName: 'WellBeing (ویل بیئنگ)',
     appTagline: 'طبی نسخہٕ تہٕ دَوا ٹریکر',
     languageLabel: 'زَبان',
@@ -449,9 +645,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'برونٛہہ کُن گژھِو',
     page2Badge: 'صفحہ ۲',
     presets: ['بَب', 'مٲج', 'بُڈٕ بَب', 'نٲنؠ', 'پیٚتٕر', 'پۄپھ'],
-  },
 
-  kok: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'نُسخٕچ جان فوٹو رٹٕنُک طٔریٖقہٕ',
+    tutorialSubtitle: 'پرژھانٛو نِش بچِو تہٕ صحیٖح زاویہٕ پؠٹھ کٔڑِو فوٹو',
+    shadowWrongTitle: 'پرژھانٛو چھُ پؠوان — غٲر مَنظوٗر',
+    shadowWrongDesc: 'اتھہٕ یا فونٕکہِ پرژھانٛو سٟتؠ چھُ ڈاکٹَر سُنٛد لؠکھمُت چھُپَان۔',
+    properAngleTitle: 'صحیٖح زاویہٕ — صاف روشٔنی',
+    properAngleDesc: 'کاغزس پیٹھمِ کَنہِ تھٲوِو فون بغیر کانٛہہ پرژھانٛو پؠنہٕ۔',
+    photoAcceptedTitle: 'فوٹو گوٚو کامیٲبی سٟتؠ مَنظوٗر!',
+    photoAcceptedDesc: 'نُسخہٕ چھُ بالکل صاف تہٕ پرَنہٕ خٲطرٕ تیار۔',
+    hospitalName: 'سِٹی کیئر ہسپتال',
+    patientName: 'مٔریٖض: راہُل سین (48 ؤری)',
+    doctorName: 'ڈاکٹر ایس کے رائے',
+    startScanningButton: 'سکین کٔرِو شروٗع',
+    replayButton: 'دوبارٕ وُچھِو',
+  }
+,  kok: {
     appName: 'WellBeing (वेलबीइंग)',
     appTagline: 'डिजिटल दोतोर ची चिठ्ठी आनी वखदां नोंद',
     languageLabel: 'भास',
@@ -479,9 +689,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'मुखार वचात',
     page2Badge: 'पान २',
     presets: ['आजो', 'आजी', 'बाबा', 'आवय', 'काका', 'मावशी'],
-  },
 
-  mai: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'चिठ्ठीचो बरो फोटो काडपाची रीत',
+    tutorialSubtitle: 'सावळे सावन पयस रावा आनी योग्य कोनांतल्यान फोटो काढा',
+    shadowWrongTitle: 'सावळी पडल्या — अमान्य',
+    shadowWrongDesc: 'हाताची वा फोनची सावळी पडल्यार दोतोराचें बरप दिसाना।',
+    properAngleTitle: 'योग्य कोन — स्पश्ट उजवाड',
+    properAngleDesc: 'सावळी पडनासतना फोन कागदाचेर सरळ धरा।',
+    photoAcceptedTitle: 'फोटो मान्य जालो!',
+    photoAcceptedDesc: 'चिठ्ठी स्पश्ट आसा आनी वाचनाखातीर तयार आसा।',
+    hospitalName: 'सिटी केअर हॉस्पिटल',
+    patientName: 'दुयेंती: राहुल सेन (48 वर्सां)',
+    doctorName: 'डॉ. एस. के. रॉय, एमडी',
+    startScanningButton: 'स्कॅन सुरू करात',
+    replayButton: 'परतून पळयात',
+  }
+,  mai: {
     appName: 'WellBeing (वेलबीइंग)',
     appTagline: 'डिजिटल पुर्जा आ ओखद ट्रैकर',
     languageLabel: 'भाषा',
@@ -509,9 +733,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'आगाँ बढ़ू',
     page2Badge: 'पृष्ठ २',
     presets: ['बाबा', 'दाई', 'पिताजी', 'माय', 'काका', 'मासी'],
-  },
 
-  ml: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'पुर्जाक सही फोटो लेबाक तरीका',
+    tutorialSubtitle: 'छाँह सँ बचू आ सही कोण सँ फोटो खींचू',
+    shadowWrongTitle: 'छाँह पड़ि रहल अछि — ई ठीक नहि',
+    shadowWrongDesc: 'हाथ वा फोनक छाँह सँ डाक्टरक लिखावट छिपि जाइत अछि।',
+    properAngleTitle: 'सही कोण — साफ़ इजोत',
+    properAngleDesc: 'कागदक ठीक ऊपर फोन बिना छाँहक सोझ राखू।',
+    photoAcceptedTitle: 'फोटो स्वीकार भेल!',
+    photoAcceptedDesc: 'पुर्जा बिल्कुल साफ़ अछि आ पढ़बाक लेल तैयार अछि।',
+    hospitalName: 'सिटी केयर अस्पताल',
+    patientName: 'रोगी: राहुल सेन (48 वर्ष)',
+    doctorName: 'डॉ. एस. के. रॉय, एमडी',
+    startScanningButton: 'स्कैन शुरू करू',
+    replayButton: 'पुनः देखू',
+  }
+,  ml: {
     appName: 'WellBeing (വെൽബീയിംഗ്)',
     appTagline: 'വ്യക്തിഗത ഡിജിറ്റൽ കുറിപ്പടിയും മരുന്ന് ട്രാക്കറും',
     languageLabel: 'ഭാഷ',
@@ -539,9 +777,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'തുടരുക',
     page2Badge: 'പേജ് 2',
     presets: ['മുത്തശ്ശൻ', 'മുത്തശ്ശി', 'അച്ഛൻ', 'അമ്മ', 'അമ്മാവൻ', 'അമ്മായി'],
-  },
 
-  mni: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'കുറിപ്പടിയുടെ നല്ല ഫോട്ടോ എടുക്കുന്ന വിധം',
+    tutorialSubtitle: 'നിഴൽ വീഴാതെ ശരിയായ കോണിൽ നിന്ന് ഫോട്ടോ എടുക്കുക',
+    shadowWrongTitle: 'നിഴൽ വീഴുന്നു — സ്വീകാര്യമല്ല',
+    shadowWrongDesc: 'കൈയുടെയോ ഫോണിന്റെയോ നിഴൽ വീണാൽ അക്ഷരങ്ങൾ വ്യക്തമാകില്ല.',
+    properAngleTitle: 'ശരിയായ കോൺ — വ്യക്തമായ വെളിച്ചം',
+    properAngleDesc: 'നിഴലില്ലാതെ പേപ്പറിന് മുകളിൽ ഫോൺ നേരെ പിടിക്കുക.',
+    photoAcceptedTitle: 'ഫോട്ടോ വിജയകരമായി സ്വീകരിച്ചു!',
+    photoAcceptedDesc: 'കുറിപ്പടി വ്യക്തമാണ്, വായിക്കാൻ തയ്യാറാണ്.',
+    hospitalName: 'സിറ്റി കെയർ ഹോസ്പിറ്റൽ',
+    patientName: 'രോഗി: രാഹുൽ സെൻ (48 വയസ്സ്)',
+    doctorName: 'ഡോ. എസ്. കെ. റോയ്, എംഡി',
+    startScanningButton: 'സ്കാനിംഗ് ആരംഭിക്കുക',
+    replayButton: 'വീണ്ടും കാണുക',
+  }
+,  mni: {
     appName: 'WellBeing (ৱেলবীয়িং)',
     appTagline: 'অনা-লায়য়েংগী চে আৰু হিদাক-লাংথক রেকোৰ্ড',
     languageLabel: 'লোন',
@@ -569,9 +821,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'মাখোং চংশিনবিয়ু',
     page2Badge: 'লম ২',
     presets: ['ইপু', 'ইবেন', 'ইপা', 'ইমা', 'ইখু', 'ইতোন'],
-  },
 
-  mr: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'চেগী অফবা ফোতো লনবগী মওং',
+    tutorialSubtitle: 'মীকাপ তাথহন্দনা চপ চাবা কোনদগী ফোতো লৌবিয়ু',
+    shadowWrongTitle: 'মীকাপ তারে — য়ানদে',
+    shadowWrongDesc: 'খুৎ নত্রগা ফোনগী মীকাপনা দোক্তরগী ইবা অদু কুপশিল্লমগনি।',
+    properAngleTitle: 'চপ চাবা কোন — শেংবা মঙাল',
+    properAngleDesc: 'মীকাপ তারমদনা ফোন অদু চেগী মথক্তা তোপ তোপ্না পাইবিয়ু।',
+    photoAcceptedTitle: 'ফোতো অদু মপুং ফানা য়ারে!',
+    photoAcceptedDesc: 'চে অসি শেংলবনি অমসুং পারবা য়ারে।',
+    hospitalName: 'সিতি কেয়ার হোস্পিতাল',
+    patientName: 'অনাবা: রাহুল সেন (চহি ৪৮)',
+    doctorName: 'দাঃ এস. কে. রোয়',
+    startScanningButton: 'স্কেন হৌবিয়ু',
+    replayButton: 'অমুক হন্না য়েংবিয়ু',
+  }
+,  mr: {
     appName: 'WellBeing (वेलबीइंग)',
     appTagline: 'डिजिटल प्रिस्क्रिप्शन व औषध ट्रॅकर',
     languageLabel: 'भाषा',
@@ -599,9 +865,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'पुढे जा',
     page2Badge: 'पृष्ठ २',
     presets: ['आजोबा', 'आजी', 'बाबा', 'आई', 'काका', 'आत्या'],
-  },
 
-  ne: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'प्रिस्क्रिप्शनचा योग्य फोटो काढण्याची पद्धत',
+    tutorialSubtitle: 'सावली टाळा आणि योग्य कोनातून फोटो काढा',
+    shadowWrongTitle: 'सावली पडत आहे — अमान्य',
+    shadowWrongDesc: 'हात किंवा फोनच्या सावलीमुळे डॉक्टरांचे हस्ताक्षर झाकले जाते.',
+    properAngleTitle: 'योग्य कोन — स्वच्छ प्रकाश',
+    properAngleDesc: 'सावली न पडता फोन कागदाच्या अगदी सरळ वर धरा.',
+    photoAcceptedTitle: 'फोटो यशस्वीरित्या स्वीकारला गेला!',
+    photoAcceptedDesc: 'प्रिस्क्रिप्शन स्वच्छ आहे आणि वाचण्यासाठी तयार आहे.',
+    hospitalName: 'सिटी केअर हॉस्पिटल',
+    patientName: 'रुग्ण: राहुल सेन (४८ वर्षे)',
+    doctorName: 'डॉ. एस. के. रॉय, एमडी',
+    startScanningButton: 'स्कॅन सुरू करा',
+    replayButton: 'पुन्हा पहा',
+  }
+,  ne: {
     appName: 'WellBeing (वेलबीइंग)',
     appTagline: 'डिजिटल प्रेस्क्रिप्सन र औषधि ट्र्याकर',
     languageLabel: 'भाषा',
@@ -629,9 +909,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'जारी राख्नुहोस्',
     page2Badge: 'पृष्ठ २',
     presets: ['हजुरबुबा', 'हजुरआमा', 'बुबा', 'आमा', 'काका', 'फुपू'],
-  },
 
-  or: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'प्रेस्क्रिप्सनको सही फोटो खिच्ने तरिका',
+    tutorialSubtitle: 'छायाँबाट बच्नुहोस् र सही कोणबाट फोटो लिनुहोस्',
+    shadowWrongTitle: 'छायाँ परेको छ — अमान्य',
+    shadowWrongDesc: 'हात वा फोनको छायाँले डाक्टरको हस्तलेखन छेकिन्छ।',
+    properAngleTitle: 'सही कोण — सफा उज्यालो',
+    properAngleDesc: 'कुनै छायाँ बिना कागजको ठ्याक्कै माथि फोन सीधा राख्नुहोस्।',
+    photoAcceptedTitle: 'फोटो सफलतापूर्वक स्वीकार भयो!',
+    photoAcceptedDesc: 'प्रेस्क्रिप्सन सफा छ र पढ्नको लागि तयार छ।',
+    hospitalName: 'सिटी केयर अस्पताल',
+    patientName: 'बिरामी: राहुल सेन (४८ वर्ष)',
+    doctorName: 'डा. एस. के. रोय, एमडी',
+    startScanningButton: 'स्क्यान सुरु गर्नुहोस्',
+    replayButton: 'फेरि हेर्नुहोस्',
+  }
+,  or: {
     appName: 'WellBeing (ୱେଲବିଇଂ)',
     appTagline: 'ବ୍ୟକ୍ତିଗତ ଡିଜିଟାଲ ପ୍ରେସକ୍ରିପସନ ଏବଂ ଔଷଧ ଟ୍ରାକର',
     languageLabel: 'ଭାଷା',
@@ -659,9 +953,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'ଆଗକୁ ବଢ଼ନ୍ତୁ',
     page2Badge: 'ପୃଷ୍ଠା ୨',
     presets: ['ଜେଜେବାପା', 'ଜେଜେମା', 'ବାପା', 'ବୋଉ', 'ଦାଦା', 'ଖୁଡ଼ୀ'],
-  },
 
-  pt: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'ପ୍ରେସକ୍ରିପସନର ସଠିକ ଫଟୋ ନେବାର ନିୟମ',
+    tutorialSubtitle: 'ଛାଇ ଏଡ଼ାନ୍ତୁ ଏବଂ ସଠିକ କୋଣରୁ ଫଟୋ ନିଅନ୍ତୁ',
+    shadowWrongTitle: 'ଛାଇ ପଡ଼ୁଛି — ଗ୍ରହଣଯୋଗ୍ୟ ନୁହେଁ',
+    shadowWrongDesc: 'ହାତ ବା ଫୋନର ଛାଇ ପଡ଼ିଲେ ଡାକ୍ତରଙ୍କ ହସ୍ତାକ୍ଷର ଦିଶେ ନାହିଁ।',
+    properAngleTitle: 'ସଠିକ କୋଣ — ସ୍ପଷ୍ଟ ଆଲୋକ',
+    properAngleDesc: 'ଛାଇ ନପଡ଼ିବା ଭଳି କାଗଜ ଉପରେ ଫୋନକୁ ସିଧା ଧରନ୍ତୁ।',
+    photoAcceptedTitle: 'ଫଟୋ ସଫଳତାର ସହ ଗୃହୀତ ହେଲା!',
+    photoAcceptedDesc: 'ପ୍ରେସକ୍ରିପସନଟି ସ୍ପଷ୍ଟ ଏବଂ ପଢ଼ିବା ପାଇଁ ପ୍ରସ୍ତୁତ।',
+    hospitalName: 'ସିଟି କେୟାର ହସ୍ପିଟାଲ',
+    patientName: 'ରୋଗୀ: ରାହୁଲ ସେନ (୪୮ ବର୍ଷ)',
+    doctorName: 'ଡା. ଏସ. କେ. ରୟ, ଏମଡି',
+    startScanningButton: 'ସ୍କାନ ଆରମ୍ଭ କରନ୍ତୁ',
+    replayButton: 'ପୁନର୍ବାର ଦେଖନ୍ତୁ',
+  }
+,  pt: {
     appName: 'WellBeing (Saúde)',
     appTagline: 'Prontuário Médico e Controle de Remédios',
     languageLabel: 'Idioma',
@@ -689,9 +997,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'Continuar',
     page2Badge: 'Página 2',
     presets: ['Papai', 'Mamãe', 'Vovô', 'Vovó', 'Tio', 'Tia'],
-  },
 
-  pa: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'Como tirar uma foto nítida da receita',
+    tutorialSubtitle: 'Evite sombras e posicione o celular no ângulo certo',
+    shadowWrongTitle: 'Sombra detectada — Não aceito',
+    shadowWrongDesc: 'A sombra da mão bloqueia o texto do médico. Ajuste a posição.',
+    properAngleTitle: 'Ângulo correto — Luz uniforme',
+    properAngleDesc: 'Segure o celular diretamente acima da receita sem projetar sombra.',
+    photoAcceptedTitle: 'Foto aceita com sucesso!',
+    photoAcceptedDesc: 'A receita está totalmente nítida e pronta para leitura.',
+    hospitalName: 'Hospital Geral City Care',
+    patientName: 'Paciente: Rahul Sen (48 anos)',
+    doctorName: 'Dr. S. K. Roy, Clínico Geral',
+    startScanningButton: 'Iniciar escaneamento',
+    replayButton: 'Assistir novamente',
+  }
+,  pa: {
     appName: 'WellBeing (ਵੈੱਲਬੀਇੰਗ)',
     appTagline: 'ਡਿਜੀਟਲ ਪਰਚੀ ਅਤੇ ਦਵਾਈ ਟ੍ਰੈਕਰ',
     languageLabel: 'ਭਾਸ਼ਾ',
@@ -719,9 +1041,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'ਜਾਰੀ ਰੱਖੋ',
     page2Badge: 'ਪੰਨਾ ੨',
     presets: ['ਦਾਦਾ ਜੀ', 'ਦਾਦੀ ਜੀ', 'ਪਿਤਾ ਜੀ', 'ਮਾਤਾ ਜੀ', 'ਚਾਚਾ ਜੀ', 'ਭੂਆ ਜੀ'],
-  },
 
-  ru: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'ਪਰਚੀ ਦੀ ਸਹੀ ਫੋਟੋ ਲੈਣ ਦਾ ਤਰੀਕਾ',
+    tutorialSubtitle: 'ਪਰਛਾਵੇਂ ਤੋਂ ਬਚੋ ਅਤੇ ਸਹੀ ਕੋਣ ਤੋਂ ਫੋਟੋ ਖਿੱਚੋ',
+    shadowWrongTitle: 'ਪਰਛਾਵਾਂ ਪੈ ਰਿਹਾ ਹੈ — ਅਯੋਗ',
+    shadowWrongDesc: 'ਹੱਥ ਜਾਂ ਫ਼ੋਨ ਦੇ ਪਰਛਾਵੇਂ ਨਾਲ ਡਾਕਟਰ ਦੀ ਲਿਖਤ ਲੁਕ ਜਾਂਦੀ ਹੈ।',
+    properAngleTitle: 'ਸਹੀ ਕੋਣ — ਸਾਫ਼ ਰੌਸ਼ਨੀ',
+    properAngleDesc: 'ਕਾਗਜ਼ ਦੇ ਬਿਲਕੁਲ ਉੱਪਰ ਬਿਨਾਂ ਪਰਛਾਵੇਂ ਫ਼ੋਨ ਸਿੱਧਾ ਰੱਖੋ।',
+    photoAcceptedTitle: 'ਫੋਟੋ ਸਫਲਤਾਪੂਰਵਕ ਸਵੀਕਾਰ ਕੀਤੀ ਗਈ!',
+    photoAcceptedDesc: 'ਪਰਚੀ ਸਾਫ਼ ਹੈ ਅਤੇ ਪੜ੍ਹਨ ਲਈ ਤਿਆਰ ਹੈ।',
+    hospitalName: 'ਸਿਟੀ ਕੇਅਰ ਹਸਪਤਾਲ',
+    patientName: 'ਮਰੀਜ਼: ਰਾਹੁਲ ਸੇਨ (48 ਸਾਲ)',
+    doctorName: 'ਡਾ. ਐਸ. ਕੇ. ਰਾਏ, ਐਮਡੀ',
+    startScanningButton: 'ਸਕੈਨ ਸ਼ੁਰੂ ਕਰੋ',
+    replayButton: 'ਦੁਬਾਰਾ ਵੇਖੋ',
+  }
+,  ru: {
     appName: 'WellBeing (Здоровье)',
     appTagline: 'Медицинская карта и контроль приема лекарств',
     languageLabel: 'Язык',
@@ -749,9 +1085,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'Продолжить',
     page2Badge: 'Страница 2',
     presets: ['Папа', 'Мама', 'Дедушка', 'Бабушка', 'Дядя', 'Тетя'],
-  },
 
-  sa: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'Как сделать четкое фото рецепта',
+    tutorialSubtitle: 'Избегайте теней и держите телефон под правильным углом',
+    shadowWrongTitle: 'Тень на рецепте — Не принято',
+    shadowWrongDesc: 'Тень от руки закрывает почерк врача. Измените угол съемки.',
+    properAngleTitle: 'Правильный угол — Четкий свет',
+    properAngleDesc: 'Держите телефон ровно над рецептом без падающих теней.',
+    photoAcceptedTitle: 'Фото успешно принято!',
+    photoAcceptedDesc: 'Рецепт четкий и готов к точному распознаванию.',
+    hospitalName: 'Городская больница City Care',
+    patientName: 'Пациент: Рахул Сен (48 лет)',
+    doctorName: 'Д-р С. К. Рой, терапевт',
+    startScanningButton: 'Начать сканирование',
+    replayButton: 'Смотреть снова',
+  }
+,  sa: {
     appName: 'WellBeing (वेलबीइंग)',
     appTagline: 'वैयक्तिकं डिजिटल-औषधपत्रं सेवन-अन्वेषकं च',
     languageLabel: 'भाषा',
@@ -779,9 +1129,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'अग्रसरतु',
     page2Badge: 'पृष्ठम् २',
     presets: ['पितामहः', 'पितामही', 'जनकः', 'जननी', 'पितृव्यः', 'मातृष्वसा'],
-  },
 
-  sat: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'औषधपत्रस्य सम्यक् छायाचित्रग्रहणविधिः',
+    tutorialSubtitle: 'छायायाः रक्षतु सम्यक् कोणेन च चित्रं गृह्णातु',
+    shadowWrongTitle: 'छाया पतति — अस्वीकृतम्',
+    shadowWrongDesc: 'हस्तस्य छायाया वैद्यस्य लेखः गुप्तः भवति। कोणं परिवर्तयतु।',
+    properAngleTitle: 'उचितः कोणः — स्पष्टः प्रकाशः',
+    properAngleDesc: 'छायारहितं पत्रस्य उपरि दूरवाणीं समतया धारयतु।',
+    photoAcceptedTitle: 'छायाचित्रं स्वीकृतम्!',
+    photoAcceptedDesc: 'औषधपत्रं स्पष्टं वर्तते पठनार्थं च सज्जम्।',
+    hospitalName: 'सिटी केयर चिकित्सालयः',
+    patientName: 'रोगी: राहुल सेनः (४८ वर्षाणि)',
+    doctorName: 'डा. एस. के. रॉय, एमडी',
+    startScanningButton: 'स्कैनं प्रारभताम्',
+    replayButton: 'पुनः पश्यतु',
+  }
+,  sat: {
     appName: 'WellBeing (ᱚᱞ ᱪᱤᱠᱤ)',
     appTagline: 'ᱨᱟᱱ ᱥᱟᱠᱟᱢ ᱟᱨ ᱨᱟᱱ ᱡᱚᱢ ᱦᱤᱥᱟᱹᱵᱽ',
     languageLabel: 'ᱯᱟᱹᱨᱥᱤ',
@@ -809,9 +1173,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'ᱞᱟᱦᱟᱜ ᱢᱮ',
     page2Badge: 'ᱥᱟᱠᱟᱢ ᱒',
     presets: ['ᱦᱟᱲᱟᱢᱵᱟ', 'ᱵᱩᱰᱷᱤᱟᱭᱳ', 'ᱵᱟᱵᱟ', 'ᱟᱭᱳ', 'ᱠᱟᱠᱟ', 'ᱦᱟᱛᱚᱢ'],
-  },
 
-  sd: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'ᱨᱟᱱ ᱥᱟᱠᱟᱢ ᱨᱮᱱᱟᱜ ᱥᱟᱹᱨᱤ ᱪᱤᱛᱟᱹᱨ ᱦᱟᱛᱟᱣ ᱦᱚᱨ',
+    tutorialSubtitle: 'ᱩᱢᱩᱞ ᱵᱟᱹᱜᱤ ᱠᱟᱛᱮ ᱥᱚᱡᱷᱮ ᱠᱳᱬ ᱛᱮ ᱪᱤᱛᱟᱹᱨ ᱦᱟᱛᱟᱣ ᱢᱮ',
+    shadowWrongTitle: 'ᱩᱢᱩᱞ ᱯᱟᱲᱟᱣ ᱟᱠᱟᱱᱟ — ᱵᱟᱝ ᱦᱩᱭᱩᱜᱼᱟ',
+    shadowWrongDesc: 'ᱛᱤ ᱟᱨ ᱯᱷᱚᱱ ᱨᱮᱱᱟᱜ ᱩᱢᱩᱞ ᱛᱮ ᱚᱞ ᱵᱟᱝ ᱧᱮᱞᱚᱜ ᱠᱟᱱᱟ᱾',
+    properAngleTitle: 'ᱥᱟᱹᱨᱤ ᱠᱳᱬ — ᱥᱟᱯᱷᱟ ᱢᱟᱨᱥᱟᱞ',
+    properAngleDesc: 'ᱩᱢᱩᱞ ᱵᱟᱝ ᱯᱟᱲᱟᱣ ᱞᱮᱠᱟ ᱥᱟᱠᱟᱢ ᱪᱮᱛᱟᱱ ᱨᱮ ᱯᱷᱚᱱ ᱥᱚᱡᱷᱮ ᱫᱚᱦᱚᱭ ᱢᱮ᱾',
+    photoAcceptedTitle: 'ᱪᱤᱛᱟᱹᱨ ᱥᱟᱹᱨᱤ ᱮᱱᱟ!',
+    photoAcceptedDesc: 'ᱨᱟᱱ ᱥᱟᱠᱟᱢ ᱥᱟᱯᱷᱟ ᱟᱠᱟᱱᱟ ᱟᱨ ᱯᱟᱲᱦᱟᱣ ᱞᱟᱹᱜᱤᱫ ᱥᱟᱯᱲᱟᱣ ᱢᱮᱱᱟᱜᱼᱟ᱾',
+    hospitalName: 'ᱥᱤᱴᱤ ᱠᱮᱭᱟᱨ ᱦᱟᱥᱯᱟᱛᱟᱞ',
+    patientName: 'ᱨᱩᱜᱤ: ᱨᱟᱦᱩᱞ ᱥᱮᱱ (48 ᱥᱮᱨᱢᱟ)',
+    doctorName: 'ᱰᱟ. ᱮᱥ. ᱠᱮ. ᱨᱚᱭ',
+    startScanningButton: 'ᱥᱠᱮᱱ ᱮᱦᱚᱵ ᱢᱮ',
+    replayButton: 'ᱟᱨᱦᱚᱸ ᱧᱮᱞ ᱢᱮ',
+  }
+,  sd: {
     appName: 'WellBeing (ويل بيئنگ)',
     appTagline: 'نسخو ۽ دوائن جو حساب ڪتاب',
     languageLabel: 'ٻولي',
@@ -839,9 +1217,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'اڳتي وڌو',
     page2Badge: 'صفحو ۲',
     presets: ['بابا', 'امڙ', 'ڏاڏو', 'ڏاڏي', 'چاچا', 'پڦي'],
-  },
 
-  ta: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'نسخي جي صحيح تصوير وٺڻ جو طريقو',
+    tutorialSubtitle: 'پاڇي کان بچو ۽ صحيح ڪنڊ مان تصوير ڪڍو',
+    shadowWrongTitle: 'پاڇو پئجي رهيو آهي — نامنظور',
+    shadowWrongDesc: 'هٿ يا فون جي پاڇي سبب ڊاڪٽر جي لکائي لڪي وڃي ٿي.',
+    properAngleTitle: 'صحيح ڪنڊ — صاف روشني',
+    properAngleDesc: 'ڪاغذ جي بلڪل مٿان پاڇي کانسواءِ فون سڌو رکو.',
+    photoAcceptedTitle: 'تصوير ڪاميابي سان قبول ٿي وئي!',
+    photoAcceptedDesc: 'نسخو بلڪل صاف آهي ۽ پڙهڻ لاءِ تيار آهي.',
+    hospitalName: 'سٽي ڪيئر اسپتال',
+    patientName: 'مريض: راھل سين (48 سال)',
+    doctorName: 'ڊاڪٽر ايس ڪي راءِ',
+    startScanningButton: 'اسڪين شروع ڪريو',
+    replayButton: 'ٻيهر ڏسو',
+  }
+,  ta: {
     appName: 'WellBeing (வெல்பೀಯிங்)',
     appTagline: 'மருந்து நினைவூட்டல் மற்றும் காப்பகம்',
     languageLabel: 'மொழி',
@@ -869,9 +1261,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'தொடரவும்',
     page2Badge: 'பக்கம் 2',
     presets: ['தாத்தா', 'பாட்டி', 'அப்பா', 'அம்மா', 'சித்தப்பா', 'அத்தை'],
-  },
 
-  te: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'மருந்துச் சீட்டை தெளிவாக படம் எடுக்கும் முறை',
+    tutorialSubtitle: 'நிழல் விழுவதைத் தவிர்த்து சரியான கோணத்தில் படம் எடுக்கவும்',
+    shadowWrongTitle: 'நிழல் விழுகிறது — ஏற்க முடியாது',
+    shadowWrongDesc: 'கை அல்லது போனின் நிழலால் மருத்துவரின் கையெழுத்து மறைகிறது.',
+    properAngleTitle: 'சரியான கோணம் — தெளிவான வெளிச்சம்',
+    properAngleDesc: 'நிழல் விழாமல் காகிதத்தின் நேர் மேலே போனை நேராகப் பிடிக்கவும்.',
+    photoAcceptedTitle: 'படம் வெற்றிகரமாக ஏற்றுக்கொள்ளப்பட்டது!',
+    photoAcceptedDesc: 'மருந்துச் சீட்டு தெளிவாக உள்ளது, வாசிக்கத் தயார்.',
+    hospitalName: 'சிட்டி கேர் மருத்துவமனை',
+    patientName: 'நோயாளி: ராகுல் சென் (48 வயது)',
+    doctorName: 'டாக்டர் எஸ். கே. ராய், எம்.டி',
+    startScanningButton: 'ஸ்கேன் தொடங்கவும்',
+    replayButton: 'மீண்டும் பார்க்க',
+  }
+,  te: {
     appName: 'WellBeing (వెల్‌బీయింగ్)',
     appTagline: 'మందుల నియంత్రణ యాప్',
     languageLabel: 'భాష',
@@ -899,9 +1305,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'కొనసాగించండి',
     page2Badge: 'పేజీ 2',
     presets: ['తాతయ్య', 'నానమ్మ', 'నాన్న', 'అమ్మ', 'బాబాయ్', 'అత్తయ్య'],
-  },
 
-  ar: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'చీటీని స్పష్టంగా ఫోటో తీసే సరైన పద్ధతి',
+    tutorialSubtitle: 'నీడ పడకుండా చూసి సరైన కోణం నుండి ఫోటో తీయండి',
+    shadowWrongTitle: 'నీడ పడుతోంది — అంగీకరించబడదు',
+    shadowWrongDesc: 'చేయి లేదా ఫోన్ నీడ వల్ల డాక్టర్ చేతిరాత కనిపించదు.',
+    properAngleTitle: 'సరైన కోణం — స్పష్టమైన వెలుతురు',
+    properAngleDesc: 'నీడ పడకుండా కాగితంపై నేరుగా ఫోన్‌ను సమాంతరంగా పట్టుకోండి.',
+    photoAcceptedTitle: 'ఫోటో విజయవంతంగా ఆమోదించబడింది!',
+    photoAcceptedDesc: 'చీటీ స్పష్టంగా ఉంది మరియు చదవడానికి సిద్ధంగా ఉంది.',
+    hospitalName: 'సిటీ కేర్ ఆసుపత్రి',
+    patientName: 'రోగి: రాహుల్ సేన్ (48 సం.)',
+    doctorName: 'డాక్టర్ ఎస్. ಕೆ. రాయ్, ఎండీ',
+    startScanningButton: 'స్కాన్ ప్రారంభించండి',
+    replayButton: 'మళ్ళీ చూడండి',
+  }
+,  ar: {
     appName: 'WellBeing (العافية والصحة)',
     appTagline: 'ملف الوصفات الطبية وإدارة الأدوية',
     languageLabel: 'اللغة',
@@ -929,9 +1349,23 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'متابعة',
     page2Badge: 'الصفحة 2',
     presets: ['أبي', 'أمي', 'جدي', 'جدتي', 'عمي', 'خالتي'],
-  },
 
-  ur: {
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'كيفية التقاط صورة واضحة للوصفة الطبية',
+    tutorialSubtitle: 'تجنب الظلال وامسك الهاتف بالزاوية الصحيحة',
+    shadowWrongTitle: 'يوجد ظل — غير مقبول',
+    shadowWrongDesc: 'ظل اليد أو الهاتف يحجب خط الطبيب. يرجى تعديل زاوية التصوير.',
+    properAngleTitle: 'زاوية صحيحة — إضاءة واضحة ومستوية',
+    properAngleDesc: 'امسك الهاتف مباشرة فوق الورقة بدون أي ظل ساقط.',
+    photoAcceptedTitle: 'تم قبول الصورة بنجاح!',
+    photoAcceptedDesc: 'الوصفة الطبية واضحة تماماً وجاهزة للقراءة الطبية.',
+    hospitalName: 'مستشفى سيتي كير العام',
+    patientName: 'المريض: راهول سين (48 عاماً)',
+    doctorName: 'د. إس. كيه. روي، استشاري',
+    startScanningButton: 'بدء المسح',
+    replayButton: 'إعادة المشاهدة',
+  }
+,  ur: {
     appName: 'WellBeing (صحت و تندرستی)',
     appTagline: 'طبی فائل کیبنٹ اور ادویات کا نظام',
     languageLabel: 'زبان',
@@ -959,6 +1393,21 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     saveAndContinue: 'جاری رکھیں',
     page2Badge: 'صفحہ ۲',
     presets: ['ابا جان', 'امی جان', 'دادا جان', 'دادی جان', 'چچا جان'],
+
+    // Page 3: Real Video Story (Table, Prescription, Shadow Wrong, Proper Angle, Accepted)
+    tutorialTitle: 'نسخے کی صاف تصویر لینے کا طریقہ',
+    tutorialSubtitle: 'سائے سے بچیں اور مناسب زاویے سے تصویر کھینچیں',
+    shadowWrongTitle: 'سایہ پڑ رہا ہے — ناقابل قبول',
+    shadowWrongDesc: 'ہاتھ یا موبائل کا سایہ ڈاکٹر کی تحریر کو چھپا دیتا ہے۔',
+    properAngleTitle: 'صحیح زاویہ — شفاف روشنی',
+    properAngleDesc: 'سائے کے بغیر فون کو کاغذ کے بالکل اوپر سیدھا رکھیں۔',
+    photoAcceptedTitle: 'تصویر کامیابی سے قبول ہو گئی!',
+    photoAcceptedDesc: 'نسخہ بالکل صاف ہے اور مکمل پڑھنے کے لیے تیار ہے۔',
+    hospitalName: 'سٹی کیئر ہسپتال',
+    patientName: 'مریض: راہل سین (48 سال)',
+    doctorName: 'ڈاکٹر ایس کے رائے، ایم ڈی',
+    startScanningButton: 'اسکین شروع کریں',
+    replayButton: 'دوبارہ دیکھیں',
   }
 };
 
