@@ -84,6 +84,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'Capture or upload prescription from another clinic',
     formTabletText: 'Tablet',
     formCapsuleText: 'Capsule',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'My Medical Accounts',
+    accountsHubSubtitle: 'Select an account to view medicines or add another doctor\'s prescription',
+    accountNumberLabel: 'Account',
+    openAccountButton: 'View this Account',
+    allAccountsButton: 'All Accounts',
+    totalMedicinesCountLabel: 'Medicines',
+    deleteAccountButton: 'Delete Account',
+    deleteAccountConfirm: 'Are you sure you want to delete this prescription account?',
+    addNewAccountButton: '+ Add Another Prescription (New Account)',
+    singleAccountDirectNotice: 'Active Medical Account',
   }
 ,  bn: {
     appName: 'WellBeing (ওয়েলবিয়িং)',
@@ -168,6 +180,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'অন্য ডাক্তারের বা পরবর্তী ভিজিটের প্রেসক্রিপশন যোগ করুন',
     formTabletText: 'ট্যাবলেট',
     formCapsuleText: 'ক্যাপসুল',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'আমার মেডিকেল অ্যাকাউন্টসমূহ',
+    accountsHubSubtitle: 'প্রেসক্রিপশন ও ঔষধ দেখতে অ্যাকাউন্ট নির্বাচন করুন বা নতুন ডাক্তারের প্রেসক্রিপশন যোগ করুন',
+    accountNumberLabel: 'অ্যাকাউন্ট',
+    openAccountButton: 'এই অ্যাকাউন্ট দেখুন',
+    allAccountsButton: 'সকল অ্যাকাউন্ট',
+    totalMedicinesCountLabel: 'টি ঔষধ',
+    deleteAccountButton: 'মুছে ফেলুন',
+    deleteAccountConfirm: 'আপনি কি এই প্রেসক্রিপশন অ্যাকাউন্টটি মুছে ফেলতে চান?',
+    addNewAccountButton: '+ আরেকটি প্রেসক্রিপশন যোগ করুন (নতুন অ্যাকাউন্ট)',
+    singleAccountDirectNotice: 'সক্রিয় মেডিকেল অ্যাকাউন্ট',
   }
 ,  hi: {
     appName: 'WellBeing (वेलबीइंग)',
@@ -252,6 +276,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'दूसरे डॉक्टर या अगली मुलाकात का पर्चा जोड़ें',
     formTabletText: 'टैबलेट',
     formCapsuleText: 'कैप्सूल',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'मेरे मेडिकल खाते',
+    accountsHubSubtitle: 'दवाइयों का विवरण देखने के लिए खाता चुनें या नए डॉक्टर का पर्चा जोड़ें',
+    accountNumberLabel: 'खाता',
+    openAccountButton: 'यह खाता खोलें',
+    allAccountsButton: 'सभी खाते',
+    totalMedicinesCountLabel: 'दवाइयाँ',
+    deleteAccountButton: 'खाता हटाएं',
+    deleteAccountConfirm: 'क्या आप वाकई इस पर्चे का खाता हटाना चाहते हैं?',
+    addNewAccountButton: '+ एक और पर्चा जोड़ें (नया खाता)',
+    singleAccountDirectNotice: 'सक्रिय मेडिकल खाता',
   }
 ,  bho: {
     appName: 'WellBeing (वेलबीइंग)',
@@ -336,6 +372,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'दूसरा डॉक्टर के पुर्जा जोड़ीं',
     formTabletText: 'टैबलेट',
     formCapsuleText: 'कैप्सूल',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'हमार मेडिकल खाता',
+    accountsHubSubtitle: 'दवाई देखे खातिर खाता चुनीं भा नया डॉक्टर के पुर्जा जोड़ीं',
+    accountNumberLabel: 'खाता',
+    openAccountButton: 'ई खाता देखीं',
+    allAccountsButton: 'सभ खाता',
+    totalMedicinesCountLabel: 'दवाई',
+    deleteAccountButton: 'खाता हटाईं',
+    deleteAccountConfirm: 'का रउआ सचहूं ई पुर्जा हटावे के चाहत बानी?',
+    addNewAccountButton: '+ अउरी पुर्जा जोड़ीं (नया खाता)',
+    singleAccountDirectNotice: 'चालू मेडिकल खाता',
   }
 ,  doi: {
     appName: 'WellBeing (वेलबीइंग)',
@@ -420,6 +468,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'दूसरे डॉक्टर या अगली मुलाकात का पर्चा जोड़ें',
     formTabletText: 'टैबलेट',
     formCapsuleText: 'कैप्सूल',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'मेरे मेडिकल खाते',
+    accountsHubSubtitle: 'दवाइयों का विवरण देखने के लिए खाता चुनें या नए डॉक्टर का पर्चा जोड़ें',
+    accountNumberLabel: 'खाता',
+    openAccountButton: 'यह खाता खोलें',
+    allAccountsButton: 'सभी खाते',
+    totalMedicinesCountLabel: 'दवाइयाँ',
+    deleteAccountButton: 'खाता हटाएं',
+    deleteAccountConfirm: 'क्या आप वाकई इस पर्चे का खाता हटाना चाहते हैं?',
+    addNewAccountButton: '+ एक और पर्चा जोड़ें (नया खाता)',
+    singleAccountDirectNotice: 'सक्रिय मेडिकल खाता',
   }
 ,  as: {
     appName: 'WellBeing (ৱেলবিয়িং)',
@@ -504,6 +564,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'আন এজন চিকিৎসকৰ প্ৰেচক্ৰিপচন যোগ কৰক',
     formTabletText: 'টেবলেট',
     formCapsuleText: 'কেপচুল',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'মোৰ চিকিৎসা একাউন্টসমূহ',
+    accountsHubSubtitle: 'ঔষধৰ বিৱৰণ চাবলৈ একাউন্ট নিৰ্বাচন কৰক বা নতুন প্ৰেচক্ৰিপচন যোগ কৰক',
+    accountNumberLabel: 'একাউন্ট',
+    openAccountButton: 'এই একাউন্ট খোলক',
+    allAccountsButton: 'সকলো একাউন্ট',
+    totalMedicinesCountLabel: 'টা ঔষধ',
+    deleteAccountButton: 'মুচি পেলাওক',
+    deleteAccountConfirm: 'আপুনি এই প্ৰেচক্ৰিপচন একাউন্টটো মুচি পেলাব বিচাৰেনে?',
+    addNewAccountButton: '+ আন এখন প্ৰেচক্ৰিপচন যোগ কৰক (নতুন একাউন্ট)',
+    singleAccountDirectNotice: 'সক্ৰিয় চিকিৎসা একাউন্ট',
   }
 ,  brx: {
     appName: 'WellBeing (वेलबीइंग)',
@@ -588,6 +660,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'दूसरे डॉक्टर या अगली मुलाकात का पर्चा जोड़ें',
     formTabletText: 'टैबलेट',
     formCapsuleText: 'कैप्सूल',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'मेरे मेडिकल खाते',
+    accountsHubSubtitle: 'दवाइयों का विवरण देखने के लिए खाता चुनें या नए डॉक्टर का पर्चा जोड़ें',
+    accountNumberLabel: 'खाता',
+    openAccountButton: 'यह खाता खोलें',
+    allAccountsButton: 'सभी खाते',
+    totalMedicinesCountLabel: 'दवाइयाँ',
+    deleteAccountButton: 'खाता हटाएं',
+    deleteAccountConfirm: 'क्या आप वाकई इस पर्चे का खाता हटाना चाहते हैं?',
+    addNewAccountButton: '+ एक और पर्चा जोड़ें (नया खाता)',
+    singleAccountDirectNotice: 'सक्रिय मेडिकल खाता',
   }
 ,  fr: {
     appName: 'WellBeing (Santé & Bien-être)',
@@ -672,6 +756,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'Ajouter l\'ordonnance d\'un autre médecin',
     formTabletText: 'Comprimé',
     formCapsuleText: 'Gélule',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'Mes comptes médicaux',
+    accountsHubSubtitle: 'Sélectionnez un compte pour voir les médicaments ou ajouter une autre ordonnance',
+    accountNumberLabel: 'Compte',
+    openAccountButton: 'Ouvrir ce compte',
+    allAccountsButton: 'Tous les comptes',
+    totalMedicinesCountLabel: 'médicaments',
+    deleteAccountButton: 'Supprimer le compte',
+    deleteAccountConfirm: 'Voulez-vous vraiment supprimer ce compte d\'ordonnance ?',
+    addNewAccountButton: '+ Ajouter une autre ordonnance (Nouveau compte)',
+    singleAccountDirectNotice: 'Compte médical actif',
   }
 ,  zh: {
     appName: 'WellBeing (健康伴侣)',
@@ -756,6 +852,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: '添加其他医生的处方',
     formTabletText: '片剂',
     formCapsuleText: '胶囊',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: '我的医疗账户',
+    accountsHubSubtitle: '选择账户以查看药物或添加新处方',
+    accountNumberLabel: '账户',
+    openAccountButton: '查看此账户',
+    allAccountsButton: '所有账户',
+    totalMedicinesCountLabel: '种药物',
+    deleteAccountButton: '删除账户',
+    deleteAccountConfirm: '您确定要删除此病历账户吗？',
+    addNewAccountButton: '+ 添加另一张处方（新账户）',
+    singleAccountDirectNotice: '当前活跃医疗账户',
   }
 ,  de: {
     appName: 'WellBeing (Gesundheit)',
@@ -840,6 +948,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'Rezept eines anderen Arztes hinzufügen',
     formTabletText: 'Tablette',
     formCapsuleText: 'Kapsel',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'Meine medizinischen Konten',
+    accountsHubSubtitle: 'Wählen Sie ein Konto, um Medikamente anzuzeigen oder ein weiteres Rezept hinzuzufügen',
+    accountNumberLabel: 'Konto',
+    openAccountButton: 'Dieses Konto öffnen',
+    allAccountsButton: 'Alle Konten',
+    totalMedicinesCountLabel: 'Medikamente',
+    deleteAccountButton: 'Konto löschen',
+    deleteAccountConfirm: 'Möchten Sie dieses Rezeptkonto wirklich löschen?',
+    addNewAccountButton: '+ Weiteres Rezept hinzufügen (Neues Konto)',
+    singleAccountDirectNotice: 'Aktives medizinisches Konto',
   }
 ,  es: {
     appName: 'WellBeing (Bienestar)',
@@ -924,6 +1044,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'Añadir receta de otro médico o consulta',
     formTabletText: 'Comprimido',
     formCapsuleText: 'Cápsula',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'Mis cuentas médicas',
+    accountsHubSubtitle: 'Seleccione una cuenta para ver los medicamentos o añadir otra receta médica',
+    accountNumberLabel: 'Cuenta',
+    openAccountButton: 'Abrir esta cuenta',
+    allAccountsButton: 'Todas las cuentas',
+    totalMedicinesCountLabel: 'medicamentos',
+    deleteAccountButton: 'Eliminar cuenta',
+    deleteAccountConfirm: '¿Está seguro de que desea eliminar esta cuenta de receta?',
+    addNewAccountButton: '+ Añadir otra receta (Nueva cuenta)',
+    singleAccountDirectNotice: 'Cuenta médica activa',
   }
 ,  gu: {
     appName: 'WellBeing (વેલબીઇંગ)',
@@ -1008,6 +1140,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'બીજા ડૉક્ટરનું પ્રિસ્ક્રિપ્શન ઉમેરો',
     formTabletText: 'ટેબ્લેટ',
     formCapsuleText: 'કેપ્સ્યુલ',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'મારા મેડિકલ ખાતા',
+    accountsHubSubtitle: 'દવાઓ જોવા માટે ખાતું પસંદ કરો અથવા નવા ડૉક્ટરનું પ્રિસ્ક્રિપ્શન ઉમેરો',
+    accountNumberLabel: 'ખાતું',
+    openAccountButton: 'આ ખાતું ખોલો',
+    allAccountsButton: 'બધા ખાતા',
+    totalMedicinesCountLabel: 'દવાઓ',
+    deleteAccountButton: 'ખાતું કાઢી નાખો',
+    deleteAccountConfirm: 'શું તમે ખરેખર આ પ્રિસ્ક્રિપ્શન ખાતું કાઢી નાખવા માંગો છો?',
+    addNewAccountButton: '+ બીજું પ્રિસ્ક્રિપ્શન ઉમેરો (નવું ખાતું)',
+    singleAccountDirectNotice: 'સક્રિય મેડિકલ ખાતું',
   }
 ,  ja: {
     appName: 'WellBeing (健康管理)',
@@ -1092,6 +1236,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: '別の処方箋を追加する',
     formTabletText: '錠剤',
     formCapsuleText: 'カプセル',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'マイ医療アカウント',
+    accountsHubSubtitle: '薬を確認するアカウントを選択するか、新しい処方箋を追加してください',
+    accountNumberLabel: 'アカウント',
+    openAccountButton: 'このアカウントを開く',
+    allAccountsButton: 'すべてのアカウント',
+    totalMedicinesCountLabel: '種の医薬品',
+    deleteAccountButton: 'アカウントを削除',
+    deleteAccountConfirm: 'この処方箋アカウントを削除してもよろしいですか？',
+    addNewAccountButton: '+ 別の処方箋を追加（新しいアカウント）',
+    singleAccountDirectNotice: '有効な医療アカウント',
   }
 ,  kn: {
     appName: 'WellBeing (ವೆಲ್‌ಬೀಯಿಂಗ್)',
@@ -1176,6 +1332,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'ಮತ್ತೊಬ್ಬ ವೈದ್ಯರ ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ ಸೇರಿಸಿ',
     formTabletText: 'ಮಾತ್ರೆ',
     formCapsuleText: 'ಕ್ಯಾಪ್ಸುಲ್',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'ನನ್ನ ವೈದ್ಯಕೀಯ ಖಾತೆಗಳು',
+    accountsHubSubtitle: 'ಔಷಧಿಗಳನ್ನು ವೀಕ್ಷಿಸಲು ಖಾತೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ ಅಥವಾ ಹೊಸ ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ ಸೇರಿಸಿ',
+    accountNumberLabel: 'ಖಾತೆ',
+    openAccountButton: 'ಈ ಖಾತೆಯನ್ನು ತೆರೆಯಿರಿ',
+    allAccountsButton: 'ಎಲ್ಲಾ ಖಾತೆಗಳು',
+    totalMedicinesCountLabel: 'ಔಷಧಿಗಳು',
+    deleteAccountButton: 'ಖಾತೆ ಅಳಿಸಿ',
+    deleteAccountConfirm: 'ನೀವು ಖಚಿತವಾಗಿ ಈ ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ ಖಾತೆಯನ್ನು ಅಳಿಸಲು ಬಯಸುವಿರಾ?',
+    addNewAccountButton: '+ ಮತ್ತೊಂದು ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ ಸೇರಿಸಿ (ಹೊಸ ಖಾತೆ)',
+    singleAccountDirectNotice: 'ಸಕ್ರಿಯ ವೈದ್ಯಕೀಯ ಖಾತೆ',
   }
 ,  ks: {
     appName: 'WellBeing (ویل بیئنگ)',
@@ -1260,6 +1428,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'دوسرے ڈاکٹر کا نسخہ شامل کریں',
     formTabletText: 'گولی',
     formCapsuleText: 'کیپسول',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'میرے میڈیکل اکاؤنٹس',
+    accountsHubSubtitle: 'ادویات دیکھنے کے لیے اکاؤنٹ منتخب کریں یا نیا نسخہ شامل کریں',
+    accountNumberLabel: 'اکاؤنٹ',
+    openAccountButton: 'یہ اکاؤنٹ کھولیں',
+    allAccountsButton: 'تمام اکاؤنٹس',
+    totalMedicinesCountLabel: 'ادویات',
+    deleteAccountButton: 'اکاؤنٹ حذف کریں',
+    deleteAccountConfirm: 'کیا آپ واقعی یہ نسخہ اکاؤنٹ حذف کرنا چاہتے ہیں؟',
+    addNewAccountButton: '+ ایک اور نسخہ شامل کریں (نیا اکاؤنٹ)',
+    singleAccountDirectNotice: 'فعال میڈیکل اکاؤنٹ',
   }
 ,  kok: {
     appName: 'WellBeing (वेलबीइंग)',
@@ -1344,6 +1524,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'दूसरे डॉक्टर या अगली मुलाकात का पर्चा जोड़ें',
     formTabletText: 'टैबलेट',
     formCapsuleText: 'कैप्सूल',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'मेरे मेडिकल खाते',
+    accountsHubSubtitle: 'दवाइयों का विवरण देखने के लिए खाता चुनें या नए डॉक्टर का पर्चा जोड़ें',
+    accountNumberLabel: 'खाता',
+    openAccountButton: 'यह खाता खोलें',
+    allAccountsButton: 'सभी खाते',
+    totalMedicinesCountLabel: 'दवाइयाँ',
+    deleteAccountButton: 'खाता हटाएं',
+    deleteAccountConfirm: 'क्या आप वाकई इस पर्चे का खाता हटाना चाहते हैं?',
+    addNewAccountButton: '+ एक और पर्चा जोड़ें (नया खाता)',
+    singleAccountDirectNotice: 'सक्रिय मेडिकल खाता',
   }
 ,  mai: {
     appName: 'WellBeing (वेलबीइंग)',
@@ -1428,6 +1620,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'आन डॉक्टरक पुर्जा जोड़ू',
     formTabletText: 'टैबलेट',
     formCapsuleText: 'कैप्सूल',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'हमर मेडिकल खाता सभ',
+    accountsHubSubtitle: 'दबाई देखबाक लेल खाता चुनू वा नव डॉक्टरक पुर्जा जोड़ू',
+    accountNumberLabel: 'खाता',
+    openAccountButton: 'ई खाता खोलू',
+    allAccountsButton: 'सबहि खाता',
+    totalMedicinesCountLabel: 'दबाई',
+    deleteAccountButton: 'खाता हटाउ',
+    deleteAccountConfirm: 'की अहाँ सचहुँ ई पुर्जाक खाता हटाबय चाहैत छी?',
+    addNewAccountButton: '+ आरो पुर्जा जोड़ू (नव खाता)',
+    singleAccountDirectNotice: 'सक्रिय मेडिकल खाता',
   }
 ,  ml: {
     appName: 'WellBeing (വെൽബീയിംഗ്)',
@@ -1512,6 +1716,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'മറ്റൊരു ഡോക്ടറുടെ കുറിപ്പടി ചേർക്കുക',
     formTabletText: 'ഗുളിക',
     formCapsuleText: 'ക്യാപ്സ്യൂൾ',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'എന്റെ മെഡിക്കൽ അക്കൗണ്ടുകൾ',
+    accountsHubSubtitle: 'മരുന്നുകൾ കാണാൻ അക്കൗണ്ട് തിരഞ്ഞെടുക്കുക അല്ലെങ്കിൽ പുതിയ കുറിപ്പടി ചേർക്കുക',
+    accountNumberLabel: 'അക്കൗണ്ട്',
+    openAccountButton: 'ഈ അക്കൗണ്ട് തുറക്കുക',
+    allAccountsButton: 'എല്ലാ അക്കൗണ്ടുകളും',
+    totalMedicinesCountLabel: 'മരുന്നുകൾ',
+    deleteAccountButton: 'അക്കൗണ്ട് ഇല്ലാതാക്കുക',
+    deleteAccountConfirm: 'ഈ കുറിപ്പടി അക്കൗണ്ട് ഇല്ലാതാക്കണമെന്ന് ഉറപ്പാണോ?',
+    addNewAccountButton: '+ മറ്റൊരു കുറിപ്പടി ചേർക്കുക (പുതിയ അക്കൗണ്ട്)',
+    singleAccountDirectNotice: 'സജീവ മെഡിക്കൽ അക്കൗണ്ട്',
   }
 ,  mni: {
     appName: 'WellBeing (ৱেলবীয়িং)',
@@ -1596,6 +1812,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'অন্য ডাক্তারের বা পরবর্তী ভিজিটের প্রেসক্রিপশন যোগ করুন',
     formTabletText: 'ট্যাবলেট',
     formCapsuleText: 'ক্যাপসুল',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'আমার মেডিকেল অ্যাকাউন্টসমূহ',
+    accountsHubSubtitle: 'প্রেসক্রিপশন ও ঔষধ দেখতে অ্যাকাউন্ট নির্বাচন করুন বা নতুন ডাক্তারের প্রেসক্রিপশন যোগ করুন',
+    accountNumberLabel: 'অ্যাকাউন্ট',
+    openAccountButton: 'এই অ্যাকাউন্ট দেখুন',
+    allAccountsButton: 'সকল অ্যাকাউন্ট',
+    totalMedicinesCountLabel: 'টি ঔষধ',
+    deleteAccountButton: 'মুছে ফেলুন',
+    deleteAccountConfirm: 'আপনি কি এই প্রেসক্রিপশন অ্যাকাউন্টটি মুছে ফেলতে চান?',
+    addNewAccountButton: '+ আরেকটি প্রেসক্রিপশন যোগ করুন (নতুন অ্যাকাউন্ট)',
+    singleAccountDirectNotice: 'সক্রিয় মেডিকেল অ্যাকাউন্ট',
   }
 ,  mr: {
     appName: 'WellBeing (वेलबीइंग)',
@@ -1680,6 +1908,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'दुसऱ्या डॉक्टरांचे प्रिस्क्रिप्शन जोडा',
     formTabletText: 'टॅबलेट',
     formCapsuleText: 'कॅप्सूल',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'माझी वैद्यकीय खाती',
+    accountsHubSubtitle: 'औषधांचा तपशील पाहण्यासाठी खाते निवडा किंवा नवीन डॉक्टरांचे प्रिस्क्रिप्शन जोडा',
+    accountNumberLabel: 'खाते',
+    openAccountButton: 'हे खाते उघडा',
+    allAccountsButton: 'सर्व खाती',
+    totalMedicinesCountLabel: 'औषधे',
+    deleteAccountButton: 'खाते हटवा',
+    deleteAccountConfirm: 'तुम्हाला नक्की हे प्रिस्क्रिप्शन खाते हटवायचे आहे का?',
+    addNewAccountButton: '+ दुसरे प्रिस्क्रिप्शन जोडा (नवीन खाते)',
+    singleAccountDirectNotice: 'सक्रिय वैद्यकीय खाते',
   }
 ,  ne: {
     appName: 'WellBeing (वेलबीइंग)',
@@ -1764,6 +2004,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'दूसरे डॉक्टर या अगली मुलाकात का पर्चा जोड़ें',
     formTabletText: 'टैबलेट',
     formCapsuleText: 'कैप्सूल',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'मेरे मेडिकल खाते',
+    accountsHubSubtitle: 'दवाइयों का विवरण देखने के लिए खाता चुनें या नए डॉक्टर का पर्चा जोड़ें',
+    accountNumberLabel: 'खाता',
+    openAccountButton: 'यह खाता खोलें',
+    allAccountsButton: 'सभी खाते',
+    totalMedicinesCountLabel: 'दवाइयाँ',
+    deleteAccountButton: 'खाता हटाएं',
+    deleteAccountConfirm: 'क्या आप वाकई इस पर्चे का खाता हटाना चाहते हैं?',
+    addNewAccountButton: '+ एक और पर्चा जोड़ें (नया खाता)',
+    singleAccountDirectNotice: 'सक्रिय मेडिकल खाता',
   }
 ,  or: {
     appName: 'WellBeing (ୱେଲବିଇଂ)',
@@ -1848,6 +2100,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'ଅନ୍ୟ ଡାକ୍ତରଙ୍କ ପ୍ରେସକ୍ରିପସନ ଯୋଡ଼ନ୍ତୁ',
     formTabletText: 'ଟାବଲେଟ',
     formCapsuleText: 'କ୍ୟାପସୁଲ',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'ମୋର ଚିକିତ୍ସା ଆକାଉଣ୍ଟଗୁଡିକ',
+    accountsHubSubtitle: 'ଔଷଧ ଦେଖିବା ପାଇଁ ଆକାଉଣ୍ଟ ବାଛନ୍ତୁ କିମ୍ବା ନୂଆ ପ୍ରେସକ୍ରିପସନ ଯୋଡ଼ନ୍ତୁ',
+    accountNumberLabel: 'ଆକାଉଣ୍ଟ',
+    openAccountButton: 'ଏହି ଆକାଉଣ୍ଟ ଖୋଲନ୍ତୁ',
+    allAccountsButton: 'ସମସ୍ତ ଆକାଉଣ୍ଟ',
+    totalMedicinesCountLabel: 'ଟି ଔଷଧ',
+    deleteAccountButton: 'ଲିଭାନ୍ତୁ',
+    deleteAccountConfirm: 'ଆପଣ କ\'ଣ ନିଶ୍ଚିତ ଭାବରେ ଏହି ପ୍ରେସକ୍ରିପସନ ଆକାଉଣ୍ଟ ଲିଭାଇବାକୁ ଚାହାଁନ୍ତି?',
+    addNewAccountButton: '+ ଆଉ ଏକ ପ୍ରେସକ୍ରିପସନ ଯୋଡ଼ନ୍ତୁ (ନୂଆ ଆକାଉଣ୍ଟ)',
+    singleAccountDirectNotice: 'ସକ୍ରିୟ ଚିକିତ୍ସା ଆକାଉଣ୍ଟ',
   }
 ,  pt: {
     appName: 'WellBeing (Saúde)',
@@ -1932,6 +2196,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'Adicionar receita de outro médico',
     formTabletText: 'Comprimido',
     formCapsuleText: 'Cápsula',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'Minhas contas médicas',
+    accountsHubSubtitle: 'Selecione uma conta para ver os medicamentos ou adicionar outra receita',
+    accountNumberLabel: 'Conta',
+    openAccountButton: 'Abrir esta conta',
+    allAccountsButton: 'Todas as contas',
+    totalMedicinesCountLabel: 'medicamentos',
+    deleteAccountButton: 'Excluir conta',
+    deleteAccountConfirm: 'Tem certeza de que deseja excluir esta conta médica?',
+    addNewAccountButton: '+ Adicionar outra receita (Nova conta)',
+    singleAccountDirectNotice: 'Conta médica ativa',
   }
 ,  pa: {
     appName: 'WellBeing (ਵੈੱਲਬੀਇੰਗ)',
@@ -2016,6 +2292,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'ਕਿਸੇ ਹੋਰ ਡਾਕਟਰ ਦਾ ਪਰਚਾ ਜੋੜੋ',
     formTabletText: 'ਗੋਲੀ',
     formCapsuleText: 'ਕੈਪਸੂਲ',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'ਮੇਰੇ ਮੈਡੀਕਲ ਖਾਤੇ',
+    accountsHubSubtitle: 'ਦਵਾਈਆਂ ਦੇਖਣ ਲਈ ਖਾਤਾ ਚੁਣੋ ਜਾਂ ਨਵੇਂ ਡਾਕਟਰ ਦਾ ਪਰਚਾ ਜੋੜੋ',
+    accountNumberLabel: 'ਖਾਤਾ',
+    openAccountButton: 'ਇਹ ਖਾਤਾ ਖੋਲ੍ਹੋ',
+    allAccountsButton: 'ਸਾਰੇ ਖਾਤੇ',
+    totalMedicinesCountLabel: 'ਦਵਾਈਆਂ',
+    deleteAccountButton: 'ਖਾਤਾ ਹਟਾਓ',
+    deleteAccountConfirm: 'ਕੀ ਤੁਸੀਂ ਸੱਚਮੁੱਚ ਇਹ ਪਰਚਾ ਖਾਤਾ ਹਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?',
+    addNewAccountButton: '+ ਇੱਕ ਹੋਰ ਪਰਚਾ ਜੋੜੋ (ਨਵਾਂ ਖਾਤਾ)',
+    singleAccountDirectNotice: 'ਸਰਗਰਮ ਮੈਡੀਕਲ ਖਾਤਾ',
   }
 ,  ru: {
     appName: 'WellBeing (Здоровье)',
@@ -2100,6 +2388,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'Добавить рецепт другого врача',
     formTabletText: 'Таблетка',
     formCapsuleText: 'Капсула',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'Мои медицинские аккаунты',
+    accountsHubSubtitle: 'Выберите аккаунт для просмотра лекарств или добавьте новый рецепт',
+    accountNumberLabel: 'Аккаунт',
+    openAccountButton: 'Открыть этот аккаунт',
+    allAccountsButton: 'Все аккаунты',
+    totalMedicinesCountLabel: 'препаратов',
+    deleteAccountButton: 'Удалить аккаунт',
+    deleteAccountConfirm: 'Вы уверены, что хотите удалить этот аккаунт рецепта?',
+    addNewAccountButton: '+ Добавить другой рецепт (Новый аккаунт)',
+    singleAccountDirectNotice: 'Активный медицинский аккаунт',
   }
 ,  sa: {
     appName: 'WellBeing (वेलबीइंग)',
@@ -2184,6 +2484,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'दूसरे डॉक्टर या अगली मुलाकात का पर्चा जोड़ें',
     formTabletText: 'टैबलेट',
     formCapsuleText: 'कैप्सूल',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'मेरे मेडिकल खाते',
+    accountsHubSubtitle: 'दवाइयों का विवरण देखने के लिए खाता चुनें या नए डॉक्टर का पर्चा जोड़ें',
+    accountNumberLabel: 'खाता',
+    openAccountButton: 'यह खाता खोलें',
+    allAccountsButton: 'सभी खाते',
+    totalMedicinesCountLabel: 'दवाइयाँ',
+    deleteAccountButton: 'खाता हटाएं',
+    deleteAccountConfirm: 'क्या आप वाकई इस पर्चे का खाता हटाना चाहते हैं?',
+    addNewAccountButton: '+ एक और पर्चा जोड़ें (नया खाता)',
+    singleAccountDirectNotice: 'सक्रिय मेडिकल खाता',
   }
 ,  sat: {
     appName: 'WellBeing (ᱚᱞ ᱪᱤᱠᱤ)',
@@ -2268,6 +2580,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'दूसरे डॉक्टर या अगली मुलाकात का पर्चा जोड़ें',
     formTabletText: 'टैबलेट',
     formCapsuleText: 'कैप्सूल',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'मेरे मेडिकल खाते',
+    accountsHubSubtitle: 'दवाइयों का विवरण देखने के लिए खाता चुनें या नए डॉक्टर का पर्चा जोड़ें',
+    accountNumberLabel: 'खाता',
+    openAccountButton: 'यह खाता खोलें',
+    allAccountsButton: 'सभी खाते',
+    totalMedicinesCountLabel: 'दवाइयाँ',
+    deleteAccountButton: 'खाता हटाएं',
+    deleteAccountConfirm: 'क्या आप वाकई इस पर्चे का खाता हटाना चाहते हैं?',
+    addNewAccountButton: '+ एक और पर्चा जोड़ें (नया खाता)',
+    singleAccountDirectNotice: 'सक्रिय मेडिकल खाता',
   }
 ,  sd: {
     appName: 'WellBeing (ويل بيئنگ)',
@@ -2352,6 +2676,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'दूसरे डॉक्टर या अगली मुलाकात का पर्चा जोड़ें',
     formTabletText: 'टैबलेट',
     formCapsuleText: 'कैप्सूल',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'मेरे मेडिकल खाते',
+    accountsHubSubtitle: 'दवाइयों का विवरण देखने के लिए खाता चुनें या नए डॉक्टर का पर्चा जोड़ें',
+    accountNumberLabel: 'खाता',
+    openAccountButton: 'यह खाता खोलें',
+    allAccountsButton: 'सभी खाते',
+    totalMedicinesCountLabel: 'दवाइयाँ',
+    deleteAccountButton: 'खाता हटाएं',
+    deleteAccountConfirm: 'क्या आप वाकई इस पर्चे का खाता हटाना चाहते हैं?',
+    addNewAccountButton: '+ एक और पर्चा जोड़ें (नया खाता)',
+    singleAccountDirectNotice: 'सक्रिय मेडिकल खाता',
   }
 ,  ta: {
     appName: 'WellBeing (வெல்பೀಯிங்)',
@@ -2436,6 +2772,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'மற்றொரு மருத்துவரின் சீட்டைச் சேர்க்கவும்',
     formTabletText: 'மாத்திரை',
     formCapsuleText: 'காப்ஸ்யூல்',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'எனது மருத்துவக் கணக்குகள்',
+    accountsHubSubtitle: 'மருந்துகளைக் காண கணக்கைத் தேர்ந்தெடுக்கவும் அல்லது புதிய மருந்துச் சீட்டைச் சேர்க்கவும்',
+    accountNumberLabel: 'கணக்கு',
+    openAccountButton: 'இந்தக் கணக்கைத் திற',
+    allAccountsButton: 'அனைத்துக் கணக்குகள்',
+    totalMedicinesCountLabel: 'மருந்துகள்',
+    deleteAccountButton: 'கணக்கை நீக்கு',
+    deleteAccountConfirm: 'இந்த மருந்துச் சீட்டுக் கணக்கை நிச்சயமாக நீக்க விரும்புகிறீர்களா?',
+    addNewAccountButton: '+ மற்றொரு மருந்துச் சீட்டைச் சேர் (புதிய கணக்கு)',
+    singleAccountDirectNotice: 'செயலில் உள்ள மருத்துவக் கணக்கு',
   }
 ,  te: {
     appName: 'WellBeing (వెల్‌బీయింగ్)',
@@ -2520,6 +2868,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'మరొక వైద్యుడి ప్రిస్క్రిప్షన్ జోడించండి',
     formTabletText: 'టాబ్లెట్',
     formCapsuleText: 'క్యాప్సూల్',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'నా వైద్య ఖాతాలు',
+    accountsHubSubtitle: 'మందుల వివరాలు చూడటానికి ఖాతాను ఎంచుకోండి లేదా కొత్త ప్రిస్క్రిప్షన్ జోడించండి',
+    accountNumberLabel: 'ఖాతా',
+    openAccountButton: 'ఈ ఖాతాను తెరవండి',
+    allAccountsButton: 'అన్ని ఖాతాలు',
+    totalMedicinesCountLabel: 'మందులు',
+    deleteAccountButton: 'ఖాతా తొలగించు',
+    deleteAccountConfirm: 'మీరు ఖచ్చితంగా ఈ ప్రిస్క్రిప్షన్ ఖాతాను తొలగించాలనుకుంటున్నారా?',
+    addNewAccountButton: '+ మరొక ప్రిస్క్రిప్షన్ జోడించండి (కొత్త ఖాతా)',
+    singleAccountDirectNotice: 'క్రియాశీల వైద్య ఖాతా',
   }
 ,  ar: {
     appName: 'WellBeing (العافية والصحة)',
@@ -2604,6 +2964,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'إضافة وصفة طبية من طبيب آخر',
     formTabletText: 'قرص',
     formCapsuleText: 'كبسولة',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'حساباتي الطبية',
+    accountsHubSubtitle: 'اختر حساباً لعرض الأدوية أو إضافة وصفة طبية جديدة',
+    accountNumberLabel: 'الحساب',
+    openAccountButton: 'فتح هذا الحساب',
+    allAccountsButton: 'جميع الحسابات',
+    totalMedicinesCountLabel: 'أدوية',
+    deleteAccountButton: 'حذف الحساب',
+    deleteAccountConfirm: 'هل أنت متأكد من رغبتك في حذف هذا الحساب الطبي؟',
+    addNewAccountButton: '+ إضافة وصفة طبية أخرى (حساب جديد)',
+    singleAccountDirectNotice: 'الحساب الطبي النشط',
   }
 ,  ur: {
     appName: 'WellBeing (صحت و تندرستی)',
@@ -2688,6 +3060,18 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addAnotherPrescriptionSubtitle: 'دوسرے ڈاکٹر کا نسخہ شامل کریں',
     formTabletText: 'گولی',
     formCapsuleText: 'کیپسول',
+
+    // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+    accountsHubTitle: 'میرے میڈیکل اکاؤنٹس',
+    accountsHubSubtitle: 'ادویات دیکھنے کے لیے اکاؤنٹ منتخب کریں یا نیا نسخہ شامل کریں',
+    accountNumberLabel: 'اکاؤنٹ',
+    openAccountButton: 'یہ اکاؤنٹ کھولیں',
+    allAccountsButton: 'تمام اکاؤنٹس',
+    totalMedicinesCountLabel: 'ادویات',
+    deleteAccountButton: 'اکاؤنٹ حذف کریں',
+    deleteAccountConfirm: 'کیا آپ واقعی یہ نسخہ اکاؤنٹ حذف کرنا چاہتے ہیں؟',
+    addNewAccountButton: '+ ایک اور نسخہ شامل کریں (نیا اکاؤنٹ)',
+    singleAccountDirectNotice: 'فعال میڈیکل اکاؤنٹ',
   }
 };
 

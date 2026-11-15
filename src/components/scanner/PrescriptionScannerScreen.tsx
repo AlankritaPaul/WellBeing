@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { getTranslation } from '../../i18n/translations';
 import { ALL_LANGUAGES } from '../../i18n/languages';
 import { ocrService } from '../../services/ocrService';
-import { storageService } from '../../services/storageService';
+import { storageService, resolvePrescriptionImageUrl } from '../../services/storageService';
 import type { ScannedPrescription, Medication } from '../../types/prescription';
 import {
   Camera,
@@ -32,13 +32,15 @@ import {
   HelpCircle,
   Info,
   Layers,
-  ChevronRight,
-  Stethoscope
+  ChevronRight
 } from 'lucide-react';
 
 interface PrescriptionScannerScreenProps {
   currentLanguage: string;
   userName?: string;
+  initialPrescription?: ScannedPrescription | null;
+  hasMultipleAccounts?: boolean;
+  onBackToAccounts?: () => void;
   onBackToTutorial: () => void;
   onSavedToCabinet?: (prescription: ScannedPrescription) => void;
 }
@@ -46,19 +48,40 @@ interface PrescriptionScannerScreenProps {
 export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps> = ({
   currentLanguage,
   userName = '',
+  initialPrescription = null,
+  hasMultipleAccounts = false,
+  onBackToAccounts,
   onBackToTutorial,
   onSavedToCabinet,
 }) => {
   const t = getTranslation(currentLanguage);
   const currentLangObj = ALL_LANGUAGES.find((l) => l.code === currentLanguage) || ALL_LANGUAGES[0];
 
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(() => resolvePrescriptionImageUrl(initialPrescription) || null);
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [scanStepIndex, setScanStepIndex] = useState<number>(0);
-  const [scannedData, setScannedData] = useState<ScannedPrescription | null>(null);
+  const [scannedData, setScannedData] = useState<ScannedPrescription | null>(() => {
+    if (!initialPrescription) return null;
+    return {
+      ...initialPrescription,
+      imageDataUrl: resolvePrescriptionImageUrl(initialPrescription),
+    };
+  });
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
   const [copiedPhone, setCopiedPhone] = useState<string | null>(null);
+
+  // Sync state if initialPrescription changes
+  useEffect(() => {
+    if (initialPrescription) {
+      const resolved = {
+        ...initialPrescription,
+        imageDataUrl: resolvePrescriptionImageUrl(initialPrescription),
+      };
+      setScannedData(resolved);
+      setPreviewImage(resolved.imageDataUrl || null);
+    }
+  }, [initialPrescription]);
 
   // Tab View for Medicines: 'schedule' ("Which medicine should be taken at what time") vs 'purpose' ("For which medicine is used for what?")
   const [medicineViewMode, setMedicineViewMode] = useState<'schedule' | 'purpose'>('schedule');
@@ -140,7 +163,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
 
   // Use Sample Prescription for 1-Click Verification
   const handleUseSample = (sampleNum: number = 1) => {
-    const sampleImageUrl = '/images/tutorial_clean.jpg';
+    const sampleImageUrl = sampleNum === 2 ? '/images/prescription_apex.jpg' : '/images/prescription_citycare.jpg';
     handleProcessImage(sampleImageUrl, sampleNum);
   };
 
@@ -273,15 +296,27 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
 
       {/* Screen Header */}
       <div className="flex items-center justify-between gap-3 mb-5">
-        <button
-          type="button"
-          onClick={onBackToTutorial}
-          className="p-2 sm:px-3 sm:py-1.5 rounded-xl border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300 text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5"
-          title="Back"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">{t.backButton || 'Back'}</span>
-        </button>
+        {hasMultipleAccounts && onBackToAccounts ? (
+          <button
+            type="button"
+            onClick={onBackToAccounts}
+            className="p-2 sm:px-3 sm:py-1.5 rounded-xl border border-blue-600/60 bg-blue-950/60 hover:bg-blue-900 text-blue-200 text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm"
+            title={t.allAccountsButton}
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>{t.allAccountsButton}</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={onBackToTutorial}
+            className="p-2 sm:px-3 sm:py-1.5 rounded-xl border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300 text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5"
+            title="Back"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">{t.backButton}</span>
+          </button>
+        )}
 
         <div className="text-center flex-1">
           <h1 className="text-xl sm:text-2xl font-black text-slate-100 tracking-tight">
@@ -299,8 +334,8 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
         </div>
       </div>
 
-      {/* MULTI-PRESCRIPTION SWITCHER BAR (if user has scanned 1 or more prescriptions) */}
-      {savedPrescriptionsList.length > 0 && (
+      {/* MULTI-PRESCRIPTION SWITCHER BAR (ONLY IF USER HAS 2 OR MORE ACCOUNTS) */}
+      {savedPrescriptionsList.length > 1 && (
         <div className="mb-5 p-3 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-center justify-between gap-3 overflow-x-auto">
           <div className="flex items-center gap-2 shrink-0">
             <Layers className="w-4 h-4 text-blue-400" />
@@ -403,7 +438,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-700 shrink-0">
                     <img
-                      src="/images/tutorial_clean.jpg"
+                      src="/images/prescription_citycare.jpg"
                       alt="Sample Prescription 1"
                       className="w-full h-full object-cover"
                     />
@@ -427,8 +462,12 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                 className="p-3.5 rounded-2xl bg-slate-950/60 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 text-left transition-all flex items-center justify-between gap-3 group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-950/60 border border-emerald-700/60 flex items-center justify-center text-emerald-400 shrink-0">
-                    <Stethoscope className="w-5 h-5" />
+                  <div className="w-10 h-10 rounded-xl overflow-hidden border border-emerald-700/60 shrink-0">
+                    <img
+                      src="/images/prescription_apex.jpg"
+                      alt="Sample Prescription 2"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div>
                     <h5 className="text-xs sm:text-sm font-bold text-slate-200 group-hover:text-emerald-300">
@@ -525,7 +564,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
               </div>
 
               {/* Photo Thumbnail with Zoom Lightbox Trigger */}
-              {scannedData.imageDataUrl && (
+              {resolvePrescriptionImageUrl(scannedData) && (
                 <button
                   type="button"
                   onClick={() => setShowImageModal(true)}
@@ -533,7 +572,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                   title="View original scanned prescription"
                 >
                   <img
-                    src={scannedData.imageDataUrl}
+                    src={resolvePrescriptionImageUrl(scannedData)}
                     alt="Prescription Thumbnail"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                   />
@@ -909,7 +948,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                 <button
                   type="button"
                   onClick={() => addPrescriptionCameraRef.current?.click()}
-                  className="px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md"
+                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md"
                 >
                   <Camera className="w-3.5 h-3.5" />
                   <span>{t.openCameraButton}</span>
@@ -918,20 +957,10 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                 <button
                   type="button"
                   onClick={() => addPrescriptionFileRef.current?.click()}
-                  className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs flex items-center gap-1.5 transition-all"
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs flex items-center gap-1.5 transition-all"
                 >
                   <Upload className="w-3.5 h-3.5" />
                   <span>{t.uploadPhotoBtn}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleUseSample(2)}
-                  className="px-3.5 py-2.5 rounded-xl bg-blue-950/80 hover:bg-blue-900 text-blue-300 border border-blue-700/60 font-bold text-xs flex items-center gap-1.5 transition-all"
-                  title={t.sample2Title}
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-                  <span>{t.sample2Button}</span>
                 </button>
               </div>
             </div>
@@ -992,7 +1021,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
             </div>
             <div className="flex-1 overflow-auto p-4 flex items-center justify-center bg-black/60">
               <img
-                src={scannedData.imageDataUrl}
+                src={resolvePrescriptionImageUrl(scannedData)}
                 alt="Full Prescription"
                 className="max-w-full max-h-[75vh] object-contain rounded-xl shadow-lg"
               />
@@ -1127,7 +1156,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                   onClick={() => setIsAddModalOpen(false)}
                   className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold"
                 >
-                  {t.backButton || 'Cancel'}
+                  {t.backButton}
                 </button>
                 <button
                   type="submit"

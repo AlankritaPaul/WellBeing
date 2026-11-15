@@ -8,7 +8,9 @@ import { LanguageSelectScreen } from './components/onboarding/LanguageSelectScre
 import { PreferredNameScreen } from './components/onboarding/PreferredNameScreen';
 import { ScanningTutorialScreen } from './components/onboarding/ScanningTutorialScreen';
 import { PrescriptionScannerScreen } from './components/scanner/PrescriptionScannerScreen';
+import { AccountsListScreen } from './components/cabinet/AccountsListScreen';
 import { NameChangeModal } from './components/onboarding/NameChangeModal';
+import type { ScannedPrescription } from './types/prescription';
 import { 
   RotateCcw, 
   Globe2, 
@@ -22,8 +24,39 @@ export const App: React.FC = () => {
   const [currentLanguage, setCurrentLanguage] = useState<string>(() => storageService.getLanguage());
   const [userName, setUserName] = useState<string>(() => storageService.getUserName());
   
-  // App Phase: 'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'page3_completed'
-  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'page3_completed'>('welcome');
+  const [prescriptions, setPrescriptions] = useState<ScannedPrescription[]>(() =>
+    storageService.getPrescriptions()
+  );
+
+  const [selectedPrescription, setSelectedPrescription] = useState<ScannedPrescription | null>(() => {
+    const list = storageService.getPrescriptions();
+    const activeId = storageService.getActiveAccountId();
+    if (activeId) {
+      const found = list.find((p) => p.id === activeId);
+      if (found) return found;
+    }
+    return list.length > 0 ? list[0] : null;
+  });
+
+  // App Phase: Resume directly where user left off! Never restart if account already created.
+  // 1 Account -> Open that single account's prescription view directly!
+  // 2+ Accounts -> Open Accounts Hub so user selects which account to view!
+  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'accounts_hub' | 'page3_completed'>(() => {
+    const list = storageService.getPrescriptions();
+    if (list.length > 1) {
+      return 'accounts_hub';
+    } else if (list.length === 1) {
+      return 'scanner';
+    }
+    const savedLang = localStorage.getItem('wellbeing_language');
+    const savedName = localStorage.getItem('wellbeing_user_name');
+    if (savedLang && savedName) {
+      return 'tutorial';
+    } else if (savedLang && savedLang !== 'en') {
+      return 'preferred_name';
+    }
+    return 'welcome';
+  });
   
   // Theme state: 'dark' | 'light' | 'emerald'
   const [theme, setTheme] = useState<'dark' | 'light' | 'emerald'>('dark');
@@ -47,11 +80,36 @@ export const App: React.FC = () => {
     window.addEventListener('wellbeing_language_changed', handleLangChange);
     window.addEventListener('wellbeing_name_changed', handleNameChange);
 
+    const handlePrescriptionsChange = (e: Event) => {
+      const customEvent = e as CustomEvent<ScannedPrescription[]>;
+      const updated = customEvent.detail || [];
+      setPrescriptions(updated);
+      if (updated.length === 0) {
+        setSelectedPrescription(null);
+      } else if (updated.length === 1) {
+        setSelectedPrescription(updated[0]);
+      }
+    };
+
+    window.addEventListener('wellbeing_prescriptions_changed', handlePrescriptionsChange);
+
     return () => {
       window.removeEventListener('wellbeing_language_changed', handleLangChange);
       window.removeEventListener('wellbeing_name_changed', handleNameChange);
+      window.removeEventListener('wellbeing_prescriptions_changed', handlePrescriptionsChange);
     };
   }, []);
+
+  const handleHomeClick = () => {
+    if (prescriptions.length > 1) {
+      setAppPhase('accounts_hub');
+    } else if (prescriptions.length === 1) {
+      setSelectedPrescription(prescriptions[0]);
+      setAppPhase('scanner');
+    } else {
+      handleResetToWelcome();
+    }
+  };
 
   const handleStart = () => {
     setAppPhase('language_select');
@@ -122,7 +180,7 @@ export const App: React.FC = () => {
           onOpenNameModal={() => setShowNameModal(true)}
           isMobileFrame={isMobileFrame}
           onToggleMobileFrame={() => setIsMobileFrame((prev) => !prev)}
-          onHomeClick={handleResetToWelcome}
+          onHomeClick={handleHomeClick}
         />
       )}
 
@@ -244,15 +302,51 @@ export const App: React.FC = () => {
             </div>
           )}
 
+          {/* Page 5: Digital File Cabinet & Accounts Hub (Multi-Account List) */}
+          {appPhase === 'accounts_hub' && (
+            <div className="flex-1 flex flex-col items-center justify-start py-4 sm:py-6 w-full">
+              <AccountsListScreen
+                currentLanguage={currentLanguage}
+                userName={userName}
+                prescriptions={prescriptions}
+                onSelectAccount={(prescription) => {
+                  setSelectedPrescription(prescription);
+                  storageService.setActiveAccountId(prescription.id);
+                  setAppPhase('scanner');
+                }}
+                onAddNewPrescription={() => {
+                  setSelectedPrescription(null);
+                  setAppPhase('scanner');
+                }}
+                onDeleteAccount={(id) => {
+                  storageService.deletePrescription(id);
+                  const remaining = storageService.getPrescriptions();
+                  if (remaining.length <= 1) {
+                    setSelectedPrescription(remaining[0] || null);
+                    setAppPhase(remaining.length === 1 ? 'scanner' : 'welcome');
+                  }
+                }}
+              />
+            </div>
+          )}
+
           {/* Page 4: Prescription Camera & Handwriting Medical OCR */}
           {appPhase === 'scanner' && (
             <div className="flex-1 flex flex-col items-center justify-start py-4 sm:py-6 w-full">
               <PrescriptionScannerScreen
                 currentLanguage={currentLanguage}
                 userName={userName}
+                initialPrescription={selectedPrescription}
+                hasMultipleAccounts={prescriptions.length > 1}
+                onBackToAccounts={() => setAppPhase('accounts_hub')}
                 onBackToTutorial={() => setAppPhase('tutorial')}
                 onSavedToCabinet={(savedPrescription) => {
-                  console.log('Saved prescription to local cabinet:', savedPrescription);
+                  setSelectedPrescription(savedPrescription);
+                  storageService.setActiveAccountId(savedPrescription.id);
+                  const currentList = storageService.getPrescriptions();
+                  if (currentList.length > 1) {
+                    setAppPhase('accounts_hub');
+                  }
                 }}
               />
             </div>

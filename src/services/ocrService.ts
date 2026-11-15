@@ -136,8 +136,10 @@ export const ocrService = {
       });
 
       return {
-        id: 'rx-cardio-' + Date.now(),
-        imageDataUrl,
+        id: 'rx-sample-apex-dranirbanroy',
+        imageDataUrl: (imageDataUrl && !imageDataUrl.includes('tutorial') && !imageDataUrl.includes('scan_')) 
+          ? imageDataUrl 
+          : '/images/prescription_apex.jpg',
         hospitalName: isBengali ? 'অ্যাপেক্স হার্ট ও ডায়াবেটিস সেন্টার' : 'Apex Heart & Diabetes Institute',
         doctorName: isBengali ? 'ডাঃ অনির্বাণ রায়, এমডি, ডিএম (কার্ডিওলজি)' : 'Dr. Anirban Roy, MD, DM (Cardiology)',
         doctorSpecialty: isBengali ? 'সিনিয়র কনসালটেন্ট হৃদরোগ ও ডায়াবেটিস বিশেষজ্ঞ' : 'Senior Interventional Cardiologist',
@@ -302,8 +304,10 @@ export const ocrService = {
     });
 
     return {
-      id: 'rx-' + Date.now(),
-      imageDataUrl,
+      id: 'rx-sample-citycare-drskroy',
+      imageDataUrl: (imageDataUrl && !imageDataUrl.includes('tutorial') && !imageDataUrl.includes('scan_')) 
+        ? imageDataUrl 
+        : '/images/prescription_citycare.jpg',
       hospitalName: isBengali ? 'সিটি কেয়ার হাসপাতাল ও মেডিকেল রিসার্চ সেন্টার' : 'City Care Hospital & Medical Research Centre',
       doctorName: isBengali ? 'ডাঃ এস. কে. রায়, এমবিবিএস, এমডি (মেডিসিন)' : 'Dr. S. K. Roy, MBBS, MD (Medicine)',
       doctorSpecialty: isBengali ? 'মেডিসিন বিশেষজ্ঞ ও ক্রিটিক্যাল কেয়ার' : 'Internal Medicine & Critical Care',

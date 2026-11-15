@@ -96,4 +96,16 @@ export interface TranslationDictionary {
   addAnotherPrescriptionSubtitle: string;
   formTabletText: string;
   formCapsuleText: string;
+
+  // Page 5: Digital File Cabinet & Multi-Doctor/Prescription Accounts
+  accountsHubTitle: string;
+  accountsHubSubtitle: string;
+  accountNumberLabel: string;
+  openAccountButton: string;
+  allAccountsButton: string;
+  totalMedicinesCountLabel: string;
+  deleteAccountButton: string;
+  deleteAccountConfirm: string;
+  addNewAccountButton: string;
+  singleAccountDirectNotice: string;
 }
