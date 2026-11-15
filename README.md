@@ -1,7 +1,7 @@
 <div align="center">
   <img src="./public/images/wellbeing_heart_logo.png" alt="WellBeing Heart Logo" width="160" />
   <br />
-  <img src="./public/images/wellbeing_header.svg" alt="WellBeing - Thoughtful Technology. Meaningful Healthcare." width="720" />
+  <img src="./public/images/wellbeing_header.svg" alt="WellBeing - Thoughtful Technology. Meaningful Healthcare." width="820" />
 </div>
 
 ---
@@ -124,6 +124,5 @@ npm run preview
 
 ## 📄 License & Credits
 
-*More Than Medicine, A Commitment to Care.*  
-Created with ❤️ by **Alankrita Paul**.  
+*Thoughtful Technology. Meaningful Healthcare.*  
 All rights reserved. Designed as a free, privacy-first healthcare utility.

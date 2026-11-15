@@ -64,35 +64,40 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
         </button>
       </header>
 
-      {/* Center Hero Content */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 text-center max-w-4xl mx-auto my-auto">
+      {/* Center Hero Content (Full Viewport Focus) */}
+      <main className="relative z-10 min-h-[calc(100vh-80px)] flex flex-col items-center justify-center px-6 py-10 text-center max-w-4xl mx-auto my-auto">
         {/* Animated Beating Heart & Oscillating ECG Wave (Background Removed) */}
         <AnimatedHeartECG className="mb-4 sm:mb-6" theme={theme} />
 
-        {/* Title: WellBeing (Big with animated dual color contrast, word stays completely still) */}
-        <h1 className="text-6xl sm:text-8xl md:text-9xl font-black tracking-tight mb-3 select-none">
+        {/* Title: WellBeing (Focused hero size with animated dual color contrast, word stays completely still) */}
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight mb-2 sm:mb-3 select-none">
           <span className={theme === 'light' ? 'animate-dual-color-light' : 'animate-dual-color-dark'}>
             WellBeing
           </span>
         </h1>
 
         {/* Medical Prescription Graphic Below WellBeing */}
-        <div className="mb-5 sm:mb-6 flex items-center justify-center">
+        <div className="mb-4 sm:mb-5 flex items-center justify-center">
           <img
             src="/images/medical_rx_icon.png"
             alt="WellBeing Medical Icon"
-            className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 object-contain drop-shadow-xl select-none pointer-events-none transition-transform duration-300 hover:scale-105"
+            className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 object-contain drop-shadow-xl select-none pointer-events-none transition-transform duration-300 hover:scale-105"
             draggable={false}
           />
         </div>
 
-        {/* Tagline (Bigger with distinct contrasting color, not same as WellBeing) */}
-        <p className={`text-xl sm:text-2xl md:text-3xl max-w-3xl mx-auto font-black tracking-tight leading-relaxed mb-10 ${
-          theme === 'light'
-            ? 'text-amber-950 font-black'
-            : 'text-amber-400 font-extrabold'
+        {/* Slogan directly on Landing Page */}
+        <h2 className={`text-xl sm:text-2xl md:text-3xl max-w-2xl mx-auto font-black tracking-tight mb-2 sm:mb-3 ${
+          theme === 'light' ? 'text-slate-950 font-black' : 'text-white font-black'
         }`}>
-          Your Personal Medical File Cabinet & Pill Accountability Companion.
+          More Than Medicine, A Commitment to Care
+        </h2>
+
+        {/* Tagline */}
+        <p className={`text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10 ${
+          theme === 'light' ? 'text-slate-800 font-bold' : 'text-slate-300 font-medium'
+        }`}>
+          Your Personal Medical File Cabinet &amp; Pill Accountability Companion.
         </p>
 
         {/* Start Button */}
@@ -115,17 +120,21 @@ export const WelcomeLandingScreen: React.FC<WelcomeLandingScreenProps> = ({
         </div>
       </main>
 
-      {/* Footer Below Start Button */}
-      <footer className={`relative z-10 w-full py-6 px-6 text-center border-t backdrop-blur-md ${
+      {/* Substantial, Prominent Footer Portion (Scroll Down to View) */}
+      <footer className={`relative z-10 w-full py-14 sm:py-20 px-6 text-center border-t-2 backdrop-blur-md transition-colors ${
         theme === 'light'
-          ? 'border-slate-300 bg-white/95 text-slate-800 shadow-inner'
-          : 'border-slate-800/60 bg-slate-950/40 text-slate-400'
+          ? 'border-slate-300 bg-white/95 text-slate-800 shadow-2xl'
+          : 'border-slate-800 bg-slate-950/95 text-slate-300 shadow-2xl'
       }`}>
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm">
-          <p className={`font-extrabold tracking-tight ${theme === 'light' ? 'text-slate-900 font-extrabold' : 'text-slate-300 font-semibold'}`}>
-            More Than Medicine, A Commitment to Care.
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-base sm:text-lg">
+          <p className={`font-black tracking-tight text-lg sm:text-xl ${
+            theme === 'light' ? 'text-slate-950 font-black' : 'text-white font-black'
+          }`}>
+            A Little More Care in Every Part of Life
           </p>
-          <p className={theme === 'light' ? 'font-bold text-slate-700' : 'font-medium text-slate-400'}>
+          <p className={`text-sm sm:text-base font-semibold ${
+            theme === 'light' ? 'text-slate-600' : 'text-slate-400'
+          }`}>
             100% On-Device Medical Utility
           </p>
         </div>

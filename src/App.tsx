@@ -583,7 +583,7 @@ export const App: React.FC = () => {
         }`}>
           <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-2">
             <p className={`font-bold tracking-tight ${theme === 'light' ? 'text-slate-900 font-extrabold' : 'text-slate-300'}`}>
-              More Than Medicine, A Commitment to Care.
+              A Little More Care in Every Part of Life
             </p>
             <p className={theme === 'light' ? 'text-slate-700' : 'text-slate-400'}>
               100% On-Device Medical Utility
