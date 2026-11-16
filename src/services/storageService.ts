@@ -34,32 +34,32 @@ export const NOTIFICATION_TONES: NotificationToneOption[] = [
   {
     id: 'gentle_harp',
     name: 'Gentle Harp Chime',
-    description: '3-tone peaceful ascending harp (C5 - E5 - G5)',
+    description: '2.6s classical 6-note ascending harp arpeggio (C5 - E5 - G5 - B5 - C6 - G5)',
     icon: '🎵',
     isDefault: true,
   },
   {
     id: 'soft_marimba',
     name: 'Soft Marimba Bell',
-    description: 'Warm acoustic wooden double-tap with gentle warmth',
+    description: '2.5s warm wooden acoustic marimba melody (A4 - C#5 - E5 - A5 - F#5 - A5)',
     icon: '🪵',
   },
   {
     id: 'temple_bowl',
     name: 'Calm Temple Bowl',
-    description: 'Deep meditative resonant singing bowl (220Hz)',
+    description: '2.8s deep Tibetan singing bowl drone with clear silver temple bells',
     icon: '🧘',
   },
   {
     id: 'birdsong',
     name: 'Morning Birdsong Chirp',
-    description: 'Light, playful two-chirp morning birdsong slide',
+    description: '2.4s bright morning canopy with 4 natural chirps and harmonic chime pad',
     icon: '🐦',
   },
   {
     id: 'zen_wind',
     name: 'Zen Wind Chime',
-    description: '4-note breezing pentatonic chime (D5 - F#5 - A5 - D6)',
+    description: '2.7s peaceful 5-bell pentatonic Japanese wind chime breeze',
     icon: '🎐',
   },
 ];
