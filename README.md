@@ -8,7 +8,7 @@
 
 ## 🌟 Overview
 
-**WellBeing** is a 100% money-free, local-first medical utility designed to operate entirely on the patient's device storage (`localStorage` & `IndexedDB`). It requires **zero account creation, zero email IDs, and zero phone number inputs**, guaranteeing absolute data privacy and eliminating cybersecurity risks.
+**WellBeing** is a 100% money-free, local-first medical utility designed to operate entirely on the patient's device storage (`localStorage` & `IndexedDB`). It runs seamlessly both online and offline, requiring **zero account creation, zero email IDs, and zero phone number inputs**, guaranteeing absolute data privacy and eliminating cybersecurity risks.
 
 The application is thoughtfully crafted for everyone — including elderly patients, families, caregivers, and individuals managing chronic health conditions or daily medical routines with dignity, simplicity, and ease.
 
