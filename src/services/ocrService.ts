@@ -573,9 +573,13 @@ export const ocrService = {
 
     let rawOcrText = '';
 
-    // Run Tesseract Optical Character Recognition
+    // Run Tesseract Optical Character Recognition with local offline bundle (100% money-free, zero network calls, zero CDN fails)
     try {
-      const worker = await createWorker('eng');
+      const worker = await createWorker('eng', 1, {
+        workerPath: '/tesseract/worker.min.js',
+        corePath: '/tesseract/tesseract-core-simd-lstm.wasm.js',
+        langPath: '/tesseract',
+      });
       const ret = await worker.recognize(imageDataUrl);
       rawOcrText = ret?.data?.text || '';
       await worker.terminate();
