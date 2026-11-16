@@ -1,5 +1,6 @@
 import type { ScannedPrescription, Medication } from '../types/prescription';
 import { storageService, isMedicationCourseCompleted } from './storageService';
+import { getReminderLocalization } from '../i18n/reminderTranslations';
 
 // Browser & Device Native Notification Service
 // 100% money-free, zero account, operating via Web Notifications, Service Worker & Web Audio API
@@ -199,8 +200,28 @@ class NotificationService {
     }
   }
 
+  // Helper to map timing labels to the user's selected language
+  private resolveMealTimingText(
+    timingKey: string,
+    isBefore: boolean,
+    loc: ReturnType<typeof getReminderLocalization>
+  ): string {
+    const key = (timingKey || '').toLowerCase();
+    if (key.includes('breakfast')) {
+      return isBefore ? loc.beforeBreakfast : loc.afterBreakfast;
+    }
+    if (key.includes('lunch')) {
+      return isBefore ? loc.beforeLunch : loc.afterLunch;
+    }
+    if (key.includes('dinner')) {
+      return isBefore ? loc.beforeDinner : loc.afterDinner;
+    }
+    return isBefore ? loc.beforeFoodGeneral : loc.afterFoodGeneral;
+  }
+
   // 1. Morning Daily Overview Notification (Between 06:30 AM and 07:00 AM)
   // Single message in clean LIST format (bulleted lines, strictly NOT paragraph type)
+  // Fully localized according to user's selected language (Bengali, Hindi, English, etc.)
   public sendMorningBriefing(userName: string, prescription: ScannedPrescription): boolean {
     const meds = prescription.medicines || [];
     if (meds.length === 0) return false;
@@ -209,6 +230,9 @@ class NotificationService {
     const activeMeds = meds.filter((m) => !isMedicationCourseCompleted(m, prescription.date));
     if (activeMeds.length === 0) return false;
 
+    const lang = storageService.getLanguage();
+    const loc = getReminderLocalization(lang);
+
     // Helper to get exact meal relationship for each medicine
     const getTimingLabel = (m: Medication): string => {
       const isBefore = m.timing === 'before_food';
@@ -216,12 +240,12 @@ class NotificationService {
       const parts = freq.split('-').map((p) => parseInt(p.trim(), 10) || 0);
 
       const times: string[] = [];
-      if (parts[0] > 0) times.push(isBefore ? 'Before breakfast' : 'After breakfast');
-      if (parts[1] > 0) times.push(isBefore ? 'Before lunch' : 'After lunch');
-      if (parts[2] > 0) times.push(isBefore ? 'Before dinner' : 'After dinner');
+      if (parts[0] > 0) times.push(isBefore ? loc.beforeBreakfast : loc.afterBreakfast);
+      if (parts[1] > 0) times.push(isBefore ? loc.beforeLunch : loc.afterLunch);
+      if (parts[2] > 0) times.push(isBefore ? loc.beforeDinner : loc.afterDinner);
 
       if (times.length > 0) return times.join(', ');
-      return isBefore ? 'Before food' : 'After food';
+      return isBefore ? loc.beforeFoodGeneral : loc.afterFoodGeneral;
     };
 
     // Format strictly as a clean, readable LIST (bulleted lines, never paragraph text)
@@ -230,8 +254,8 @@ class NotificationService {
       .join('\n');
 
     const displayName = userName.trim() || 'Maa';
-    const title = `☀️ Good morning, ${displayName}!`;
-    const body = `Today's medicine list:\n${listLines}\n\nPlease keep your medicines with you.`;
+    const title = loc.morningTitle(displayName);
+    const body = `${loc.morningHeader}\n${listLines}\n\n${loc.morningFooter}`;
 
     this.sendNotification(title, {
       body,
@@ -243,6 +267,7 @@ class NotificationService {
   // 2. INDIVIDUAL MEDICINE REMINDER
   // Strictly ONE single message for that specific medicine at its exact time
   // Gives only the medicine name and whether to take before breakfast, after breakfast, etc.
+  // Language-sensitive: dynamically adapts to Bengali, Hindi, English, etc.
   public sendSingleMedicineReminder(
     userName: string, 
     med: Medication, 
@@ -251,10 +276,15 @@ class NotificationService {
   ): boolean {
     const isBeforeFood = med.timing === 'before_food' || mealLabel.toLowerCase().includes('before');
     const displayName = userName.trim() || 'Maa';
+    const lang = storageService.getLanguage();
+    const loc = getReminderLocalization(lang);
+
+    // Localize the meal timing phrase
+    const localizedMeal = this.resolveMealTimingText(mealLabel, isBeforeFood, loc);
 
     // Single medicine message: only medicine name and before/after breakfast, lunch, or dinner
     const title = `💊 ${med.name} (${med.dosage})`;
-    const body = `${displayName}, please take ${med.name} (${med.dosage}) ${mealLabel}.`;
+    const body = loc.singleDosePrompt(displayName, med.name, med.dosage, localizedMeal);
 
     const todayStr = new Date().toISOString().split('T')[0];
 
@@ -264,11 +294,11 @@ class NotificationService {
       tag: `wellbeing-med-${med.id}-${slotType}-${todayStr}`,
       requireInteraction: true,
       actions: [
-        { action: 'taken', title: '✓ Taken' },
-        { action: 'delayed', title: '⏱ Delay (15m)' },
-        { action: 'skipped', title: '✕ Skip' },
+        { action: 'taken', title: loc.actionTaken },
+        { action: 'delayed', title: loc.actionDelay15m },
+        { action: 'skipped', title: loc.actionSkip },
       ],
-      data: { med, timeLabel: mealLabel, slotType, isBeforeFood, userName: displayName },
+      data: { med, timeLabel: localizedMeal, slotType, isBeforeFood, userName: displayName },
     };
 
     this.sendNotification(title, options as NotificationOptions);
@@ -279,7 +309,7 @@ class NotificationService {
         new CustomEvent('wellbeing_single_dose_popup', {
           detail: {
             med,
-            timeLabel: mealLabel,
+            timeLabel: localizedMeal,
             slotType,
             isBeforeFood,
             userName: displayName,
@@ -293,16 +323,15 @@ class NotificationService {
   }
 
   // 3. Night / End-of-Day Adherence Summary Report (09:45 PM)
+  // Localized dynamically
   public sendNightSummary(userName: string, totalScheduled: number, takenCount: number, delayedCount: number, skippedCount: number): boolean {
     const displayName = userName.trim() || 'Maa';
-    const title = `🌙 Daily Medicine Summary for ${displayName}`;
+    const lang = storageService.getLanguage();
+    const loc = getReminderLocalization(lang);
+
+    const title = loc.nightSummaryTitle(displayName);
     const adherencePercent = totalScheduled > 0 ? Math.round((takenCount / totalScheduled) * 100) : 100;
-
-    let detail = `${takenCount} of ${totalScheduled} taken on time (${adherencePercent}%)`;
-    if (delayedCount > 0) detail += `, ${delayedCount} delayed`;
-    if (skippedCount > 0) detail += `, ${skippedCount} skipped`;
-
-    const body = `${detail}.\nAll details are safely saved in your report to show your doctor on your next checkup!`;
+    const body = loc.nightSummaryBody(takenCount, totalScheduled, adherencePercent, delayedCount, skippedCount);
 
     this.sendNotification(title, {
       body,
@@ -314,9 +343,12 @@ class NotificationService {
   // Preview test reminder so user can hear the pleasant, gentle chime and see the natural reminder format
   public sendTestSampleReminder(userName: string): void {
     const displayName = userName.trim() || 'Maa';
+    const lang = storageService.getLanguage();
+    const loc = getReminderLocalization(lang);
+
     this.playAlertChime();
     this.sendNotification(`💊 Pantoprazole 40mg`, {
-      body: `${displayName}, please take Pantoprazole 40mg before breakfast.`,
+      body: loc.singleDosePrompt(displayName, 'Pantoprazole', '40mg', loc.beforeBreakfast),
       tag: 'wellbeing-test-sample-reminder',
     });
   }
@@ -374,8 +406,10 @@ class NotificationService {
       if (isMedicationCourseCompleted(med, currentDoc.date)) {
         const completeKey = `wellbeing_course_completed_sent_${med.id}`;
         if (!localStorage.getItem(completeKey)) {
-          this.sendNotification(`🎉 Course Completed for ${displayName}!`, {
-            body: `${displayName}, your ${med.duration || 'prescribed'} course of ${med.name} (${med.dosage}) is now successfully completed! Well done.`,
+          const lang = storageService.getLanguage();
+          const loc = getReminderLocalization(lang);
+          this.sendNotification(loc.courseCompletedTitle(displayName), {
+            body: loc.courseCompletedBody(displayName, med.duration || 'prescribed', med.name, med.dosage),
             tag: `wellbeing-course-completed-${med.id}`,
           });
           localStorage.setItem(completeKey, 'true');

@@ -323,7 +323,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
             <ArrowLeft className="w-4 h-4" />
             <span>{t.allAccountsButton}</span>
           </button>
-        ) : (
+        ) : savedPrescriptionsList.length === 0 ? (
           <button
             type="button"
             onClick={onBackToTutorial}
@@ -337,7 +337,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
             <ArrowLeft className="w-4 h-4" />
             <span>{t.backButton}</span>
           </button>
-        )}
+        ) : null}
 
         <div className="text-center flex-1">
           <h1 className={`text-xl sm:text-2xl font-black tracking-tight ${

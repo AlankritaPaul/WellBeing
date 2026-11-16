@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { storageService } from '../../services/storageService';
 import { notificationService } from '../../services/notificationService';
+import { getReminderLocalization } from '../../i18n/reminderTranslations';
 import type { Medication, ScannedPrescription } from '../../types/prescription';
 import { BellRing, CheckCircle2, Clock, X, AlertCircle, UtensilsCrossed, AlertTriangle } from 'lucide-react';
 
@@ -20,8 +21,11 @@ interface SingleAlarmDetail {
 
 export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
   theme = 'dark',
+  currentLanguage,
 }) => {
   const isLight = theme === 'light';
+  const activeLang = currentLanguage || storageService.getLanguage();
+  const loc = getReminderLocalization(activeLang);
 
   // Queue of individual medication alerts to show ONE BY ONE
   const [alarmQueue, setAlarmQueue] = useState<SingleAlarmDetail[]>([]);
@@ -115,7 +119,7 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
     });
 
     notificationService.playAlertChime();
-    setSuccessToast(`✓ ${currentAlert.med.name} logged as TAKEN! Adherence score updated.`);
+    setSuccessToast(loc.loggedSuccess(currentAlert.med.name));
     setTimeout(() => {
       setSuccessToast(null);
       advanceQueue();
@@ -145,7 +149,7 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
       delayedUntil: duration,
     });
 
-    setSuccessToast(`⏱ ${currentAlert.med.name} delayed for ${duration}. Will ring again!`);
+    setSuccessToast(loc.delayedSuccess(currentAlert.med.name));
     setTimeout(() => {
       setSuccessToast(null);
       advanceQueue();
@@ -231,14 +235,14 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
               <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
                 isLight ? 'bg-blue-100 text-blue-900 border border-blue-200' : 'bg-blue-950/80 text-blue-300 border border-blue-700/60'
               }`}>
-                ⏰ 5-10 Min Advance Reminder
+                {loc.advanceNoticeBadge}
               </span>
               <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${
                 isBefore
                   ? 'bg-amber-500 text-slate-950 shadow-sm'
                   : 'bg-emerald-600 text-white shadow-sm'
               }`}>
-                {isBefore ? 'Take Before Food' : 'Take After Food'}
+                {isBefore ? loc.takeBeforeFoodBadge : loc.takeAfterFoodBadge}
               </span>
               <span className={`text-[11px] font-bold ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
                 {currentAlert.timeLabel}
@@ -249,7 +253,12 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
               {currentAlert.med.name} ({currentAlert.med.dosage})
             </h2>
             <p className={`text-xs sm:text-sm font-bold mt-1 ${isLight ? 'text-slate-800' : 'text-slate-200'}`}>
-              {currentAlert.userName || 'Maa'}, please take {currentAlert.med.name} ({currentAlert.med.dosage}) {currentAlert.timeLabel}.
+              {loc.singleDosePrompt(
+                currentAlert.userName || 'Maa',
+                currentAlert.med.name,
+                currentAlert.med.dosage,
+                currentAlert.timeLabel
+              )}
             </p>
           </div>
         </div>
@@ -274,7 +283,7 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
                 <span className={`text-[10px] font-black uppercase tracking-wider block mb-0.5 ${
                   isLight ? 'text-blue-900' : 'text-blue-400'
                 }`}>
-                  Current Medicine:
+                  {loc.currentMedicineLabel}
                 </span>
                 <h3 className="text-lg sm:text-xl font-black">{currentAlert.med.name}</h3>
                 <p className={`text-xs sm:text-sm font-bold mt-0.5 ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
@@ -291,7 +300,7 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
                   ? 'bg-emerald-100 border-emerald-300 text-emerald-950'
                   : 'bg-emerald-950/80 border-emerald-700 text-emerald-300'
               }`}>
-                <span>{isBefore ? 'খাওয়ার আগে' : 'খাওয়ার পরে'}</span>
+                <span>{isBefore ? loc.beforeFoodGeneral : loc.afterFoodGeneral}</span>
               </div>
             </div>
 
@@ -299,7 +308,7 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
             {alarmQueue.length > 1 && (
               <div className="mt-3 pt-2.5 border-t border-slate-200 dark:border-slate-800 text-[11px] font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1.5">
                 <BellRing className="w-3.5 h-3.5" />
-                <span>+ {alarmQueue.length - 1} more medicine waiting after this</span>
+                <span>{loc.moreMedsWaiting(alarmQueue.length - 1)}</span>
               </div>
             )}
           </div>
@@ -315,7 +324,7 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
               className="py-3.5 px-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-black text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center gap-1.5 shadow-lg shadow-emerald-950/30 transition-all cursor-pointer"
             >
               <CheckCircle2 className="w-4 h-4 stroke-[3]" />
-              <span>Taken</span>
+              <span>{loc.actionTaken}</span>
             </button>
 
             {/* BUTTON 2: DELAY */}
@@ -329,7 +338,7 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
               }`}
             >
               <Clock className="w-4 h-4" />
-              <span>Delay (15m)</span>
+              <span>{loc.actionDelay15m}</span>
             </button>
 
             {/* BUTTON 3: SKIP */}
@@ -343,7 +352,7 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
               }`}
             >
               <AlertCircle className="w-4 h-4" />
-              <span>Skip Dose</span>
+              <span>{loc.actionSkip}</span>
             </button>
           </div>
         )}
@@ -353,23 +362,23 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
           <div className="py-3 space-y-3 animate-in fade-in">
             <div className="flex items-center justify-between">
               <span className={`text-xs font-black ${isLight ? 'text-slate-900' : 'text-slate-200'}`}>
-                Why are you skipping {currentAlert.med.name}? (Recorded for Doctor):
+                {loc.skipPrompt(currentAlert.med.name)}
               </span>
               <button
                 type="button"
                 onClick={() => setIsSkipping(false)}
                 className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline"
               >
-                Back
+                {loc.skipBack}
               </button>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               {[
-                'Medical Fasting / Test Prep',
-                'Stomach Upset / Side Effect',
-                'Forgot Medicine Strip at Home',
-                'Doctor Advised to Hold',
+                loc.skipReasonFasting,
+                loc.skipReasonUpset,
+                loc.skipReasonForgot,
+                loc.skipReasonDoctorHold,
               ].map((reason) => (
                 <button
                   key={reason}
@@ -392,7 +401,7 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
                 type="text"
                 value={customReason}
                 onChange={(e) => setCustomReason(e.target.value)}
-                placeholder="Or type custom reason..."
+                placeholder={loc.customReasonPlaceholder}
                 className={`flex-1 py-2 px-3 rounded-xl border text-xs focus:outline-none ${
                   isLight
                     ? 'bg-white border-2 border-slate-300 text-slate-900'
@@ -412,7 +421,7 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
                 }}
                 className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white font-bold text-xs"
               >
-                Skip
+                {loc.actionSkip.replace(/^[✕✓⏱\s]+/, '')}
               </button>
             </div>
           </div>

@@ -45,9 +45,20 @@ export const App: React.FC = () => {
     return list.length > 0 ? list[0] : null;
   });
 
-  // App Phase: Always open directly onto the Welcome Landing Screen for anyone starting or reloading the app!
+  // App Phase:
+  // - If 0 accounts exist (first-time brand new user) -> start on 'welcome'
+  // - If 1 prescription account exists -> land directly on that prescription ('scanner')
+  // - If >1 accounts exist -> land on the accounts list ('accounts_hub')
   type AppPhase = 'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'accounts_hub' | 'vault' | 'lab' | 'pills_inventory' | 'doctor_review' | 'page3_completed';
-  const [appPhase, setAppPhase] = useState<AppPhase>('welcome');
+  const [appPhase, setAppPhase] = useState<AppPhase>(() => {
+    const list = storageService.getPrescriptions();
+    if (list.length === 1) {
+      return 'scanner';
+    } else if (list.length > 1) {
+      return 'accounts_hub';
+    }
+    return 'welcome';
+  });
 
   // Navigation History Stack so Back buttons always navigate smoothly without getting stuck or looping
   const [, setNavHistory] = useState<AppPhase[]>([]);
@@ -59,6 +70,7 @@ export const App: React.FC = () => {
   };
 
   const navigateBack = () => {
+    const stored = storageService.getPrescriptions();
     setNavHistory((prev) => {
       const history = [...prev];
       // Discard any entries that match the current screen
@@ -67,17 +79,27 @@ export const App: React.FC = () => {
       }
       if (history.length > 0) {
         const target = history.pop()!;
+        // Anti-looping rule: Once an account exists, NEVER navigate back into onboarding (welcome, language_select, preferred_name, tutorial)!
+        if (stored.length > 0 && ['welcome', 'language_select', 'preferred_name', 'tutorial'].includes(target)) {
+          setAppPhase(stored.length > 1 ? 'accounts_hub' : 'scanner');
+          return [];
+        }
         setAppPhase(target);
         return history;
       }
 
       // Logical fallback if history stack is empty
       if (['vault', 'lab', 'pills_inventory', 'doctor_review'].includes(appPhase)) {
-        setAppPhase(prescriptions.length > 1 ? 'accounts_hub' : 'scanner');
+        setAppPhase(stored.length > 1 ? 'accounts_hub' : 'scanner');
       } else if (appPhase === 'accounts_hub') {
-        setAppPhase('scanner');
+        if (stored.length === 1) {
+          setAppPhase('scanner');
+        }
       } else if (appPhase === 'scanner') {
-        setAppPhase(prescriptions.length > 1 ? 'accounts_hub' : 'tutorial');
+        if (stored.length > 1) {
+          setAppPhase('accounts_hub');
+        }
+        // If stored.length === 1, keep the user on their prescription account! Never loop to tutorial or welcome!
       } else if (appPhase === 'tutorial') {
         setAppPhase('preferred_name');
       } else if (appPhase === 'preferred_name') {
@@ -85,7 +107,13 @@ export const App: React.FC = () => {
       } else if (appPhase === 'language_select') {
         setAppPhase('welcome');
       } else {
-        setAppPhase('welcome');
+        if (stored.length === 1) {
+          setAppPhase('scanner');
+        } else if (stored.length > 1) {
+          setAppPhase('accounts_hub');
+        } else {
+          setAppPhase('welcome');
+        }
       }
       return [];
     });
@@ -156,7 +184,16 @@ export const App: React.FC = () => {
   }, [appPhase]);
 
   const handleHomeClick = () => {
-    handleResetToWelcome();
+    const list = storageService.getPrescriptions();
+    if (list.length === 1) {
+      setSelectedPrescription(list[0]);
+      storageService.setActiveAccountId(list[0].id);
+      setAppPhase('scanner');
+    } else if (list.length > 1) {
+      setAppPhase('accounts_hub');
+    } else {
+      handleResetToWelcome();
+    }
   };
 
   const handleStart = () => {
