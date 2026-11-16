@@ -216,7 +216,12 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
             )}
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                isLight ? 'bg-blue-100 text-blue-900 border border-blue-200' : 'bg-blue-950/80 text-blue-300 border border-blue-700/60'
+              }`}>
+                ⏰ 5-10 Min Advance Reminder
+              </span>
               <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${
                 isBefore
                   ? 'bg-amber-500 text-slate-950 shadow-sm'
@@ -234,8 +239,8 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
             </h2>
             <p className={`text-xs sm:text-sm font-bold mt-1 ${isLight ? 'text-slate-800' : 'text-slate-200'}`}>
               {isBefore
-                ? 'Please take this medicine before your food.'
-                : 'Please take this medicine after your food.'}
+                ? 'Meal is coming up in 5-10 minutes. Please take this medicine on an empty stomach before food.'
+                : 'Meal finishing in 5-10 minutes. Please keep this medicine ready to take right after food.'}
             </p>
           </div>
         </div>

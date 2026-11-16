@@ -11,6 +11,19 @@ const STORAGE_KEYS = {
   ACTIVE_ACCOUNT_ID: 'wellbeing_active_account_id',
   DOSE_LOGS: 'wellbeing_dose_logs',
   THEME: 'wellbeing_theme',
+  REMINDER_SETTINGS: 'wellbeing_reminder_preferences',
+};
+
+export interface ReminderPreferences {
+  morningWindow: '6:30' | '6:45' | '7:00';
+  advanceMinutes: number; // 5 or 10 minutes before
+  soundLevel: 'gentle' | 'soft' | 'moderate';
+}
+
+export const DEFAULT_REMINDER_PREFERENCES: ReminderPreferences = {
+  morningWindow: '6:30',
+  advanceMinutes: 10,
+  soundLevel: 'gentle',
 };
 
 // Generates a canonical account key for medical deduplication.
@@ -582,6 +595,27 @@ export const storageService = {
       return prescriptions.length > 0;
     } catch {
       return false;
+    }
+  },
+
+  getReminderPreferences(): ReminderPreferences {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.REMINDER_SETTINGS);
+      if (!data) return DEFAULT_REMINDER_PREFERENCES;
+      return { ...DEFAULT_REMINDER_PREFERENCES, ...JSON.parse(data) };
+    } catch {
+      return DEFAULT_REMINDER_PREFERENCES;
+    }
+  },
+
+  setReminderPreferences(prefs: Partial<ReminderPreferences>): void {
+    try {
+      const current = this.getReminderPreferences();
+      const updated = { ...current, ...prefs };
+      localStorage.setItem(STORAGE_KEYS.REMINDER_SETTINGS, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('wellbeing_reminder_preferences_changed', { detail: updated }));
+    } catch (e) {
+      console.warn('Could not save reminder preferences:', e);
     }
   },
 

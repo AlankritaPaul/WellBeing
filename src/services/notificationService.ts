@@ -71,9 +71,9 @@ class NotificationService {
     }
   }
 
-  // Play a LOUD, rich, resonant medical alarm chime sequence
-  // Designed to cut through background noise and ring loud and clear on phone/laptop speakers
-  public playAlertChime(): void {
+  // Play a GENTLE, soothing, non-disturbing melodic chime
+  // Crystal clear and audible on phone/laptop speakers, but never harsh or piercing
+  public playAlertChime(volumeLevel: number = 0.32): void {
     try {
       const ctx = this.initAudio();
       if (!ctx) return;
@@ -84,67 +84,66 @@ class NotificationService {
 
       const now = ctx.currentTime;
 
-      // Master Compressor to maximize acoustic loudness without clipping
-      const compressor = ctx.createDynamicsCompressor();
-      compressor.threshold.setValueAtTime(-15, now);
-      compressor.knee.setValueAtTime(20, now);
-      compressor.ratio.setValueAtTime(8, now);
-      compressor.attack.setValueAtTime(0.003, now);
-      compressor.release.setValueAtTime(0.2, now);
-      compressor.connect(ctx.destination);
+      // Soft limiter for smooth acoustic dynamics (zero harsh clipping)
+      const limiter = ctx.createDynamicsCompressor();
+      limiter.threshold.setValueAtTime(-12, now);
+      limiter.knee.setValueAtTime(30, now);
+      limiter.ratio.setValueAtTime(4, now);
+      limiter.attack.setValueAtTime(0.01, now);
+      limiter.release.setValueAtTime(0.25, now);
+      limiter.connect(ctx.destination);
 
-      // Master Gain for full loud volume
+      // Master Gain set to comfortable, gentle level (never blaring)
       const masterGain = ctx.createGain();
-      masterGain.gain.setValueAtTime(0.95, now);
-      masterGain.connect(compressor);
+      masterGain.gain.setValueAtTime(volumeLevel, now);
+      masterGain.connect(limiter);
 
-      // Helper to synthesize a crisp, resonant bell tone with harmonic overtones
-      const playBellTone = (freq: number, startTime: number, duration: number, gainLevel: number) => {
-        // Fundamental frequency
+      // Helper to synthesize a gentle, warm bell chime with soft envelope
+      const playGentleTone = (freq: number, startTime: number, duration: number, peakGain: number) => {
+        // Warm sine wave fundamental
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.type = 'triangle';
+        osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, startTime);
+
+        // Smooth gradual attack (0.04s) to prevent clicking, followed by pleasant exponential ring
         gain.gain.setValueAtTime(0, startTime);
-        gain.gain.linearRampToValueAtTime(gainLevel, startTime + 0.02);
+        gain.gain.linearRampToValueAtTime(peakGain, startTime + 0.04);
         gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
         osc.connect(gain);
         gain.connect(masterGain);
         osc.start(startTime);
         osc.stop(startTime + duration + 0.05);
 
-        // Harmonic overtone (2x freq for bright bell clarity)
-        const harm = ctx.createOscillator();
-        const harmGain = ctx.createGain();
-        harm.type = 'sine';
-        harm.frequency.setValueAtTime(freq * 2, startTime);
-        harmGain.gain.setValueAtTime(0, startTime);
-        harmGain.gain.linearRampToValueAtTime(gainLevel * 0.45, startTime + 0.015);
-        harmGain.gain.exponentialRampToValueAtTime(0.0008, startTime + duration * 0.7);
-        harm.connect(harmGain);
-        harmGain.connect(masterGain);
-        harm.start(startTime);
-        harm.stop(startTime + duration + 0.05);
+        // Soft warm harmonic overtone (low amplitude for warmth, not sharpness)
+        const overtone = ctx.createOscillator();
+        const overGain = ctx.createGain();
+        overtone.type = 'triangle';
+        overtone.frequency.setValueAtTime(freq * 2, startTime);
+        overGain.gain.setValueAtTime(0, startTime);
+        overGain.gain.linearRampToValueAtTime(peakGain * 0.2, startTime + 0.03);
+        overGain.gain.exponentialRampToValueAtTime(0.0005, startTime + duration * 0.6);
+
+        overtone.connect(overGain);
+        overGain.connect(masterGain);
+        overtone.start(startTime);
+        overtone.stop(startTime + duration + 0.05);
       };
 
-      // Two complete cycles of a distinct 3-tone ascending hospital alarm chime:
-      // Cycle 1:
-      playBellTone(587.33, now, 0.45, 0.90);        // D5 (0.00s)
-      playBellTone(739.99, now + 0.18, 0.45, 0.90); // F#5 (0.18s)
-      playBellTone(880.00, now + 0.36, 0.85, 0.98); // A5 (0.36s)
-
-      // Cycle 2 (Repeats loud for urgent notice):
-      playBellTone(587.33, now + 0.90, 0.45, 0.90); // D5 (0.90s)
-      playBellTone(739.99, now + 1.08, 0.45, 0.90); // F#5 (1.08s)
-      playBellTone(1174.66, now + 1.26, 1.20, 1.0); // D6 (1.26s) High resolution bell
+      // A gentle, peaceful 3-note ascending harp/marimba chime (C5 -> E5 -> G5)
+      // Plays ONCE smoothly without harsh repetitions
+      playGentleTone(523.25, now, 0.45, 0.70);        // C5 (warm base)
+      playGentleTone(659.25, now + 0.16, 0.50, 0.75); // E5 (bright pleasant center)
+      playGentleTone(783.99, now + 0.34, 0.90, 0.85); // G5 (peaceful lingering bell)
     } catch (e) {
       console.warn('Audio chime playback error:', e);
     }
 
-    // Trigger physical mobile phone vibration
+    // Gentle haptic feedback (short soft double-tap, not a long vibration)
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       try {
-        navigator.vibrate([400, 150, 400, 150, 600]);
+        navigator.vibrate([100, 70, 100]);
       } catch {
         // Ignored if vibration not permitted
       }
@@ -200,7 +199,7 @@ class NotificationService {
     }
   }
 
-  // 1. Morning Daily Overview Notification (08:00 AM)
+  // 1. Morning Daily Overview Notification (Between 06:30 AM and 07:00 AM)
   // Reminds patient of their full day course before leaving home
   public sendMorningBriefing(userName: string, prescription: ScannedPrescription): boolean {
     const meds = prescription.medicines || [];
@@ -208,7 +207,7 @@ class NotificationService {
 
     const medNames = meds.map((m) => `${m.name} (${m.timing === 'before_food' ? 'Before food' : 'After food'})`).join(', ');
     const title = `☀️ Good Morning ${userName ? userName : 'Patient'}! Today's Medicine Plan`;
-    const body = `Your Full Day Course: ${medNames}.\nPlease pack your medicine strips with you before leaving home so you don't forget!`;
+    const body = `🌅 Morning Reminder (6:30 - 7:00 AM):\nYour full day course: ${medNames}.\nPlease keep your medicines handy with you before leaving home!`;
 
     this.sendNotification(title, {
       body,
@@ -217,7 +216,7 @@ class NotificationService {
     return true;
   }
 
-  // 2. INDIVIDUAL MEDICINE REMINDER (One by One, strictly separating Before Food and After Food!)
+  // 2. INDIVIDUAL MEDICINE REMINDER (One by One, strictly separating Before Food and After Food, 5-10 mins in advance!)
   public sendSingleMedicineReminder(
     userName: string, 
     med: Medication, 
@@ -227,10 +226,10 @@ class NotificationService {
     const isBeforeFood = med.timing === 'before_food';
     const timingBadge = isBeforeFood ? 'Take Before Food' : 'Take After Food';
 
-    const title = `${med.name} (${med.dosage}) • ${timingBadge}`;
+    const title = `💊 ${med.name} (${med.dosage}) • ${timingBadge}`;
     const body = isBeforeFood 
-      ? 'Please take this medicine before your food.'
-      : 'Please take this medicine after your food.';
+      ? `⏰ 5-10 min advance reminder: Meal coming up. Please take ${med.name} on an empty stomach before food.`
+      : `⏰ 5-10 min advance reminder: Meal finishing soon. Please keep ${med.name} ready to take right after food.`;
 
     const todayStr = new Date().toISOString().split('T')[0];
 
@@ -286,6 +285,15 @@ class NotificationService {
     return true;
   }
 
+  // Preview test reminder so user can hear the pleasant, gentle chime and see the 5-10 min advance notification
+  public sendTestSampleReminder(userName: string): void {
+    this.playAlertChime();
+    this.sendNotification(`💊 Pantoprazole 40mg • Take Before Food`, {
+      body: `⏰ 5-10 min advance reminder for ${userName ? userName : 'Patient'}: Breakfast is in 10 minutes. Please take Pantoprazole 40mg on an empty stomach. (Sound is set to gentle chime)`,
+      tag: 'wellbeing-test-sample-reminder',
+    });
+  }
+
   // Background Auto-Scheduler
   // Checks current time every 30 seconds and checks each medicine individually at its exact Before/After food time
   public startScheduler(): void {
@@ -333,8 +341,10 @@ class NotificationService {
       return slotIndex === 0;
     };
 
-    // A. 08:00 AM Morning Full-Day Overview Briefing
-    if (currentHour === 8 && currentMinute >= 0 && currentMinute <= 15) {
+    // A. 06:30 AM to 07:00 AM Morning Full-Day Overview Briefing
+    // Triggered strictly between 6:30 AM and 7:00 AM (with catch-up up to 8:30 AM if the device was asleep/offline)
+    const isMorningTime = (currentHour === 6 && currentMinute >= 30) || (currentHour === 7 && currentMinute <= 15) || (currentHour === 7 || currentHour === 8);
+    if (isMorningTime) {
       const briefingKey = `wellbeing_briefing_sent_${todayStr}`;
       if (!localStorage.getItem(briefingKey)) {
         this.sendMorningBriefing(userName, currentDoc);
@@ -342,89 +352,89 @@ class NotificationService {
       }
     }
 
-    // B. MORNING MEDICINES:
-    // 1. Morning BEFORE Food (07:30 AM to 08:15 AM)
-    if (currentHour === 7 && currentMinute >= 30 || (currentHour === 8 && currentMinute <= 15)) {
+    // B. MORNING MEDICINES (At least 5 to 10 minutes before):
+    // 1. Morning BEFORE Food: (07:20 AM to 07:55 AM — 5-10 mins advance before food / dose)
+    if (currentHour === 7 && currentMinute >= 20 && currentMinute <= 55) {
       currentDoc.medicines.forEach((med) => {
         if (hasDoseInSlot(med, 0) && med.timing === 'before_food') {
           const medKey = `wellbeing_dose_${med.id}_morning_beforefood_${todayStr}`;
           if (!localStorage.getItem(medKey)) {
-            this.sendSingleMedicineReminder(userName, med, 'Morning (Before Breakfast)', 'morning');
+            this.sendSingleMedicineReminder(userName, med, 'Morning (5-10 min Before Breakfast)', 'morning');
             localStorage.setItem(medKey, 'true');
           }
         }
       });
     }
 
-    // 2. Morning AFTER Food (08:30 AM to 09:15 AM)
-    if (currentHour === 8 && currentMinute >= 30 || (currentHour === 9 && currentMinute <= 15)) {
+    // 2. Morning AFTER Food: (08:20 AM to 08:55 AM — 5-10 mins advance before finishing breakfast)
+    if (currentHour === 8 && currentMinute >= 20 && currentMinute <= 55) {
       currentDoc.medicines.forEach((med) => {
         if (hasDoseInSlot(med, 0) && med.timing !== 'before_food') {
           const medKey = `wellbeing_dose_${med.id}_morning_afterfood_${todayStr}`;
           if (!localStorage.getItem(medKey)) {
-            this.sendSingleMedicineReminder(userName, med, 'Morning (After Breakfast)', 'morning');
+            this.sendSingleMedicineReminder(userName, med, 'Morning (5-10 min Before Finishing Breakfast)', 'morning');
             localStorage.setItem(medKey, 'true');
           }
         }
       });
     }
 
-    // C. AFTERNOON MEDICINES:
-    // 1. Afternoon BEFORE Food (12:45 PM to 01:15 PM)
-    if ((currentHour === 12 && currentMinute >= 45) || (currentHour === 13 && currentMinute <= 15)) {
+    // C. AFTERNOON MEDICINES (At least 5 to 10 minutes before):
+    // 1. Afternoon BEFORE Food: (12:20 PM to 12:55 PM — 5-10 mins advance before lunch)
+    if (currentHour === 12 && currentMinute >= 20 && currentMinute <= 55) {
       currentDoc.medicines.forEach((med) => {
         if (hasDoseInSlot(med, 1) && med.timing === 'before_food') {
           const medKey = `wellbeing_dose_${med.id}_afternoon_beforefood_${todayStr}`;
           if (!localStorage.getItem(medKey)) {
-            this.sendSingleMedicineReminder(userName, med, 'Afternoon (Before Lunch)', 'afternoon');
+            this.sendSingleMedicineReminder(userName, med, 'Afternoon (5-10 min Before Lunch)', 'afternoon');
             localStorage.setItem(medKey, 'true');
           }
         }
       });
     }
 
-    // 2. Afternoon AFTER Food (01:45 PM to 02:30 PM)
-    if ((currentHour === 13 && currentMinute >= 45) || (currentHour === 14 && currentMinute <= 30)) {
+    // 2. Afternoon AFTER Food: (01:20 PM to 01:55 PM — 5-10 mins advance before finishing lunch)
+    if (currentHour === 13 && currentMinute >= 20 && currentMinute <= 55) {
       currentDoc.medicines.forEach((med) => {
         if (hasDoseInSlot(med, 1) && med.timing !== 'before_food') {
           const medKey = `wellbeing_dose_${med.id}_afternoon_afterfood_${todayStr}`;
           if (!localStorage.getItem(medKey)) {
-            this.sendSingleMedicineReminder(userName, med, 'Afternoon (After Lunch)', 'afternoon');
+            this.sendSingleMedicineReminder(userName, med, 'Afternoon (5-10 min Before Finishing Lunch)', 'afternoon');
             localStorage.setItem(medKey, 'true');
           }
         }
       });
     }
 
-    // D. NIGHT MEDICINES:
-    // 1. Night BEFORE Food (07:45 PM to 08:30 PM)
-    if ((currentHour === 19 && currentMinute >= 45) || (currentHour === 20 && currentMinute <= 30)) {
+    // D. NIGHT MEDICINES (At least 5 to 10 minutes before):
+    // 1. Night BEFORE Food: (07:50 PM to 08:25 PM — 5-10 mins advance before dinner)
+    if ((currentHour === 19 && currentMinute >= 50) || (currentHour === 20 && currentMinute <= 25)) {
       currentDoc.medicines.forEach((med) => {
         if (hasDoseInSlot(med, 2) && med.timing === 'before_food') {
           const medKey = `wellbeing_dose_${med.id}_night_beforefood_${todayStr}`;
           if (!localStorage.getItem(medKey)) {
-            this.sendSingleMedicineReminder(userName, med, 'Night (Before Dinner)', 'night');
+            this.sendSingleMedicineReminder(userName, med, 'Night (5-10 min Before Dinner)', 'night');
             localStorage.setItem(medKey, 'true');
           }
         }
       });
     }
 
-    // 2. Night AFTER Food (09:00 PM to 09:45 PM)
-    if (currentHour === 21 && currentMinute >= 0 && currentMinute <= 45) {
+    // 2. Night AFTER Food: (08:50 PM to 09:25 PM — 5-10 mins advance before finishing dinner)
+    if ((currentHour === 20 && currentMinute >= 50) || (currentHour === 21 && currentMinute <= 25)) {
       currentDoc.medicines.forEach((med) => {
         if (hasDoseInSlot(med, 2) && med.timing !== 'before_food') {
           const medKey = `wellbeing_dose_${med.id}_night_afterfood_${todayStr}`;
           if (!localStorage.getItem(medKey)) {
-            this.sendSingleMedicineReminder(userName, med, 'Night (After Dinner)', 'night');
+            this.sendSingleMedicineReminder(userName, med, 'Night (5-10 min Before Finishing Dinner)', 'night');
             localStorage.setItem(medKey, 'true');
           }
         }
       });
     }
 
-    // E. 09:45 PM Bedtime Adherence Summary for Doctor
-    if (currentHour === 21 && currentMinute >= 45) {
+    // E. 09:30 PM to 10:00 PM Bedtime Adherence Summary for Doctor
+    if (currentHour === 21 && currentMinute >= 30) {
       const nightSummaryKey = `wellbeing_night_summary_sent_${todayStr}`;
       if (!localStorage.getItem(nightSummaryKey)) {
         let totalScheduled = 0;

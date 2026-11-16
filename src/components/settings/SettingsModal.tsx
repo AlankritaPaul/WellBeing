@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { getTranslation } from '../../i18n/translations';
 import { ALL_LANGUAGES } from '../../i18n/languages';
 import { storageService } from '../../services/storageService';
+import { notificationService } from '../../services/notificationService';
 import type { ScannedPrescription } from '../../types/prescription';
 import {
   Settings,
@@ -19,7 +20,10 @@ import {
   Square,
   Globe,
   User,
-  ShieldCheck
+  ShieldCheck,
+  BellRing,
+  Volume2,
+  Clock
 } from 'lucide-react';
 
 export type AppTheme = 'dark' | 'light';
@@ -52,7 +56,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const t = getTranslation(currentLanguage);
   const currentLangObj = ALL_LANGUAGES.find((l) => l.code === currentLanguage) || ALL_LANGUAGES[0];
 
-  const [activeTab, setActiveTab] = useState<'accounts' | 'theme' | 'tutorial'>('accounts');
+  const [activeTab, setActiveTab] = useState<'accounts' | 'theme' | 'tutorial' | 'reminders'>('accounts');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [confirmDeleteModal, setConfirmDeleteModal] = useState<{
     show: boolean;
@@ -168,6 +172,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           >
             <Video className="w-4 h-4 text-emerald-400" />
             <span>{t.tutorialSettingsTitle}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('reminders')}
+            className={`px-3.5 py-2.5 rounded-t-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all border-b-2 whitespace-nowrap ${
+              activeTab === 'reminders'
+                ? 'border-amber-500 text-amber-400 bg-amber-950/20'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <BellRing className="w-4 h-4 text-amber-400" />
+            <span>Reminders & Sounds</span>
           </button>
         </div>
 
@@ -405,6 +422,79 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <Video className="w-4 h-4" />
                   <span>{t.watchTutorialButton}</span>
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: REMINDERS & SOUND SETTINGS */}
+          {activeTab === 'reminders' && (
+            <div className="space-y-4 animate-in fade-in">
+              <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2">
+                <div className="flex items-center gap-2.5 text-amber-400">
+                  <Clock className="w-5 h-5 shrink-0" />
+                  <h3 className="text-sm sm:text-base font-black text-white">
+                    Morning Reminder Schedule (6:30 AM – 7:00 AM)
+                  </h3>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Your daily full-course reminder arrives strictly between <strong>6:30 AM and 7:00 AM</strong> each morning so you can pack all your medicine strips before heading out for the day.
+                </p>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-800/60 text-emerald-300 text-xs font-bold mt-1">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>Active Window: 06:30 AM – 07:00 AM</span>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2">
+                <div className="flex items-center gap-2.5 text-blue-400">
+                  <BellRing className="w-5 h-5 shrink-0" />
+                  <h3 className="text-sm sm:text-base font-black text-white">
+                    Meal Reminders (5 to 10 Minutes Before)
+                  </h3>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Before-food and after-food reminders are delivered at least <strong>5 to 10 minutes in advance</strong>. This gives you time to take empty-stomach pills before eating, and to keep post-meal medicines ready right as your meal finishes.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-bold pt-1">
+                  <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">
+                    <span className="text-amber-400 block mb-0.5">🟡 Before Food:</span>
+                    Sent 5–10 min before meal time
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">
+                    <span className="text-emerald-400 block mb-0.5">🟢 After Food:</span>
+                    Sent 5–10 min before meal finishes
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 text-emerald-400">
+                    <Volume2 className="w-5 h-5 shrink-0" />
+                    <div>
+                      <h3 className="text-sm sm:text-base font-black text-white">
+                        Gentle Chime Sound
+                      </h3>
+                      <p className="text-xs text-slate-400">
+                        Soft, soothing, and pleasant — never loud or disturbing
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      notificationService.sendTestSampleReminder(userName);
+                    }}
+                    className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-black flex items-center justify-center gap-2 shadow-md transition-all shrink-0 cursor-pointer"
+                  >
+                    <Volume2 className="w-4 h-4" />
+                    <span>🔊 Test Gentle Chime</span>
+                  </button>
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  Tap &quot;Test Gentle Chime&quot; to preview how the notification rings and pops up on your phone. It uses a peaceful 3-tone marimba chime calibrated to alert you without being harsh.
+                </p>
               </div>
             </div>
           )}
