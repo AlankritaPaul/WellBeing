@@ -3,6 +3,7 @@ import { getTranslation } from '../../i18n/translations';
 import { ALL_LANGUAGES } from '../../i18n/languages';
 import { ocrService } from '../../services/ocrService';
 import { storageService, resolvePrescriptionImageUrl } from '../../services/storageService';
+import { optimizePrescriptionImage } from '../../utils/imageUtils';
 import type { ScannedPrescription, Medication } from '../../types/prescription';
 import {
   Camera,
@@ -165,18 +166,28 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
     }
   };
 
-  // Handle file chosen from upload or camera
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle file chosen from upload or camera with auto-optimization for fast OCR and storage
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          // Real prescription scanned by patient -> isSample = false!
-          handleProcessImage(reader.result, false);
+      try {
+        // Optimize raw camera or gallery photo to crisp max-1600px (~200KB)
+        // This avoids memory crashes in mobile browsers and eliminates localStorage quota errors
+        const optimizedDataUrl = await optimizePrescriptionImage(file, 1600);
+        if (optimizedDataUrl) {
+          handleProcessImage(optimizedDataUrl, false);
         }
-      };
-      reader.readAsDataURL(file);
+      } catch (err) {
+        console.error('Prescription image optimization error:', err);
+        // Fallback to direct file reader
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (typeof reader.result === 'string') {
+            handleProcessImage(reader.result, false);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
     }
     e.target.value = '';
   };

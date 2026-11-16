@@ -387,7 +387,22 @@ export const storageService = {
       localStorage.setItem(STORAGE_KEYS.PRESCRIPTIONS, JSON.stringify(updated));
       window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: updated }));
     } catch (e) {
-      console.warn('Could not save prescription to device storage:', e);
+      console.warn('Could not save prescription directly to device storage, attempting safe compact storage:', e);
+      try {
+        // Fallback: If quota exceeded, preserve the current prescription and compact older ones
+        const currentList = this.getPrescriptions();
+        const compacted = [rawPrescription, ...currentList.filter(p => p.id !== rawPrescription.id)].map((p, idx) => {
+          if (idx === 0) return p;
+          if (p.imageDataUrl && p.imageDataUrl.startsWith('data:image') && p.imageDataUrl.length > 300000) {
+            return { ...p, imageDataUrl: '' };
+          }
+          return p;
+        });
+        localStorage.setItem(STORAGE_KEYS.PRESCRIPTIONS, JSON.stringify(compacted));
+        window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: compacted }));
+      } catch (quotaErr) {
+        console.error('Storage quota limit reached:', quotaErr);
+      }
     }
   },
 
