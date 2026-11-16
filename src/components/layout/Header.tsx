@@ -2,6 +2,7 @@ import React from 'react';
 import { Globe, User, Smartphone, Monitor, Settings } from 'lucide-react';
 import { ALL_LANGUAGES } from '../../i18n/languages';
 import { getTranslation } from '../../i18n/translations';
+import { storageService } from '../../services/storageService';
 
 interface HeaderProps {
   currentLanguage: string;
@@ -67,6 +68,18 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Settings className="w-4 h-4 text-blue-400 shrink-0" />
               <span className="hidden sm:inline">{t.openSettingsButton}</span>
+            </button>
+          )}
+
+          {/* Quick Switch to English Button (Visible whenever another language is active) */}
+          {currentLanguage !== 'en' && (
+            <button
+              type="button"
+              onClick={() => storageService.setLanguage('en')}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-blue-600/30 hover:bg-blue-600/50 text-blue-200 border border-blue-400/50 text-xs font-bold transition-all shadow-sm active:scale-95"
+              title="Convert app language and voice to English"
+            >
+              <span>🇬🇧 English</span>
             </button>
           )}
 

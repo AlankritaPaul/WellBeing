@@ -127,6 +127,11 @@ export const App: React.FC = () => {
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [isMobileFrame, setIsMobileFrame] = useState<boolean>(false);
 
+  // Sync HTML element lang attribute to ensure mobile keyboards and voice dictation use the correct language (e.g. English)
+  useEffect(() => {
+    document.documentElement.lang = currentLanguage || 'en';
+  }, [currentLanguage]);
+
   // Sync state when storage events occur
   useEffect(() => {
     const handleLangChange = (e: Event) => {
