@@ -131,6 +131,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
   const [showApiKeyModal, setShowApiKeyModal] = useState<boolean>(false);
   const [apiKeyInput, setApiKeyInput] = useState<string>(() => storageService.getGeminiApiKey());
   const [pendingDataUrl, setPendingDataUrl] = useState<string | null>(null);
+  const [scanErrorMessage, setScanErrorMessage] = useState<string | null>(null);
 
   const handleSaveApiKeyAndAnalyze = (e: React.FormEvent) => {
     e.preventDefault();
@@ -208,6 +209,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
     setIsScanning(true);
     setScannedData(null);
     setIsSaved(false);
+    setScanErrorMessage(null);
     setScanStepIndex(0);
 
     const step1 = setTimeout(() => setScanStepIndex(1), 500);
@@ -227,9 +229,20 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
       }
     } catch (err: any) {
       console.warn('Prescription Vision AI processing status:', err);
-      if (err?.message === 'NO_API_KEY' || !geminiVisionService.isConfigured()) {
+      if (
+        err?.message === 'NO_API_KEY' || 
+        !geminiVisionService.isConfigured() ||
+        err?.message?.toLowerCase().includes('api key') ||
+        err?.message?.toLowerCase().includes('api_key')
+      ) {
         setPendingDataUrl(dataUrl);
         setShowApiKeyModal(true);
+      } else {
+        setScanErrorMessage(
+          currentLangObj.code === 'bn'
+            ? 'প্রেসক্রিপশনটি বিশ্লেষণ করতে সমস্যা হয়েছে। ইন্টারনেট সংযোগ পরীক্ষা করে পুনরায় চেষ্টা করুন।'
+            : 'Could not analyze prescription. Please check your network connection and lighting, then try again.'
+        );
       }
     } finally {
       clearTimeout(step1);
@@ -502,6 +515,23 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
           >
             <Plus className={`w-3.5 h-3.5 ${isLight ? 'text-emerald-700' : 'text-emerald-400'}`} />
             <span>{t.addAnotherPrescription}</span>
+          </button>
+        </div>
+      )}
+
+      {/* Error notification banner if any */}
+      {scanErrorMessage && (
+        <div className="mb-4 p-4 rounded-2xl bg-rose-950/70 border border-rose-500/50 text-rose-200 text-xs sm:text-sm flex items-center justify-between gap-3 animate-in fade-in">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+            <span>{scanErrorMessage}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setScanErrorMessage(null)}
+            className="p-1 rounded-lg hover:bg-rose-900/60 text-rose-300 transition-colors"
+          >
+            <X className="w-4 h-4" />
           </button>
         </div>
       )}

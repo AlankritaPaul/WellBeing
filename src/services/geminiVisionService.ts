@@ -191,7 +191,17 @@ Return strictly a valid JSON object matching this schema (do not wrap in markdow
           throw new Error('Empty response from Gemini Vision');
         }
 
-        const parsed: GeminiAnalysisResult = JSON.parse(rawJsonText);
+        let cleanText = rawJsonText.trim();
+        if (cleanText.startsWith('```')) {
+          cleanText = cleanText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+        }
+        const firstBrace = cleanText.indexOf('{');
+        const lastBrace = cleanText.lastIndexOf('}');
+        if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+          cleanText = cleanText.substring(firstBrace, lastBrace + 1);
+        }
+
+        const parsed: GeminiAnalysisResult = JSON.parse(cleanText);
         const uniqueRxId = 'rx-ai-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
 
         const mappedMedicines: Medication[] = (parsed.medicines || []).map((m) => ({
