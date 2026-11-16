@@ -23,7 +23,8 @@ import {
   Building2,
   X,
   FileCheck2,
-  UserCheck
+  UserCheck,
+  Pill
 } from 'lucide-react';
 
 interface DiagnosticLabDeskScreenProps {
@@ -35,6 +36,7 @@ interface DiagnosticLabDeskScreenProps {
   onSelectPrescription: (prescription: ScannedPrescription) => void;
   onBackToPrevious: () => void;
   onOpenVault?: (prescription: ScannedPrescription) => void;
+  onOpenPillsMenu?: () => void;
 }
 
 export const DiagnosticLabDeskScreen: React.FC<DiagnosticLabDeskScreenProps> = ({
@@ -46,6 +48,7 @@ export const DiagnosticLabDeskScreen: React.FC<DiagnosticLabDeskScreenProps> = (
   onSelectPrescription,
   onBackToPrevious,
   onOpenVault,
+  onOpenPillsMenu,
 }) => {
   const isLight = theme === 'light';
   const t = getTranslation(currentLanguage);
@@ -319,6 +322,22 @@ export const DiagnosticLabDeskScreen: React.FC<DiagnosticLabDeskScreenProps> = (
             <ArrowLeft className="w-4 h-4" />
             <span>{t.backButton}</span>
           </button>
+
+          {onOpenPillsMenu && (
+            <button
+              type="button"
+              onClick={onOpenPillsMenu}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm ${
+                isLight
+                  ? 'bg-amber-50 hover:bg-amber-100 text-amber-950 border-2 border-amber-300'
+                  : 'border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-300'
+              }`}
+              title={t.openPillsMenuButton}
+            >
+              <Pill className={`w-4 h-4 ${isLight ? 'text-amber-800' : 'text-amber-400'}`} />
+              <span>{t.openPillsMenuButton}</span>
+            </button>
+          )}
 
           {onOpenVault && (
             <button

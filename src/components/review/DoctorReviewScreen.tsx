@@ -9,6 +9,7 @@ import {
   Printer,
   Download,
   ArrowLeft,
+  FlaskConical,
   Pill,
   ShieldCheck,
   Timer
@@ -22,7 +23,7 @@ interface DoctorReviewScreenProps {
   allPrescriptions: ScannedPrescription[];
   onSelectPrescription: (prescription: ScannedPrescription) => void;
   onBackToPrevious: () => void;
-  onOpenReminders?: () => void;
+  onOpenLabDesk?: () => void;
   onOpenPillsMenu?: () => void;
 }
 
@@ -34,7 +35,7 @@ export const DoctorReviewScreen: React.FC<DoctorReviewScreenProps> = ({
   allPrescriptions,
   onSelectPrescription,
   onBackToPrevious,
-  onOpenReminders,
+  onOpenLabDesk,
   onOpenPillsMenu,
 }) => {
   const isLight = theme === 'light';
@@ -126,18 +127,18 @@ export const DoctorReviewScreen: React.FC<DoctorReviewScreenProps> = ({
             <span>{t.backButton}</span>
           </button>
 
-          {onOpenReminders && (
+          {onOpenLabDesk && (
             <button
               type="button"
-              onClick={onOpenReminders}
+              onClick={onOpenLabDesk}
               className={`px-3 py-2 rounded-xl border text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm ${
                 isLight
-                  ? 'border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-900'
-                  : 'border-emerald-700/60 bg-emerald-950/60 hover:bg-emerald-900 text-emerald-200'
+                  ? 'border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-900'
+                  : 'border-blue-700/60 bg-blue-950/60 hover:bg-blue-900 text-blue-200'
               }`}
             >
-              <Clock className="w-4 h-4 text-emerald-500" />
-              <span>{t.openRemindersButton}</span>
+              <FlaskConical className="w-4 h-4 text-blue-500" />
+              <span>{t.openLabDeskButton}</span>
             </button>
           )}
 

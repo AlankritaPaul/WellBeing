@@ -18,6 +18,7 @@ import {
   FlaskConical,
   Clock,
   FileCheck2,
+  FileText,
   Settings,
   Check,
   Edit3,
@@ -33,7 +34,6 @@ interface AccountsListScreenProps {
   onOpenVault?: (prescription: ScannedPrescription) => void;
   onOpenLabDesk?: (prescription: ScannedPrescription) => void;
   onOpenPillsMenu?: (prescription: ScannedPrescription) => void;
-  onOpenReminders?: (prescription: ScannedPrescription) => void;
   onOpenDoctorReview?: (prescription: ScannedPrescription) => void;
   onOpenSettings?: () => void;
   onAddNewPrescription: () => void;
@@ -50,7 +50,6 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
   onOpenVault,
   onOpenLabDesk,
   onOpenPillsMenu,
-  onOpenReminders,
   onOpenDoctorReview,
   onOpenSettings,
   onAddNewPrescription,
@@ -459,9 +458,14 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
                     <button
                       type="button"
                       onClick={() => onOpenLabDesk(prescription)}
-                      className="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-[11px] flex items-center justify-center gap-1 transition-all"
+                      className={`py-2 px-2 rounded-xl active:scale-[0.98] font-bold text-[11px] flex items-center justify-center gap-1 transition-all ${
+                        isLight
+                          ? 'bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200'
+                          : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                      }`}
+                      title={t.openLabDeskButton}
                     >
-                      <FlaskConical className="w-3.5 h-3.5 text-blue-400" />
+                      <FlaskConical className={`w-3.5 h-3.5 ${isLight ? 'text-blue-700' : 'text-blue-400'}`} />
                       <span>{t.openLabDeskButton}</span>
                     </button>
                   )}
@@ -470,21 +474,31 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
                     <button
                       type="button"
                       onClick={() => onOpenPillsMenu(prescription)}
-                      className="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-[11px] flex items-center justify-center gap-1 transition-all"
+                      className={`py-2 px-2 rounded-xl active:scale-[0.98] font-bold text-[11px] flex items-center justify-center gap-1 transition-all ${
+                        isLight
+                          ? 'bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-200'
+                          : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                      }`}
+                      title={t.openPillsMenuButton}
                     >
-                      <Pill className="w-3.5 h-3.5 text-amber-400" />
+                      <Pill className={`w-3.5 h-3.5 ${isLight ? 'text-amber-700' : 'text-amber-400'}`} />
                       <span>{t.openPillsMenuButton}</span>
                     </button>
                   )}
 
-                  {onOpenReminders && (
+                  {onOpenVault && (
                     <button
                       type="button"
-                      onClick={() => onOpenReminders(prescription)}
-                      className="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-[11px] flex items-center justify-center gap-1 transition-all"
+                      onClick={() => onOpenVault(prescription)}
+                      className={`py-2 px-2 rounded-xl active:scale-[0.98] font-bold text-[11px] flex items-center justify-center gap-1 transition-all ${
+                        isLight
+                          ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-950 border border-emerald-200'
+                          : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                      }`}
+                      title={t.openVaultButton}
                     >
-                      <Clock className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>{t.openRemindersButton}</span>
+                      <FileText className={`w-3.5 h-3.5 ${isLight ? 'text-emerald-700' : 'text-emerald-400'}`} />
+                      <span>{t.openVaultButton}</span>
                     </button>
                   )}
 
@@ -492,9 +506,14 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
                     <button
                       type="button"
                       onClick={() => onOpenDoctorReview(prescription)}
-                      className="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 font-bold text-[11px] flex items-center justify-center gap-1 transition-all"
+                      className={`py-2 px-2 rounded-xl active:scale-[0.98] font-bold text-[11px] flex items-center justify-center gap-1 transition-all ${
+                        isLight
+                          ? 'bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300'
+                          : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                      }`}
+                      title={t.openDoctorReviewButton}
                     >
-                      <FileCheck2 className="w-3.5 h-3.5 text-blue-300" />
+                      <FileCheck2 className={`w-3.5 h-3.5 ${isLight ? 'text-blue-700' : 'text-blue-300'}`} />
                       <span>{t.openDoctorReviewButton}</span>
                     </button>
                   )}

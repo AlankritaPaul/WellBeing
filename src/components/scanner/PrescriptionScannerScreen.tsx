@@ -48,7 +48,6 @@ interface PrescriptionScannerScreenProps {
   onOpenVault?: () => void;
   onOpenLabDesk?: () => void;
   onOpenPillsMenu?: () => void;
-  onOpenReminders?: () => void;
   onOpenDoctorReview?: () => void;
   onSavedToCabinet?: (prescription: ScannedPrescription) => void;
 }
@@ -64,7 +63,6 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
   onOpenVault,
   onOpenLabDesk,
   onOpenPillsMenu,
-  onOpenReminders,
   onOpenDoctorReview,
   onSavedToCabinet,
 }) => {
@@ -814,18 +812,19 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                 </button>
               )}
 
-              {onOpenReminders && (
+              {onOpenVault && (
                 <button
                   type="button"
-                  onClick={onOpenReminders}
+                  onClick={onOpenVault}
                   className={`py-2 px-2 rounded-xl font-bold text-[11px] flex items-center justify-center gap-1 transition-colors ${
                     isLight
                       ? 'bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-900'
                       : 'bg-slate-950/80 hover:bg-slate-800 border border-slate-800 text-slate-200'
                   }`}
+                  title={t.openVaultButton}
                 >
-                  <Clock className={`w-3.5 h-3.5 ${isLight ? 'text-emerald-700' : 'text-emerald-400'}`} />
-                  <span>{t.openRemindersButton}</span>
+                  <FileText className={`w-3.5 h-3.5 ${isLight ? 'text-emerald-700' : 'text-emerald-400'}`} />
+                  <span>{t.openVaultButton}</span>
                 </button>
               )}
 

@@ -15,6 +15,7 @@ import {
   Building2,
   X,
   FileCheck2,
+  FlaskConical,
   ShieldCheck,
   PackageCheck
 } from 'lucide-react';
@@ -27,7 +28,7 @@ interface PillsInventoryScreenProps {
   allPrescriptions: ScannedPrescription[];
   onSelectPrescription: (prescription: ScannedPrescription) => void;
   onBackToPrevious: () => void;
-  onOpenReminders?: () => void;
+  onOpenLabDesk?: () => void;
   onOpenDoctorReview?: () => void;
 }
 
@@ -39,7 +40,7 @@ export const PillsInventoryScreen: React.FC<PillsInventoryScreenProps> = ({
   allPrescriptions,
   onSelectPrescription,
   onBackToPrevious,
-  onOpenReminders,
+  onOpenLabDesk,
   onOpenDoctorReview,
 }) => {
   const isLight = theme === 'light';
@@ -171,18 +172,18 @@ export const PillsInventoryScreen: React.FC<PillsInventoryScreenProps> = ({
             <span>{t.backButton}</span>
           </button>
 
-          {onOpenReminders && (
+          {onOpenLabDesk && (
             <button
               type="button"
-              onClick={onOpenReminders}
+              onClick={onOpenLabDesk}
               className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm ${
                 isLight
                   ? 'bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-300'
                   : 'border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-300'
               }`}
             >
-              <Clock className={`w-4 h-4 ${isLight ? 'text-amber-700' : 'text-amber-400'}`} />
-              <span>{t.openRemindersButton}</span>
+              <FlaskConical className={`w-4 h-4 ${isLight ? 'text-blue-700' : 'text-blue-400'}`} />
+              <span>{t.openLabDeskButton}</span>
             </button>
           )}
 

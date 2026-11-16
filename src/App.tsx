@@ -13,7 +13,6 @@ import { AccountsListScreen } from './components/cabinet/AccountsListScreen';
 import { PrescriptionVaultScreen } from './components/vault/PrescriptionVaultScreen';
 import { DiagnosticLabDeskScreen } from './components/lab/DiagnosticLabDeskScreen';
 import { PillsInventoryScreen } from './components/pills/PillsInventoryScreen';
-import { DailyPillAccountabilityScreen } from './components/reminders/DailyPillAccountabilityScreen';
 import { GlobalDoseAlertModal } from './components/reminders/GlobalDoseAlertModal';
 import { DoctorReviewScreen } from './components/review/DoctorReviewScreen';
 import { NameChangeModal } from './components/onboarding/NameChangeModal';
@@ -47,7 +46,7 @@ export const App: React.FC = () => {
   });
 
   // App Phase: Always open directly onto the Welcome Landing Screen for anyone starting or reloading the app!
-  type AppPhase = 'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'accounts_hub' | 'vault' | 'lab' | 'pills_inventory' | 'reminders' | 'doctor_review' | 'page3_completed';
+  type AppPhase = 'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'accounts_hub' | 'vault' | 'lab' | 'pills_inventory' | 'doctor_review' | 'page3_completed';
   const [appPhase, setAppPhase] = useState<AppPhase>('welcome');
 
   // Navigation History Stack so Back buttons always navigate smoothly without getting stuck or looping
@@ -73,7 +72,7 @@ export const App: React.FC = () => {
       }
 
       // Logical fallback if history stack is empty
-      if (['vault', 'lab', 'pills_inventory', 'reminders', 'doctor_review'].includes(appPhase)) {
+      if (['vault', 'lab', 'pills_inventory', 'doctor_review'].includes(appPhase)) {
         setAppPhase(prescriptions.length > 1 ? 'accounts_hub' : 'scanner');
       } else if (appPhase === 'accounts_hub') {
         setAppPhase('scanner');
@@ -412,11 +411,6 @@ export const App: React.FC = () => {
                   storageService.setActiveAccountId(prescription.id);
                   navigateTo('pills_inventory');
                 }}
-                onOpenReminders={(prescription: ScannedPrescription) => {
-                  setSelectedPrescription(prescription);
-                  storageService.setActiveAccountId(prescription.id);
-                  navigateTo('reminders');
-                }}
                 onOpenDoctorReview={(prescription: ScannedPrescription) => {
                   setSelectedPrescription(prescription);
                   storageService.setActiveAccountId(prescription.id);
@@ -460,9 +454,6 @@ export const App: React.FC = () => {
                 onOpenPillsMenu={() => {
                   navigateTo('pills_inventory');
                 }}
-                onOpenReminders={() => {
-                  navigateTo('reminders');
-                }}
                 onOpenDoctorReview={() => {
                   navigateTo('doctor_review');
                 }}
@@ -478,7 +469,7 @@ export const App: React.FC = () => {
             </div>
           )}
 
-          {/* Page 6: "Scanned Papers" Digital Vault (Pan & Zoom 1x to 4x, Rotation, Local Download & PDF) */}
+          {/* Page 6: Original Prescription Paper Document Viewer (Pan & Zoom 1x to 4x, Rotation, Print & Download) */}
           {appPhase === 'vault' && (
             <div className="flex-1 flex flex-col items-center justify-start py-4 sm:py-6 w-full">
               <PrescriptionVaultScreen
@@ -510,6 +501,9 @@ export const App: React.FC = () => {
                   storageService.setActiveAccountId(p.id);
                 }}
                 onBackToPrevious={navigateBack}
+                onOpenPillsMenu={() => {
+                  navigateTo('pills_inventory');
+                }}
                 onOpenVault={(p) => {
                   setSelectedPrescription(p);
                   storageService.setActiveAccountId(p.id);
@@ -533,8 +527,8 @@ export const App: React.FC = () => {
                   storageService.setActiveAccountId(p.id);
                 }}
                 onBackToPrevious={navigateBack}
-                onOpenReminders={() => {
-                  navigateTo('reminders');
+                onOpenLabDesk={() => {
+                  navigateTo('lab');
                 }}
                 onOpenDoctorReview={() => {
                   navigateTo('doctor_review');
@@ -543,31 +537,7 @@ export const App: React.FC = () => {
             </div>
           )}
 
-          {/* Page 9: Daily Pill Accountability & 3-Button Smart Delayed Alarms */}
-          {appPhase === 'reminders' && (
-            <div className="flex-1 flex flex-col items-center justify-start py-4 sm:py-6 w-full">
-              <DailyPillAccountabilityScreen
-                currentLanguage={currentLanguage}
-                userName={userName}
-                theme={theme}
-                activePrescription={selectedPrescription}
-                allPrescriptions={prescriptions}
-                onSelectPrescription={(p) => {
-                  setSelectedPrescription(p);
-                  storageService.setActiveAccountId(p.id);
-                }}
-                onBackToPrevious={navigateBack}
-                onOpenPillsMenu={() => {
-                  navigateTo('pills_inventory');
-                }}
-                onOpenDoctorReview={() => {
-                  navigateTo('doctor_review');
-                }}
-              />
-            </div>
-          )}
-
-          {/* Page 10: Doctor Review Mode & Adherence Proof Report */}
+          {/* Page 9: Doctor Review Mode & Adherence Proof Report */}
           {appPhase === 'doctor_review' && (
             <div className="flex-1 flex flex-col items-center justify-start py-4 sm:py-6 w-full">
               <DoctorReviewScreen
@@ -581,8 +551,8 @@ export const App: React.FC = () => {
                   storageService.setActiveAccountId(p.id);
                 }}
                 onBackToPrevious={navigateBack}
-                onOpenReminders={() => {
-                  navigateTo('reminders');
+                onOpenLabDesk={() => {
+                  navigateTo('lab');
                 }}
                 onOpenPillsMenu={() => {
                   navigateTo('pills_inventory');

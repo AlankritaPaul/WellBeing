@@ -104,9 +104,9 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addNewAccountButton: '+ Add Another Prescription (New Account)',
     singleAccountDirectNotice: 'Active Medical Account',
 
-    // Page 6: "Scanned Papers" Digital Vault
-    vaultTitle: 'Prescription Document Vault',
-    vaultSubtitle: 'High-resolution inspection, 4x pan-zoom, and original paper document backup',
+    // Page 6: Original Prescription Paper Document Viewer
+    vaultTitle: 'Original Prescription Paper',
+    vaultSubtitle: 'View, zoom in (4x), and print the doctor\'s original prescription document',
     zoomInButton: 'Zoom In (+)',
     zoomOutButton: 'Zoom Out (-)',
     resetZoomButton: 'Reset View',
@@ -123,7 +123,7 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     switchPrescriptionLabel: 'Switch Prescription',
     backToCabinetButton: '← Back to File Cabinet',
     backToPrescriptionButton: '← Back to Prescription',
-    openVaultButton: 'Inspect in Vault',
+    openVaultButton: 'View Original Prescription',
 
     // Page 7: Diagnostic Lab Desk
     labDeskTitle: 'Diagnostic Lab Desk',
@@ -334,9 +334,9 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     addNewAccountButton: '+ আরেকটি প্রেসক্রিপশন যোগ করুন (নতুন অ্যাকাউন্ট)',
     singleAccountDirectNotice: 'সক্রিয় মেডিকেল অ্যাকাউন্ট',
 
-    // Page 6: "Scanned Papers" Digital Vault
-    vaultTitle: 'প্রেসক্রিপশন ডিজিটাল ভল্ট',
-    vaultSubtitle: 'মূল প্রেসক্রিপশন নথির উচ্চ রেজোলিউশন পরিদর্শন, ৪ গুণ জুম ও ডাউনলোড',
+    // Page 6: Original Prescription Paper Document Viewer
+    vaultTitle: 'মূল প্রেসক্রিপশন কাগজ',
+    vaultSubtitle: 'ডাক্তারের মূল প্রেসক্রিপশন কাগজ ৪ গুণ জুম করে পরিষ্কারভাবে দেখুন ও প্রিন্ট করুন',
     zoomInButton: 'জুম বাড়ান (+)',
     zoomOutButton: 'জুম কমান (-)',
     resetZoomButton: 'স্বাভাবিক মাপ',
@@ -353,7 +353,7 @@ export const TRANSLATIONS: Record<SupportedLanguageCode, TranslationDictionary> 
     switchPrescriptionLabel: 'প্রেসক্রিপশন পরিবর্তন',
     backToCabinetButton: '← ডিজিটাল ফাইলে ফিরুন',
     backToPrescriptionButton: '← প্রেসক্রিপশন তালিকায় ফিরুন',
-    openVaultButton: 'ভল্টে দেখুন',
+    openVaultButton: 'মূল প্রেসক্রিপশন দেখুন',
 
     // Page 7: Diagnostic Lab Desk
     labDeskTitle: 'ডায়াগনস্টিক ল্যাব ডেস্ক',
