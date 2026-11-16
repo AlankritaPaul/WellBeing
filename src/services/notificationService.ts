@@ -225,13 +225,12 @@ class NotificationService {
     slotType: 'morning' | 'afternoon' | 'night'
   ): boolean {
     const isBeforeFood = med.timing === 'before_food';
-    const timingBadge = isBeforeFood ? 'Take BEFORE Food' : 'Take AFTER Food';
-    const instructions = isBeforeFood 
-      ? 'on an empty stomach, 30 minutes before your meal.'
-      : 'after having your meal.';
+    const timingBadge = isBeforeFood ? 'Take Before Food' : 'Take After Food';
 
-    const title = `${isBeforeFood ? '⚠️' : '💊'} ${timingBadge}: ${med.name} (${med.dosage})`;
-    const body = `${userName ? `${userName}, please ` : 'Please '}take ${med.name} (${med.dosage}) now ${instructions}\nTap to mark as Taken, Delay, or Skip.`;
+    const title = `${med.name} (${med.dosage}) • ${timingBadge}`;
+    const body = isBeforeFood 
+      ? 'Please take this medicine before your food.'
+      : 'Please take this medicine after your food.';
 
     const todayStr = new Date().toISOString().split('T')[0];
 

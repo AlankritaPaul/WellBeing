@@ -222,7 +222,7 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
                   ? 'bg-amber-500 text-slate-950 shadow-sm'
                   : 'bg-emerald-600 text-white shadow-sm'
               }`}>
-                {isBefore ? '⚠️ TAKE BEFORE FOOD' : '🍽️ TAKE AFTER FOOD'}
+                {isBefore ? 'Take Before Food' : 'Take After Food'}
               </span>
               <span className={`text-[11px] font-bold ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
                 {currentAlert.timeLabel}
@@ -230,12 +230,12 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
             </div>
 
             <h2 className={`text-xl sm:text-2xl font-black mt-2 leading-snug ${isLight ? 'text-slate-950' : 'text-white'}`}>
-              Time for {currentAlert.med.name}
+              {currentAlert.med.name} ({currentAlert.med.dosage})
             </h2>
-            <p className={`text-xs sm:text-sm font-semibold mt-0.5 ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
+            <p className={`text-xs sm:text-sm font-bold mt-1 ${isLight ? 'text-slate-800' : 'text-slate-200'}`}>
               {isBefore
-                ? 'Take on an empty stomach, 30 minutes before your meal.'
-                : 'Take immediately after completing your meal.'}
+                ? 'Please take this medicine before your food.'
+                : 'Please take this medicine after your food.'}
             </p>
           </div>
         </div>

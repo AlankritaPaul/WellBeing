@@ -88,7 +88,7 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
     const beforeMed = meds.find((m) => m.timing === 'before_food') || meds[0];
     if (!beforeMed) return;
     notificationService.sendSingleMedicineReminder(userName, beforeMed, 'Morning (07:30 AM Before Breakfast)', 'morning');
-    setTestFeedback(currentLangObj.code === 'bn' ? `⚠️ খাওয়ার আগের ওষুধের অ্যালার্ট পাঠানো হয়েছে (${beforeMed.name})!` : `⚠️ Sent BEFORE FOOD alert for ${beforeMed.name}!`);
+    setTestFeedback(currentLangObj.code === 'bn' ? `খাওয়ার আগের ওষুধের নোটিফিকেশন পাঠানো হয়েছে (${beforeMed.name})` : `Sent: Take this medicine before your food (${beforeMed.name})`);
     setTimeout(() => setTestFeedback(null), 4000);
   };
 
@@ -101,7 +101,7 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
     const afterMed = meds.find((m) => m.timing !== 'before_food') || meds[1] || meds[0];
     if (!afterMed) return;
     notificationService.sendSingleMedicineReminder(userName, afterMed, 'Morning (08:30 AM After Breakfast)', 'morning');
-    setTestFeedback(currentLangObj.code === 'bn' ? `🍽️ খাওয়ার পরের ওষুধের অ্যালার্ট পাঠানো হয়েছে (${afterMed.name})!` : `🍽️ Sent AFTER FOOD alert for ${afterMed.name}!`);
+    setTestFeedback(currentLangObj.code === 'bn' ? `খাওয়ার পরের ওষুধের নোটিফিকেশন পাঠানো হয়েছে (${afterMed.name})` : `Sent: Take this medicine after your food (${afterMed.name})`);
     setTimeout(() => setTestFeedback(null), 4000);
   };
 
@@ -568,7 +568,7 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
                 }`}
                 title="Ring alarm for a single medicine BEFORE food"
               >
-                <span>⚠️ Test Before Food Alarm</span>
+                <span>Test "Take Before Food"</span>
               </button>
 
               <button
@@ -579,9 +579,9 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
                     ? 'bg-white hover:bg-emerald-100 text-emerald-950 border border-emerald-300 shadow-sm'
                     : 'bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 border border-emerald-700/60'
                 }`}
-                title="Ring alarm for a single medicine AFTER food"
+                title="Send notification for a single medicine AFTER food"
               >
-                <span>🍽️ Test After Food Alarm</span>
+                <span>Test "Take After Food"</span>
               </button>
 
               <button
