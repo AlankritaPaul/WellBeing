@@ -13,6 +13,7 @@ const STORAGE_KEYS = {
   THEME: 'wellbeing_theme',
   REMINDER_SETTINGS: 'wellbeing_reminder_preferences',
   NOTIFICATION_TONE: 'wellbeing_notification_tone',
+  GEMINI_API_KEY: 'wellbeing_gemini_api_key',
 };
 
 export type NotificationToneId = 
@@ -759,6 +760,27 @@ export const storageService = {
       window.dispatchEvent(new CustomEvent('wellbeing_notification_tone_changed', { detail: tone }));
     } catch (e) {
       console.warn('Could not save notification tone:', e);
+    }
+  },
+
+  getGeminiApiKey(): string {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.GEMINI_API_KEY) || (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
+    } catch {
+      return '';
+    }
+  },
+
+  setGeminiApiKey(key: string): void {
+    try {
+      if (key && key.trim()) {
+        localStorage.setItem(STORAGE_KEYS.GEMINI_API_KEY, key.trim());
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.GEMINI_API_KEY);
+      }
+      window.dispatchEvent(new CustomEvent('wellbeing_gemini_key_changed', { detail: key.trim() }));
+    } catch (e) {
+      console.warn('Could not save Gemini API key:', e);
     }
   },
 

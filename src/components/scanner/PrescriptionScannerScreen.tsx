@@ -4,6 +4,7 @@ import { ALL_LANGUAGES } from '../../i18n/languages';
 import { ocrService } from '../../services/ocrService';
 import { storageService, resolvePrescriptionImageUrl } from '../../services/storageService';
 import { optimizePrescriptionImage } from '../../utils/imageUtils';
+import { geminiVisionService } from '../../services/geminiVisionService';
 import type { ScannedPrescription, Medication } from '../../types/prescription';
 import {
   Camera,
@@ -410,6 +411,19 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
           }`}>
             {t.scannerSubtitle}
           </p>
+          <div className="mt-2 flex items-center justify-center">
+            {geminiVisionService.isConfigured() ? (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
+                <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                <span>{currentLangObj.code === 'bn' ? 'এআই হাতের লেখা রিডার সক্রিয়' : 'AI Handwriting Vision Engine Active'}</span>
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-800/40 text-cyan-300 text-[11px] font-medium">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                <span>{currentLangObj.code === 'bn' ? 'ডাক্তারের হাতের লেখা বুঝতে সেটিংসে এআই সক্রিয় করুন' : 'Enable AI in Settings for messy doctor cursive'}</span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right spacing (removed redundant language pill per user instruction) */}

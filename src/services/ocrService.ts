@@ -1,5 +1,6 @@
 import { createWorker } from 'tesseract.js';
 import type { ScannedPrescription, Medication, ContactPhone, DiagnosticTest } from '../types/prescription';
+import { geminiVisionService } from './geminiVisionService';
 
 export interface OCRProcessOptions {
   isSample?: boolean;
@@ -563,8 +564,22 @@ export const ocrService = {
 
     // ========================================================
     // PATH 2: REAL USER PRESCRIPTION (Authentic OCR & Storage)
+    // Priority 1: Gemini Vision AI (Deciphers messy cursive doctor handwriting)
     // ========================================================
-    const uniqueRxId = 'rx-user-' + Date.now();
+    if (geminiVisionService.isConfigured()) {
+      try {
+        const aiResult = await geminiVisionService.analyzePrescription(
+          imageDataUrl,
+          languageCode,
+          patientNameFallback
+        );
+        return aiResult;
+      } catch (aiErr) {
+        console.warn('Gemini Vision AI error, proceeding to local scanner fallback:', aiErr);
+      }
+    }
+
+    const uniqueRxId = 'rx-user-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6);
     let rawOcrText = '';
 
     // Run Tesseract Optical Character Recognition with local offline bundle (100% money-free, zero network calls, zero CDN fails)
