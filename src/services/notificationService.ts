@@ -95,7 +95,7 @@ class NotificationService {
 
       // Master Gain for full loud volume
       const masterGain = ctx.createGain();
-      masterGain.gain.setValueAtTime(0.9, now);
+      masterGain.gain.setValueAtTime(0.95, now);
       masterGain.connect(compressor);
 
       // Helper to synthesize a crisp, resonant bell tone with harmonic overtones
@@ -119,7 +119,7 @@ class NotificationService {
         harm.type = 'sine';
         harm.frequency.setValueAtTime(freq * 2, startTime);
         harmGain.gain.setValueAtTime(0, startTime);
-        harmGain.gain.linearRampToValueAtTime(gainLevel * 0.4, startTime + 0.015);
+        harmGain.gain.linearRampToValueAtTime(gainLevel * 0.45, startTime + 0.015);
         harmGain.gain.exponentialRampToValueAtTime(0.0008, startTime + duration * 0.7);
         harm.connect(harmGain);
         harmGain.connect(masterGain);
@@ -129,13 +129,13 @@ class NotificationService {
 
       // Two complete cycles of a distinct 3-tone ascending hospital alarm chime:
       // Cycle 1:
-      playBellTone(587.33, now, 0.45, 0.85);        // D5 (0.00s)
-      playBellTone(739.99, now + 0.18, 0.45, 0.85); // F#5 (0.18s)
-      playBellTone(880.00, now + 0.36, 0.85, 0.95); // A5 (0.36s)
+      playBellTone(587.33, now, 0.45, 0.90);        // D5 (0.00s)
+      playBellTone(739.99, now + 0.18, 0.45, 0.90); // F#5 (0.18s)
+      playBellTone(880.00, now + 0.36, 0.85, 0.98); // A5 (0.36s)
 
       // Cycle 2 (Repeats loud for urgent notice):
-      playBellTone(587.33, now + 0.90, 0.45, 0.85); // D5 (0.90s)
-      playBellTone(739.99, now + 1.08, 0.45, 0.85); // F#5 (1.08s)
+      playBellTone(587.33, now + 0.90, 0.45, 0.90); // D5 (0.90s)
+      playBellTone(739.99, now + 1.08, 0.45, 0.90); // F#5 (1.08s)
       playBellTone(1174.66, now + 1.26, 1.20, 1.0); // D6 (1.26s) High resolution bell
     } catch (e) {
       console.warn('Audio chime playback error:', e);
@@ -171,10 +171,10 @@ class NotificationService {
     try {
       this.playAlertChime();
 
-      // Use ServiceWorkerRegistration when available (enables action buttons like WhatsApp/Flipkart on Android)
+      // Use ServiceWorkerRegistration when available (enables action buttons on Android Lock Screen & Notification Bar)
       if (this.swRegistration && 'showNotification' in this.swRegistration) {
         await this.swRegistration.showNotification(title, {
-          icon: '/favicon.svg',
+          icon: '/images/wellbeing_heart_logo.png',
           badge: '/favicon.svg',
           ...options,
         });
@@ -183,7 +183,7 @@ class NotificationService {
 
       // Fallback to standard Window Notification
       const notif = new Notification(title, {
-        icon: '/favicon.svg',
+        icon: '/images/wellbeing_heart_logo.png',
         badge: '/favicon.svg',
         ...options,
       });
@@ -200,15 +200,15 @@ class NotificationService {
     }
   }
 
-  // 1. Morning Daily Overview Notification (e.g. 8:00 AM)
+  // 1. Morning Daily Overview Notification (08:00 AM)
   // Reminds patient of their full day course before leaving home
   public sendMorningBriefing(userName: string, prescription: ScannedPrescription): boolean {
     const meds = prescription.medicines || [];
     if (meds.length === 0) return false;
 
-    const medNames = meds.map((m) => `${m.name} (${m.dosage})`).join(', ');
+    const medNames = meds.map((m) => `${m.name} (${m.timing === 'before_food' ? 'Before food' : 'After food'})`).join(', ');
     const title = `☀️ Good Morning ${userName ? userName : 'Patient'}! Today's Medicine Plan`;
-    const body = `Full Day Course: ${medNames}.\nTake your medicines with you before leaving home so you don't forget!`;
+    const body = `Your Full Day Course: ${medNames}.\nPlease pack your medicine strips with you before leaving home so you don't forget!`;
 
     this.sendNotification(title, {
       body,
@@ -217,35 +217,51 @@ class NotificationService {
     return true;
   }
 
-  // 2. Scheduled Time-of-Dose Pill Reminder (Morning, Afternoon, Night)
-  // Pops up notification on device + dispatches event for immediate in-app popup modal
-  public sendDoseReminder(userName: string, slotLabel: string, medicines: Medication[]): boolean {
-    if (medicines.length === 0) return false;
+  // 2. INDIVIDUAL MEDICINE REMINDER (One by One, strictly separating Before Food and After Food!)
+  public sendSingleMedicineReminder(
+    userName: string, 
+    med: Medication, 
+    timeLabel: string, 
+    slotType: 'morning' | 'afternoon' | 'night'
+  ): boolean {
+    const isBeforeFood = med.timing === 'before_food';
+    const timingBadge = isBeforeFood ? 'Take BEFORE Food' : 'Take AFTER Food';
+    const instructions = isBeforeFood 
+      ? 'on an empty stomach, 30 minutes before your meal.'
+      : 'after having your meal.';
 
-    const medList = medicines.map((m) => `${m.name} (${m.dosage})`).join(', ');
-    const title = `⏰ Time for your ${slotLabel} Medicine!`;
-    const body = `${userName ? `${userName}, ` : ''}Please take: ${medList}.\nTap to open WellBeing and mark as Taken, Delay or Skip.`;
+    const title = `${isBeforeFood ? '⚠️' : '💊'} ${timingBadge}: ${med.name} (${med.dosage})`;
+    const body = `${userName ? `${userName}, please ` : 'Please '}take ${med.name} (${med.dosage}) now ${instructions}\nTap to mark as Taken, Delay, or Skip.`;
 
-    // 1. Send device notification with lockscreen action buttons (like WhatsApp/Flipkart)
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    // 1. Send system/lockscreen notification
     const options: NotificationOptions & { actions?: Array<{ action: string; title: string }> } = {
       body,
-      tag: `wellbeing-dose-${slotLabel.toLowerCase().replace(/[^a-z0-9]/g, '')}-${new Date().toISOString().split('T')[0]}`,
+      tag: `wellbeing-med-${med.id}-${slotType}-${todayStr}`,
       requireInteraction: true,
       actions: [
         { action: 'taken', title: '✓ Taken' },
         { action: 'delayed', title: '⏱ Delay (15m)' },
         { action: 'skipped', title: '✕ Skip' },
       ],
-      data: { slotLabel, medicines, userName },
+      data: { med, timeLabel, slotType, isBeforeFood, userName },
     };
 
     this.sendNotification(title, options as NotificationOptions);
 
-    // 2. Dispatch custom event so the Instant In-App Popup Modal pops up on screen immediately
+    // 2. Dispatch custom event for the Instant In-App Popup Modal (focused strictly on THIS single medicine)
     if (typeof window !== 'undefined') {
       window.dispatchEvent(
-        new CustomEvent('wellbeing_dose_alarm_popup', {
-          detail: { slotLabel, medicines, userName, timestamp: Date.now() },
+        new CustomEvent('wellbeing_single_dose_popup', {
+          detail: {
+            med,
+            timeLabel,
+            slotType,
+            isBeforeFood,
+            userName,
+            timestamp: Date.now(),
+          },
         })
       );
     }
@@ -253,7 +269,7 @@ class NotificationService {
     return true;
   }
 
-  // 3. Night / End-of-Day Adherence Summary Report (e.g. 9:30 PM)
+  // 3. Night / End-of-Day Adherence Summary Report (09:30 PM)
   public sendNightSummary(userName: string, totalScheduled: number, takenCount: number, delayedCount: number, skippedCount: number): boolean {
     const title = `🌙 Daily Medicine Summary for ${userName ? userName : 'Today'}`;
     const adherencePercent = totalScheduled > 0 ? Math.round((takenCount / totalScheduled) * 100) : 100;
@@ -272,7 +288,7 @@ class NotificationService {
   }
 
   // Background Auto-Scheduler
-  // Runs automatically every 30 seconds and checks device time without any manual clicks
+  // Checks current time every 30 seconds and checks each medicine individually at its exact Before/After food time
   public startScheduler(): void {
     if (this.schedulerInterval) return;
 
@@ -308,62 +324,116 @@ class NotificationService {
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
 
-    // Helper: slot medicines
-    const getSlotMeds = (slotIndex: 0 | 1 | 2) => {
-      return (currentDoc.medicines || []).filter((med) => {
-        const freq = med.frequency || '1-0-0';
-        if (freq.includes('-')) {
-          const parts = freq.split('-').map((p) => parseInt(p.trim(), 10) || 0);
-          return parts[slotIndex] && parts[slotIndex] > 0;
-        }
-        return slotIndex === 0;
-      });
+    // Helper: does medicine have dose in this slot (0=morning, 1=afternoon, 2=night)
+    const hasDoseInSlot = (med: Medication, slotIndex: 0 | 1 | 2): boolean => {
+      const freq = med.frequency || '1-0-0';
+      if (freq.includes('-')) {
+        const parts = freq.split('-').map((p) => parseInt(p.trim(), 10) || 0);
+        return Boolean(parts[slotIndex] && parts[slotIndex] > 0);
+      }
+      return slotIndex === 0;
     };
 
-    // A. 8:00 AM - Morning Briefing & Morning Dose
+    // A. 08:00 AM Morning Full-Day Overview Briefing
     if (currentHour === 8 && currentMinute >= 0 && currentMinute <= 15) {
       const briefingKey = `wellbeing_briefing_sent_${todayStr}`;
       if (!localStorage.getItem(briefingKey)) {
         this.sendMorningBriefing(userName, currentDoc);
         localStorage.setItem(briefingKey, 'true');
       }
-
-      const morningDoseKey = `wellbeing_morning_dose_sent_${todayStr}`;
-      const morningMeds = getSlotMeds(0);
-      if (morningMeds.length > 0 && !localStorage.getItem(morningDoseKey)) {
-        this.sendDoseReminder(userName, 'Morning (08:00 AM)', morningMeds);
-        localStorage.setItem(morningDoseKey, 'true');
-      }
     }
 
-    // B. 1:00 PM (13:00) - Afternoon Dose
-    if (currentHour === 13 && currentMinute >= 0 && currentMinute <= 15) {
-      const afternoonDoseKey = `wellbeing_afternoon_dose_sent_${todayStr}`;
-      const afternoonMeds = getSlotMeds(1);
-      if (afternoonMeds.length > 0 && !localStorage.getItem(afternoonDoseKey)) {
-        this.sendDoseReminder(userName, 'Afternoon (01:00 PM)', afternoonMeds);
-        localStorage.setItem(afternoonDoseKey, 'true');
-      }
+    // B. MORNING MEDICINES:
+    // 1. Morning BEFORE Food (07:30 AM to 08:15 AM)
+    if (currentHour === 7 && currentMinute >= 30 || (currentHour === 8 && currentMinute <= 15)) {
+      currentDoc.medicines.forEach((med) => {
+        if (hasDoseInSlot(med, 0) && med.timing === 'before_food') {
+          const medKey = `wellbeing_dose_${med.id}_morning_beforefood_${todayStr}`;
+          if (!localStorage.getItem(medKey)) {
+            this.sendSingleMedicineReminder(userName, med, 'Morning (Before Breakfast)', 'morning');
+            localStorage.setItem(medKey, 'true');
+          }
+        }
+      });
     }
 
-    // C. 9:00 PM (21:00) - Night Dose
-    if (currentHour === 21 && currentMinute >= 0 && currentMinute <= 15) {
-      const nightDoseKey = `wellbeing_night_dose_sent_${todayStr}`;
-      const nightMeds = getSlotMeds(2);
-      if (nightMeds.length > 0 && !localStorage.getItem(nightDoseKey)) {
-        this.sendDoseReminder(userName, 'Night (09:00 PM)', nightMeds);
-        localStorage.setItem(nightDoseKey, 'true');
-      }
+    // 2. Morning AFTER Food (08:30 AM to 09:15 AM)
+    if (currentHour === 8 && currentMinute >= 30 || (currentHour === 9 && currentMinute <= 15)) {
+      currentDoc.medicines.forEach((med) => {
+        if (hasDoseInSlot(med, 0) && med.timing !== 'before_food') {
+          const medKey = `wellbeing_dose_${med.id}_morning_afterfood_${todayStr}`;
+          if (!localStorage.getItem(medKey)) {
+            this.sendSingleMedicineReminder(userName, med, 'Morning (After Breakfast)', 'morning');
+            localStorage.setItem(medKey, 'true');
+          }
+        }
+      });
     }
 
-    // D. 9:30 PM (21:30) - End of Day Adherence Summary for Doctor
-    if (currentHour === 21 && currentMinute >= 30 && currentMinute <= 55) {
+    // C. AFTERNOON MEDICINES:
+    // 1. Afternoon BEFORE Food (12:45 PM to 01:15 PM)
+    if ((currentHour === 12 && currentMinute >= 45) || (currentHour === 13 && currentMinute <= 15)) {
+      currentDoc.medicines.forEach((med) => {
+        if (hasDoseInSlot(med, 1) && med.timing === 'before_food') {
+          const medKey = `wellbeing_dose_${med.id}_afternoon_beforefood_${todayStr}`;
+          if (!localStorage.getItem(medKey)) {
+            this.sendSingleMedicineReminder(userName, med, 'Afternoon (Before Lunch)', 'afternoon');
+            localStorage.setItem(medKey, 'true');
+          }
+        }
+      });
+    }
+
+    // 2. Afternoon AFTER Food (01:45 PM to 02:30 PM)
+    if ((currentHour === 13 && currentMinute >= 45) || (currentHour === 14 && currentMinute <= 30)) {
+      currentDoc.medicines.forEach((med) => {
+        if (hasDoseInSlot(med, 1) && med.timing !== 'before_food') {
+          const medKey = `wellbeing_dose_${med.id}_afternoon_afterfood_${todayStr}`;
+          if (!localStorage.getItem(medKey)) {
+            this.sendSingleMedicineReminder(userName, med, 'Afternoon (After Lunch)', 'afternoon');
+            localStorage.setItem(medKey, 'true');
+          }
+        }
+      });
+    }
+
+    // D. NIGHT MEDICINES:
+    // 1. Night BEFORE Food (07:45 PM to 08:30 PM)
+    if ((currentHour === 19 && currentMinute >= 45) || (currentHour === 20 && currentMinute <= 30)) {
+      currentDoc.medicines.forEach((med) => {
+        if (hasDoseInSlot(med, 2) && med.timing === 'before_food') {
+          const medKey = `wellbeing_dose_${med.id}_night_beforefood_${todayStr}`;
+          if (!localStorage.getItem(medKey)) {
+            this.sendSingleMedicineReminder(userName, med, 'Night (Before Dinner)', 'night');
+            localStorage.setItem(medKey, 'true');
+          }
+        }
+      });
+    }
+
+    // 2. Night AFTER Food (09:00 PM to 09:45 PM)
+    if (currentHour === 21 && currentMinute >= 0 && currentMinute <= 45) {
+      currentDoc.medicines.forEach((med) => {
+        if (hasDoseInSlot(med, 2) && med.timing !== 'before_food') {
+          const medKey = `wellbeing_dose_${med.id}_night_afterfood_${todayStr}`;
+          if (!localStorage.getItem(medKey)) {
+            this.sendSingleMedicineReminder(userName, med, 'Night (After Dinner)', 'night');
+            localStorage.setItem(medKey, 'true');
+          }
+        }
+      });
+    }
+
+    // E. 09:45 PM Bedtime Adherence Summary for Doctor
+    if (currentHour === 21 && currentMinute >= 45) {
       const nightSummaryKey = `wellbeing_night_summary_sent_${todayStr}`;
       if (!localStorage.getItem(nightSummaryKey)) {
-        const morningMeds = getSlotMeds(0);
-        const afternoonMeds = getSlotMeds(1);
-        const nightMeds = getSlotMeds(2);
-        const totalScheduled = morningMeds.length + afternoonMeds.length + nightMeds.length;
+        let totalScheduled = 0;
+        currentDoc.medicines.forEach((med) => {
+          if (hasDoseInSlot(med, 0)) totalScheduled++;
+          if (hasDoseInSlot(med, 1)) totalScheduled++;
+          if (hasDoseInSlot(med, 2)) totalScheduled++;
+        });
 
         const logs = storageService.getDoseLogs().filter((l) => l.date === todayStr && l.prescriptionId === currentDoc.id);
         const takenCount = logs.filter((l) => l.status === 'taken').length;

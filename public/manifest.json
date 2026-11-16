@@ -1,0 +1,22 @@
+{
+  "short_name": "WellBeing",
+  "name": "WellBeing - Patient Medical Utility",
+  "description": "100% money-free, local-first patient medical utility with individual medication alarms and lockscreen alerts",
+  "icons": [
+    {
+      "src": "/images/wellbeing_heart_logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/images/wellbeing_heart_logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0b1120",
+  "theme_color": "#0b1120",
+  "display": "standalone",
+  "orientation": "portrait"
+}

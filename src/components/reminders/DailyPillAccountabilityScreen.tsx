@@ -79,14 +79,29 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
     }
   };
 
-  const handleTestDoseAlert = () => {
+  const handleTestBeforeFoodAlert = () => {
     if (notifPermission !== 'granted') {
       handleEnableNotifications();
       return;
     }
     const meds = currentDoc?.medicines || [];
-    notificationService.sendDoseReminder(userName, 'Morning (08:00 AM)', meds.slice(0, 2));
-    setTestFeedback(currentLangObj.code === 'bn' ? '🔔 ওষুধের সময় হলে এই নোটিফিকেশন আসবে!' : '🔔 Sample Pill Dose reminder sent with chime!');
+    const beforeMed = meds.find((m) => m.timing === 'before_food') || meds[0];
+    if (!beforeMed) return;
+    notificationService.sendSingleMedicineReminder(userName, beforeMed, 'Morning (07:30 AM Before Breakfast)', 'morning');
+    setTestFeedback(currentLangObj.code === 'bn' ? `⚠️ খাওয়ার আগের ওষুধের অ্যালার্ট পাঠানো হয়েছে (${beforeMed.name})!` : `⚠️ Sent BEFORE FOOD alert for ${beforeMed.name}!`);
+    setTimeout(() => setTestFeedback(null), 4000);
+  };
+
+  const handleTestAfterFoodAlert = () => {
+    if (notifPermission !== 'granted') {
+      handleEnableNotifications();
+      return;
+    }
+    const meds = currentDoc?.medicines || [];
+    const afterMed = meds.find((m) => m.timing !== 'before_food') || meds[1] || meds[0];
+    if (!afterMed) return;
+    notificationService.sendSingleMedicineReminder(userName, afterMed, 'Morning (08:30 AM After Breakfast)', 'morning');
+    setTestFeedback(currentLangObj.code === 'bn' ? `🍽️ খাওয়ার পরের ওষুধের অ্যালার্ট পাঠানো হয়েছে (${afterMed.name})!` : `🍽️ Sent AFTER FOOD alert for ${afterMed.name}!`);
     setTimeout(() => setTestFeedback(null), 4000);
   };
 
@@ -545,15 +560,28 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
             <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
-                onClick={handleTestDoseAlert}
+                onClick={handleTestBeforeFoodAlert}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  isLight
+                    ? 'bg-white hover:bg-amber-100 text-amber-950 border border-amber-300 shadow-sm'
+                    : 'bg-amber-950/60 hover:bg-amber-900 text-amber-200 border border-amber-700/60'
+                }`}
+                title="Ring alarm for a single medicine BEFORE food"
+              >
+                <span>⚠️ Test Before Food Alarm</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleTestAfterFoodAlert}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
                   isLight
                     ? 'bg-white hover:bg-emerald-100 text-emerald-950 border border-emerald-300 shadow-sm'
                     : 'bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 border border-emerald-700/60'
                 }`}
-                title="Ring loud alarm tune and show Take/Delay/Skip popup"
+                title="Ring alarm for a single medicine AFTER food"
               >
-                <span>🔊 Ring Alarm Tune Now (Test Volume)</span>
+                <span>🍽️ Test After Food Alarm</span>
               </button>
 
               <button
@@ -561,8 +589,8 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
                 onClick={handleTestMorningBriefing}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
                   isLight
-                    ? 'bg-white hover:bg-amber-100 text-amber-950 border border-amber-300 shadow-sm'
-                    : 'bg-amber-950/60 hover:bg-amber-900 text-amber-200 border border-amber-700/60'
+                    ? 'bg-white hover:bg-blue-100 text-blue-950 border border-blue-300 shadow-sm'
+                    : 'bg-blue-950/60 hover:bg-blue-900 text-blue-200 border border-blue-700/60'
                 }`}
                 title="Preview 8:00 AM morning full day packing briefing"
               >
@@ -574,8 +602,8 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
                 onClick={handleTestNightSummary}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
                   isLight
-                    ? 'bg-white hover:bg-blue-100 text-blue-950 border border-blue-300 shadow-sm'
-                    : 'bg-blue-950/60 hover:bg-blue-900 text-blue-200 border border-blue-700/60'
+                    ? 'bg-white hover:bg-purple-100 text-purple-950 border border-purple-300 shadow-sm'
+                    : 'bg-purple-950/60 hover:bg-purple-900 text-purple-200 border border-purple-700/60'
                 }`}
                 title="Preview bedtime adherence summary report"
               >
