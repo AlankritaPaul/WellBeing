@@ -14,6 +14,7 @@ import { PrescriptionVaultScreen } from './components/vault/PrescriptionVaultScr
 import { DiagnosticLabDeskScreen } from './components/lab/DiagnosticLabDeskScreen';
 import { PillsInventoryScreen } from './components/pills/PillsInventoryScreen';
 import { DailyPillAccountabilityScreen } from './components/reminders/DailyPillAccountabilityScreen';
+import { GlobalDoseAlertModal } from './components/reminders/GlobalDoseAlertModal';
 import { DoctorReviewScreen } from './components/review/DoctorReviewScreen';
 import { NameChangeModal } from './components/onboarding/NameChangeModal';
 import { SettingsModal, type AppTheme } from './components/settings/SettingsModal';
@@ -652,6 +653,12 @@ export const App: React.FC = () => {
         onReplayTutorial={() => {
           navigateTo('tutorial');
         }}
+      />
+
+      {/* Global In-App Dose Alert Popup Modal (Time to Take Medicine: Taken / Delay / Skip) */}
+      <GlobalDoseAlertModal
+        currentLanguage={currentLanguage}
+        theme={theme}
       />
     </div>
   );

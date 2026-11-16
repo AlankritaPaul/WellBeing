@@ -508,11 +508,11 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
               }`}>
                 {notifPermission === 'granted'
                   ? (currentLangObj.code === 'bn'
-                      ? 'স্বয়ংক্রিয়ভাবে সকালে বের হওয়ার আগে পুরো দিনের সূচি, প্রতিটি ওষুধের সময় ঘণ্টা বাজিয়ে অ্যালার্ট এবং রাতে সারাদিনের রিপোর্ট চিকিৎসকের জন্য জমা থাকবে।'
-                      : 'Automatic morning briefing before leaving home, timely dose reminders with chime alert, and nightly adherence report saved for your doctor.')
+                      ? 'সম্পূর্ণ স্বয়ংক্রিয়: ঘড়ির সময় অনুযায়ী মোবাইল রিং করবে এবং সরাসরি স্ক্রিনে Taken, Delay ও Skip এর পপআপ বক্স চলে আসবে। কোনো বোতাম টেপার প্রয়োজন নেই।'
+                      : 'Runs 100% automatically in the background: your phone/device will ring loud at dose times, and an instant alert box will pop up on your screen with Taken, Delay, and Skip options without needing to click around!')
                   : (currentLangObj.code === 'bn'
-                      ? 'একটি ওষুধও যেন বাদ না পড়ে — সকালে বের হওয়ার আগে পুরো তালিকা, সঠিক সময়ে অ্যালার্ট এবং রাতের রিপোর্ট পেতে অনুমতি দিন।'
-                      : 'Never miss a single dose. Enable device notifications to receive morning packing plans, dose chime alerts, and nightly doctor compliance reports.')}
+                      ? 'একটি ওষুধও যেন বাদ না পড়ে — সকালে বের হওয়ার আগে পুরো তালিকা, সঠিক সময়ে উচ্চস্বরে অ্যালার্ট এবং রাতের রিপোর্ট পেতে অনুমতি দিন।'
+                      : 'Never miss a single dose. Enable device notifications to receive morning packing plans, loud dose chime alerts, and nightly doctor compliance reports.')}
               </p>
             </div>
           </div>
@@ -539,7 +539,7 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
               isLight ? 'text-emerald-900' : 'text-emerald-300'
             }`}>
               <Volume2 className="w-4 h-4 text-emerald-500" />
-              <span>{currentLangObj.code === 'bn' ? 'অ্যালার্ট পরীক্ষা করুন:' : 'Test Notifications on Your Device:'}</span>
+              <span>{currentLangObj.code === 'bn' ? 'সাউন্ড ও অ্যালার্মের ভলিউম পরীক্ষা করুন:' : 'Preview Alarm & Test Volume:'}</span>
             </span>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -551,9 +551,9 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
                     ? 'bg-white hover:bg-emerald-100 text-emerald-950 border border-emerald-300 shadow-sm'
                     : 'bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 border border-emerald-700/60'
                 }`}
-                title="Trigger immediate dose chime alert"
+                title="Ring loud alarm tune and show Take/Delay/Skip popup"
               >
-                <span>⏰ Test Pill Chime Alert</span>
+                <span>🔊 Ring Alarm Tune Now (Test Volume)</span>
               </button>
 
               <button
@@ -564,9 +564,9 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
                     ? 'bg-white hover:bg-amber-100 text-amber-950 border border-amber-300 shadow-sm'
                     : 'bg-amber-950/60 hover:bg-amber-900 text-amber-200 border border-amber-700/60'
                 }`}
-                title="Trigger 8:00 AM morning full day packing briefing"
+                title="Preview 8:00 AM morning full day packing briefing"
               >
-                <span>☀️ Test Morning Plan</span>
+                <span>☀️ Preview Morning Plan</span>
               </button>
 
               <button
@@ -577,9 +577,9 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
                     ? 'bg-white hover:bg-blue-100 text-blue-950 border border-blue-300 shadow-sm'
                     : 'bg-blue-950/60 hover:bg-blue-900 text-blue-200 border border-blue-700/60'
                 }`}
-                title="Trigger bedtime adherence summary report"
+                title="Preview bedtime adherence summary report"
               >
-                <span>🌙 Test Bedtime Report</span>
+                <span>🌙 Preview Bedtime Report</span>
               </button>
             </div>
           </div>
@@ -765,36 +765,60 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
           <Sparkles className={`w-5 h-5 ${isLight ? 'text-amber-600' : 'text-amber-400'}`} />
           <span>{t.nightlySummaryTitle}</span>
         </h3>
-        <p className="text-xs text-slate-400 leading-relaxed">
+        <p className={`text-xs leading-relaxed ${isLight ? 'text-slate-700 font-semibold' : 'text-slate-400'}`}>
           {currentLangObj.code === 'bn'
             ? 'সারাদিনে সময়মতো নেওয়া, দেরিতে নেওয়া ও বাদ দেওয়া ঔষধের সার্বিক পর্যালোচনা।'
             : 'Comprehensive log of on-time, delayed, and skipped medications for today.'}
         </p>
 
         <div className="grid grid-cols-3 gap-3 pt-2">
-          <div className="p-3 rounded-2xl bg-emerald-950/40 border border-emerald-800/60 text-center">
-            <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider block">
+          <div className={`p-3.5 rounded-2xl border-2 text-center transition-all ${
+            isLight
+              ? 'bg-emerald-50 border-emerald-400 text-emerald-950 shadow-sm'
+              : 'bg-emerald-950/40 border-emerald-800/60 text-emerald-300'
+          }`}>
+            <span className={`text-[11px] font-black uppercase tracking-wider block ${
+              isLight ? 'text-emerald-900' : 'text-emerald-400'
+            }`}>
               {t.takenOnTimeDosesLabel}
             </span>
-            <p className="text-xl font-black text-emerald-300 font-mono mt-0.5">
+            <p className={`text-2xl font-black font-mono mt-1 ${
+              isLight ? 'text-emerald-950' : 'text-emerald-300'
+            }`}>
               {takenCount}
             </p>
           </div>
 
-          <div className="p-3 rounded-2xl bg-amber-950/40 border border-amber-800/60 text-center">
-            <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider block">
+          <div className={`p-3.5 rounded-2xl border-2 text-center transition-all ${
+            isLight
+              ? 'bg-amber-50 border-amber-400 text-amber-950 shadow-sm'
+              : 'bg-amber-950/40 border-amber-800/60 text-amber-300'
+          }`}>
+            <span className={`text-[11px] font-black uppercase tracking-wider block ${
+              isLight ? 'text-amber-950' : 'text-amber-400'
+            }`}>
               {t.delayedDosesLabel}
             </span>
-            <p className="text-xl font-black text-amber-300 font-mono mt-0.5">
+            <p className={`text-2xl font-black font-mono mt-1 ${
+              isLight ? 'text-amber-950' : 'text-amber-300'
+            }`}>
               {delayedCount}
             </p>
           </div>
 
-          <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 text-center">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+          <div className={`p-3.5 rounded-2xl border-2 text-center transition-all ${
+            isLight
+              ? 'bg-rose-50 border-rose-300 text-rose-950 shadow-sm'
+              : 'bg-slate-950 border border-slate-800 text-slate-300'
+          }`}>
+            <span className={`text-[11px] font-black uppercase tracking-wider block ${
+              isLight ? 'text-rose-900' : 'text-slate-400'
+            }`}>
               {t.skippedDosesLabel}
             </span>
-            <p className="text-xl font-black text-slate-300 font-mono mt-0.5">
+            <p className={`text-2xl font-black font-mono mt-1 ${
+              isLight ? 'text-rose-950' : 'text-slate-300'
+            }`}>
               {skippedCount}
             </p>
           </div>
@@ -804,22 +828,34 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
       {/* MODAL 1: SNOOZE / DELAY ALARM MODAL */}
       {snoozingItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-sm bg-slate-900 rounded-3xl border border-amber-600/70 p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-sm font-black text-amber-300 flex items-center gap-2">
+          <div className={`w-full max-w-sm rounded-3xl border-2 p-6 shadow-2xl space-y-4 ${
+            isLight
+              ? 'bg-white border-amber-400 text-slate-900'
+              : 'bg-slate-900 border-amber-600/70 text-white'
+          }`}>
+            <div className={`flex items-center justify-between pb-3 border-b ${
+              isLight ? 'border-slate-200' : 'border-slate-800'
+            }`}>
+              <h3 className={`text-sm font-black flex items-center gap-2 ${
+                isLight ? 'text-amber-900' : 'text-amber-300'
+              }`}>
                 <Clock className="w-4 h-4" />
                 <span>{t.snoozeModalTitle}</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setSnoozingItem(null)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+                className={`p-1 rounded-lg transition-colors ${
+                  isLight
+                    ? 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'
+                    : 'hover:bg-slate-800 text-slate-400 hover:text-white'
+                }`}
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-xs font-bold text-white">
+            <p className={`text-xs font-bold ${isLight ? 'text-slate-950 font-black' : 'text-white'}`}>
               {snoozingItem.med.name} ({snoozingItem.med.dosage})
             </p>
 
@@ -827,7 +863,11 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
               <button
                 type="button"
                 onClick={() => handleConfirmSnooze('15m')}
-                className="w-full py-3 px-4 rounded-xl bg-slate-950 hover:bg-amber-600 hover:text-white border border-slate-800 text-slate-200 font-bold text-xs transition-colors flex items-center justify-between"
+                className={`w-full py-3 px-4 rounded-xl border text-xs font-bold transition-colors flex items-center justify-between ${
+                  isLight
+                    ? 'bg-amber-50 hover:bg-amber-100 border-amber-300 text-amber-950'
+                    : 'bg-slate-950 hover:bg-amber-600 hover:text-white border-slate-800 text-slate-200'
+                }`}
               >
                 <span>{t.snooze15Min}</span>
                 <span className="text-[11px] opacity-70">+15 mins</span>
@@ -836,7 +876,11 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
               <button
                 type="button"
                 onClick={() => handleConfirmSnooze('30m')}
-                className="w-full py-3 px-4 rounded-xl bg-slate-950 hover:bg-amber-600 hover:text-white border border-slate-800 text-slate-200 font-bold text-xs transition-colors flex items-center justify-between"
+                className={`w-full py-3 px-4 rounded-xl border text-xs font-bold transition-colors flex items-center justify-between ${
+                  isLight
+                    ? 'bg-amber-50 hover:bg-amber-100 border-amber-300 text-amber-950'
+                    : 'bg-slate-950 hover:bg-amber-600 hover:text-white border-slate-800 text-slate-200'
+                }`}
               >
                 <span>{t.snooze30Min}</span>
                 <span className="text-[11px] opacity-70">+30 mins</span>
@@ -845,7 +889,11 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
               <button
                 type="button"
                 onClick={() => handleConfirmSnooze('1h')}
-                className="w-full py-3 px-4 rounded-xl bg-slate-950 hover:bg-amber-600 hover:text-white border border-slate-800 text-slate-200 font-bold text-xs transition-colors flex items-center justify-between"
+                className={`w-full py-3 px-4 rounded-xl border text-xs font-bold transition-colors flex items-center justify-between ${
+                  isLight
+                    ? 'bg-amber-50 hover:bg-amber-100 border-amber-300 text-amber-950'
+                    : 'bg-slate-950 hover:bg-amber-600 hover:text-white border-slate-800 text-slate-200'
+                }`}
               >
                 <span>{t.snooze1Hour}</span>
                 <span className="text-[11px] opacity-70">+60 mins</span>
@@ -858,22 +906,34 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
       {/* MODAL 2: SKIP REASON MODAL */}
       {skippingItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-slate-900 rounded-3xl border border-red-700/60 p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-sm font-black text-red-400 flex items-center gap-2">
+          <div className={`w-full max-w-md rounded-3xl border-2 p-6 shadow-2xl space-y-4 ${
+            isLight
+              ? 'bg-white border-red-300 text-slate-900'
+              : 'bg-slate-900 border-red-700/60 text-white'
+          }`}>
+            <div className={`flex items-center justify-between pb-3 border-b ${
+              isLight ? 'border-slate-200' : 'border-slate-800'
+            }`}>
+              <h3 className={`text-sm font-black flex items-center gap-2 ${
+                isLight ? 'text-red-700' : 'text-red-400'
+              }`}>
                 <AlertCircle className="w-4 h-4" />
                 <span>{t.skipReasonModalTitle}</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setSkippingItem(null)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+                className={`p-1 rounded-lg transition-colors ${
+                  isLight
+                    ? 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'
+                    : 'hover:bg-slate-800 text-slate-400 hover:text-white'
+                }`}
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-xs font-bold text-white">
+            <p className={`text-xs font-bold ${isLight ? 'text-slate-950 font-black' : 'text-white'}`}>
               {skippingItem.med.name} ({skippingItem.med.dosage})
             </p>
 
@@ -881,7 +941,11 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
               <button
                 type="button"
                 onClick={() => handleConfirmSkip(t.skipReasonFasting)}
-                className="w-full py-3 px-4 rounded-xl bg-slate-950 hover:bg-red-950 border border-slate-800 hover:border-red-600/70 text-slate-200 text-left font-bold text-xs transition-colors"
+                className={`w-full py-3 px-4 rounded-xl border text-left font-bold text-xs transition-colors ${
+                  isLight
+                    ? 'bg-rose-50 hover:bg-rose-100 border-rose-200 text-rose-950'
+                    : 'bg-slate-950 hover:bg-red-950 border-slate-800 hover:border-red-600/70 text-slate-200'
+                }`}
               >
                 • {t.skipReasonFasting}
               </button>
@@ -889,7 +953,11 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
               <button
                 type="button"
                 onClick={() => handleConfirmSkip(t.skipReasonUpset)}
-                className="w-full py-3 px-4 rounded-xl bg-slate-950 hover:bg-red-950 border border-slate-800 hover:border-red-600/70 text-slate-200 text-left font-bold text-xs transition-colors"
+                className={`w-full py-3 px-4 rounded-xl border text-left font-bold text-xs transition-colors ${
+                  isLight
+                    ? 'bg-rose-50 hover:bg-rose-100 border-rose-200 text-rose-950'
+                    : 'bg-slate-950 hover:bg-red-950 border-slate-800 hover:border-red-600/70 text-slate-200'
+                }`}
               >
                 • {t.skipReasonUpset}
               </button>
@@ -897,7 +965,11 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
               <button
                 type="button"
                 onClick={() => handleConfirmSkip(t.skipReasonForgot)}
-                className="w-full py-3 px-4 rounded-xl bg-slate-950 hover:bg-red-950 border border-slate-800 hover:border-red-600/70 text-slate-200 text-left font-bold text-xs transition-colors"
+                className={`w-full py-3 px-4 rounded-xl border text-left font-bold text-xs transition-colors ${
+                  isLight
+                    ? 'bg-rose-50 hover:bg-rose-100 border-rose-200 text-rose-950'
+                    : 'bg-slate-950 hover:bg-red-950 border-slate-800 hover:border-red-600/70 text-slate-200'
+                }`}
               >
                 • {t.skipReasonForgot}
               </button>
@@ -905,15 +977,19 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
               <button
                 type="button"
                 onClick={() => handleConfirmSkip(t.skipReasonDoctorHold)}
-                className="w-full py-3 px-4 rounded-xl bg-slate-950 hover:bg-red-950 border border-slate-800 hover:border-red-600/70 text-slate-200 text-left font-bold text-xs transition-colors"
+                className={`w-full py-3 px-4 rounded-xl border text-left font-bold text-xs transition-colors ${
+                  isLight
+                    ? 'bg-rose-50 hover:bg-rose-100 border-rose-200 text-rose-950'
+                    : 'bg-slate-950 hover:bg-red-950 border-slate-800 hover:border-red-600/70 text-slate-200'
+                }`}
               >
                 • {t.skipReasonDoctorHold}
               </button>
             </div>
 
             {/* Custom Reason Box (When Option Is Not Mentioned) */}
-            <div className="pt-3 border-t border-slate-800 space-y-2">
-              <label className="text-[11px] font-bold text-slate-300 block">
+            <div className={`pt-3 border-t space-y-2 ${isLight ? 'border-slate-200' : 'border-slate-800'}`}>
+              <label className={`text-[11px] font-bold block ${isLight ? 'text-slate-800 font-extrabold' : 'text-slate-300'}`}>
                 Or write your own reason (if option is not mentioned above):
               </label>
               <div className="flex items-center gap-2">
@@ -922,7 +998,11 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
                   value={customSkipReason}
                   onChange={(e) => setCustomSkipReason(e.target.value)}
                   placeholder="Type your reason here..."
-                  className="flex-1 py-2.5 px-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs placeholder:text-slate-500 focus:outline-none focus:border-red-500 transition-colors"
+                  className={`flex-1 py-2.5 px-3 rounded-xl border text-xs focus:outline-none transition-colors ${
+                    isLight
+                      ? 'bg-slate-50 border-2 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-red-600'
+                      : 'bg-slate-950 border border-slate-700 text-white placeholder:text-slate-500 focus:border-red-500'
+                  }`}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && customSkipReason.trim()) {
                       handleConfirmSkip(customSkipReason.trim());
