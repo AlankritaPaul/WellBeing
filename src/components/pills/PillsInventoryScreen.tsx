@@ -467,6 +467,28 @@ export const PillsInventoryScreen: React.FC<PillsInventoryScreenProps> = ({
                   />
                 </div>
 
+                {/* Prompt if timing or meal instructions are missing */}
+                {(!med.timing || !med.frequency) && (
+                  <div className="p-3 rounded-2xl bg-amber-950/60 border border-amber-500/70 text-amber-200 text-xs space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-black flex items-center gap-1.5 text-amber-300">
+                        <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                        <span>Timing not specified on prescription</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenScheduleEditor(med)}
+                        className="px-3 py-1 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-xs transition-all shadow-md cursor-pointer"
+                      >
+                        ✍️ Write Timing
+                      </button>
+                    </div>
+                    <p className="text-[11px] text-amber-300/80 leading-relaxed">
+                      Please tell us when to take this medicine (Before/After Breakfast, Lunch, Dinner) and duration.
+                    </p>
+                  </div>
+                )}
+
                 {/* Timing & Duration Badge */}
                 <div className="flex flex-col gap-2 pt-1 border-t border-slate-800/80">
                   <div className="flex flex-wrap items-center justify-between gap-1.5 text-[11px]">

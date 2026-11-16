@@ -200,7 +200,7 @@ class NotificationService {
   }
 
   // 1. Morning Daily Overview Notification (Between 06:30 AM and 07:00 AM)
-  // Addresses user by their chosen name (e.g. "Good morning, Maa!"), lists day's course, and reminds to keep medicines ready
+  // Single message in clean LIST format (bulleted lines, strictly NOT paragraph type)
   public sendMorningBriefing(userName: string, prescription: ScannedPrescription): boolean {
     const meds = prescription.medicines || [];
     if (meds.length === 0) return false;
@@ -209,13 +209,29 @@ class NotificationService {
     const activeMeds = meds.filter((m) => !isMedicationCourseCompleted(m, prescription.date));
     if (activeMeds.length === 0) return false;
 
-    const medNames = activeMeds
-      .map((m) => `${m.name} (${m.timing === 'before_food' ? 'Before food' : 'After food'})`)
-      .join(', ');
+    // Helper to get exact meal relationship for each medicine
+    const getTimingLabel = (m: Medication): string => {
+      const isBefore = m.timing === 'before_food';
+      const freq = m.frequency || '1-0-1';
+      const parts = freq.split('-').map((p) => parseInt(p.trim(), 10) || 0);
+
+      const times: string[] = [];
+      if (parts[0] > 0) times.push(isBefore ? 'Before breakfast' : 'After breakfast');
+      if (parts[1] > 0) times.push(isBefore ? 'Before lunch' : 'After lunch');
+      if (parts[2] > 0) times.push(isBefore ? 'Before dinner' : 'After dinner');
+
+      if (times.length > 0) return times.join(', ');
+      return isBefore ? 'Before food' : 'After food';
+    };
+
+    // Format strictly as a clean, readable LIST (bulleted lines, never paragraph text)
+    const listLines = activeMeds
+      .map((m) => `• ${m.name} (${m.dosage}) — ${getTimingLabel(m)}`)
+      .join('\n');
 
     const displayName = userName.trim() || 'Maa';
     const title = `☀️ Good morning, ${displayName}!`;
-    const body = `Today's medicine course: ${medNames}.\nPlease keep your medicines with you and ready for the day.`;
+    const body = `Today's medicine list:\n${listLines}\n\nPlease keep your medicines with you.`;
 
     this.sendNotification(title, {
       body,
@@ -225,7 +241,8 @@ class NotificationService {
   }
 
   // 2. INDIVIDUAL MEDICINE REMINDER
-  // Formatted with user's chosen name and natural meal relationship (e.g. "Reminder, Maa: Please take Pantoprazole 40mg before breakfast")
+  // Strictly ONE single message for that specific medicine at its exact time
+  // Gives only the medicine name and whether to take before breakfast, after breakfast, etc.
   public sendSingleMedicineReminder(
     userName: string, 
     med: Medication, 
@@ -235,12 +252,13 @@ class NotificationService {
     const isBeforeFood = med.timing === 'before_food' || mealLabel.toLowerCase().includes('before');
     const displayName = userName.trim() || 'Maa';
 
-    const title = `💊 Medicine Reminder for ${displayName}`;
-    const body = `Reminder, ${displayName}: Please take ${med.name} (${med.dosage}) ${mealLabel}.`;
+    // Single medicine message: only medicine name and before/after breakfast, lunch, or dinner
+    const title = `💊 ${med.name} (${med.dosage})`;
+    const body = `${displayName}, please take ${med.name} (${med.dosage}) ${mealLabel}.`;
 
     const todayStr = new Date().toISOString().split('T')[0];
 
-    // 1. Send system/lockscreen notification
+    // 1. Send single system/lockscreen notification
     const options: NotificationOptions & { actions?: Array<{ action: string; title: string }> } = {
       body,
       tag: `wellbeing-med-${med.id}-${slotType}-${todayStr}`,
@@ -297,8 +315,8 @@ class NotificationService {
   public sendTestSampleReminder(userName: string): void {
     const displayName = userName.trim() || 'Maa';
     this.playAlertChime();
-    this.sendNotification(`💊 Medicine Reminder for ${displayName}`, {
-      body: `Reminder, ${displayName}: Please take Pantoprazole 40mg before breakfast.`,
+    this.sendNotification(`💊 Pantoprazole 40mg`, {
+      body: `${displayName}, please take Pantoprazole 40mg before breakfast.`,
       tag: 'wellbeing-test-sample-reminder',
     });
   }

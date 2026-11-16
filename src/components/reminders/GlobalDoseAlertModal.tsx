@@ -249,7 +249,7 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
               {currentAlert.med.name} ({currentAlert.med.dosage})
             </h2>
             <p className={`text-xs sm:text-sm font-bold mt-1 ${isLight ? 'text-slate-800' : 'text-slate-200'}`}>
-              Reminder, {currentAlert.userName || 'Maa'}: Please take {currentAlert.med.name} ({currentAlert.med.dosage}) {currentAlert.timeLabel}.
+              {currentAlert.userName || 'Maa'}, please take {currentAlert.med.name} ({currentAlert.med.dosage}) {currentAlert.timeLabel}.
             </p>
           </div>
         </div>
