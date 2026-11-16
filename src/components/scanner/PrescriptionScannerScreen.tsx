@@ -83,6 +83,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
   const [copiedPhone, setCopiedPhone] = useState<string | null>(null);
+  const [isDocumentExpanded, setIsDocumentExpanded] = useState<boolean>(true);
 
   // Sync state if initialPrescription changes
   useEffect(() => {
@@ -134,22 +135,28 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
   }, []);
 
   // Process Prescription Image through Medical OCR
-  const handleProcessImage = async (dataUrl: string, sampleIndex: number = 1) => {
+  const handleProcessImage = async (dataUrl: string, isSample: boolean = false, sampleIndex: number = 1) => {
     setPreviewImage(dataUrl);
     setIsScanning(true);
     setScannedData(null);
     setIsSaved(false);
     setScanStepIndex(0);
 
-    const step1 = setTimeout(() => setScanStepIndex(1), 400);
-    const step2 = setTimeout(() => setScanStepIndex(2), 800);
+    const step1 = setTimeout(() => setScanStepIndex(1), 500);
+    const step2 = setTimeout(() => setScanStepIndex(2), 1000);
 
     try {
-      const result = await ocrService.processPrescription(dataUrl, userName, currentLanguage, sampleIndex);
+      const result = await ocrService.processPrescription(dataUrl, userName, currentLanguage, {
+        isSample,
+        sampleIndex,
+      });
       setScannedData(result);
       // Automatically save to local storage cabinet
       storageService.savePrescription(result);
       setSavedPrescriptionsList(storageService.getPrescriptions());
+      if (onSavedToCabinet) {
+        onSavedToCabinet(result);
+      }
     } catch (err) {
       console.error('OCR processing error:', err);
     } finally {
@@ -166,7 +173,8 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
       const reader = new FileReader();
       reader.onload = () => {
         if (typeof reader.result === 'string') {
-          handleProcessImage(reader.result, 1);
+          // Real prescription scanned by patient -> isSample = false!
+          handleProcessImage(reader.result, false);
         }
       };
       reader.readAsDataURL(file);
@@ -177,7 +185,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
   // Use Sample Prescription for 1-Click Verification
   const handleUseSample = (sampleNum: number = 1) => {
     const sampleImageUrl = sampleNum === 2 ? '/images/prescription_apex.jpg' : '/images/prescription_citycare.jpg';
-    handleProcessImage(sampleImageUrl, sampleNum);
+    handleProcessImage(sampleImageUrl, true, sampleNum);
   };
 
   // Save Prescription to Local Device Storage
@@ -594,18 +602,18 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
 
       {/* VIEW 2: ACTIVE OCR SCANNING ANIMATION */}
       {isScanning && (
-        <div className="p-6 sm:p-10 rounded-3xl bg-slate-900/90 border-2 border-blue-500/50 shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden">
-          {/* Prescription Image with Sweeping Laser Line */}
-          <div className="w-full max-w-md h-72 sm:h-80 relative rounded-2xl overflow-hidden border-2 border-blue-400/60 shadow-xl bg-black">
+        <div className="p-4 sm:p-8 rounded-3xl bg-slate-900/90 border-2 border-blue-500/50 shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden">
+          {/* Full Prescription Document Viewport (Never cropped in half) */}
+          <div className="w-full max-w-xl min-h-[380px] sm:min-h-[500px] max-h-[75vh] relative rounded-2xl overflow-hidden border-2 border-blue-400/60 shadow-2xl bg-slate-950 flex items-center justify-center p-2">
             {previewImage && (
               <img
                 src={previewImage}
-                alt="Scanning Prescription"
-                className="w-full h-full object-cover filter brightness-90 contrast-105"
+                alt="Scanning Full Prescription"
+                className="max-h-[72vh] w-auto max-w-full object-contain filter brightness-95"
               />
             )}
 
-            {/* Glowing Laser Scanner Beam */}
+            {/* Glowing Laser Scanner Beam (Sweeps Entire Full Height) */}
             <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_15px_#22d3ee] animate-pulse transition-all duration-75"
                  style={{
                    animation: 'scanningLaser 2s ease-in-out infinite alternate',
@@ -613,14 +621,14 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
             />
 
             {/* Scanner Grid Overlay */}
-            <div className="absolute inset-0 bg-blue-500/10 pointer-events-none flex flex-col justify-between p-4">
+            <div className="absolute inset-0 bg-blue-500/10 pointer-events-none flex flex-col justify-between p-3 sm:p-4">
               <div className="flex justify-between">
-                <div className="w-6 h-6 border-t-2 border-l-2 border-cyan-400"></div>
-                <div className="w-6 h-6 border-t-2 border-r-2 border-cyan-400"></div>
+                <div className="w-8 h-8 border-t-2 border-l-2 border-cyan-400"></div>
+                <div className="w-8 h-8 border-t-2 border-r-2 border-cyan-400"></div>
               </div>
               <div className="flex justify-between">
-                <div className="w-6 h-6 border-b-2 border-l-2 border-cyan-400"></div>
-                <div className="w-6 h-6 border-b-2 border-r-2 border-cyan-400"></div>
+                <div className="w-8 h-8 border-b-2 border-l-2 border-cyan-400"></div>
+                <div className="w-8 h-8 border-b-2 border-r-2 border-cyan-400"></div>
               </div>
             </div>
           </div>
@@ -751,6 +759,54 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                 <span>{scannedData.date}</span>
               </div>
             </div>
+
+            {/* Full Scanned Prescription Document Card (Full View, No Cropping) */}
+            {resolvePrescriptionImageUrl(scannedData) && (
+              <div className={`mt-3.5 pt-3.5 border-t rounded-2xl overflow-hidden transition-all ${
+                isLight ? 'border-slate-200 bg-slate-50' : 'border-slate-800 bg-slate-950/60'
+              }`}>
+                <div 
+                  onClick={() => setIsDocumentExpanded(!isDocumentExpanded)}
+                  className={`px-3 py-2 flex items-center justify-between cursor-pointer rounded-xl transition-colors ${
+                    isLight ? 'hover:bg-slate-100' : 'hover:bg-slate-900'
+                  }`}
+                >
+                  <span className={`text-xs font-bold flex items-center gap-2 ${
+                    isLight ? 'text-slate-900' : 'text-slate-200'
+                  }`}>
+                    <FileText className="w-4 h-4 text-blue-400" />
+                    <span>{currentLangObj.code === 'bn' ? 'স্ক্যান করা পুরো প্রেসক্রিপশন নথি' : 'Full Scanned Prescription Document'}</span>
+                  </span>
+                  <div className="flex items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowImageModal(true);
+                      }}
+                      className="text-[11px] font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>{currentLangObj.code === 'bn' ? 'বড় করে দেখুন' : 'Full View'}</span>
+                    </button>
+                    <span className="text-xs text-slate-400 font-bold">
+                      {isDocumentExpanded ? '▲' : '▼'}
+                    </span>
+                  </div>
+                </div>
+
+                {isDocumentExpanded && (
+                  <div className="p-3 flex items-center justify-center bg-black/40 rounded-xl mt-1">
+                    <img
+                      src={resolvePrescriptionImageUrl(scannedData)}
+                      alt="Scanned Prescription Document"
+                      onClick={() => setShowImageModal(true)}
+                      className="max-h-[55vh] w-auto max-w-full object-contain rounded-xl shadow-lg cursor-pointer hover:opacity-95 transition-opacity"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Quick Diagnostic Lab Desk Banner */}
             {scannedData.diagnosticTests && scannedData.diagnosticTests.length > 0 && onOpenLabDesk && (

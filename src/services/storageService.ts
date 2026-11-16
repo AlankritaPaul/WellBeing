@@ -88,75 +88,54 @@ function getPrescriptionAccountKey(p: ScannedPrescription): string {
   const normHosp = (p.hospitalName || '').trim().toLowerCase();
   const id = (p.id || '').toLowerCase();
 
-  // Canonical key for Sample 1: City Care Hospital & Dr. S. K. Roy (across all languages and historical IDs)
-  if (
-    id.includes('citycare') ||
-    id.includes('drskroy') ||
-    ((normDoc.includes('s. k. roy') || normDoc.includes('রায়') || normDoc.includes('roy')) &&
-     (normHosp.includes('city care') || normHosp.includes('সিটি কেয়ার')))
-  ) {
+  // ONLY map genuine sample IDs to sample keys!
+  if (id === 'rx-sample-citycare-drskroy') {
     return 'rx_sample_citycare_drskroy';
   }
 
-  // Canonical key for Sample 2: Apex Heart & Dr. Anirban Roy (across all languages and historical IDs)
-  if (
-    id.includes('cardio') ||
-    id.includes('apex') ||
-    id.includes('anirban') ||
-    ((normDoc.includes('anirban') || normDoc.includes('অনির্বাণ')) &&
-     (normHosp.includes('apex') || normHosp.includes('অ্যাপেক্স')))
-  ) {
+  if (id === 'rx-sample-apex-dranirbanroy') {
     return 'rx_sample_apex_dranirbanroy';
   }
 
-  // General medical identity key: Doctor Name + Hospital Name
-  return `${normDoc.replace(/\s+/g, ' ')}__${normHosp.replace(/\s+/g, ' ')}`;
+  // Real user prescription: preserve distinct identity so it is NEVER merged into a sample!
+  if (id.startsWith('rx-user-')) {
+    return id;
+  }
+
+  // General medical identity key: Doctor Name + Hospital Name + ID
+  return `${normDoc.replace(/\s+/g, ' ')}__${normHosp.replace(/\s+/g, ' ')}__${id}`;
 }
 
 // Resolves the true prescription image for any record.
-// 1. For sample prescriptions (Apex Heart, City Care), strictly resolves to the authentic paper prescription document!
-//    This prevents ANY historical cache or hand-holding-phone photo from ever appearing.
-// 2. If the user clicked/uploaded their own photo (data:image URL) with the camera, that exact photo is strictly preserved.
+// 1. If the user clicked/uploaded their own photo (data:image URL or blob:) with the camera/file picker,
+//    that exact authentic photo is strictly preserved. It is NEVER overwritten with a sample!
+// 2. ONLY for pre-bundled test templates (Apex Heart, City Care) does it resolve to the sample file paths.
 export function resolvePrescriptionImageUrl(p: ScannedPrescription | null | undefined): string {
   if (!p) return '';
   const id = (p.id || '').toLowerCase();
-  const doc = (p.doctorName || '').toLowerCase();
-  const hosp = (p.hospitalName || '').toLowerCase();
   const url = p.imageDataUrl || '';
 
-  // Sample 2: Apex Heart & Diabetes Institute (Dr. Anirban Roy)
-  // ALWAYS return official paper prescription document!
-  if (
-    id.includes('apex') ||
-    id.includes('cardio') ||
-    doc.includes('anirban') ||
-    doc.includes('অনির্বাণ') ||
-    hosp.includes('apex') ||
-    hosp.includes('অ্যাপেক্স')
-  ) {
-    return '/images/prescription_apex.jpg';
-  }
-
-  // Sample 1: City Care Hospital & Medical Research Centre (Dr. S. K. Roy)
-  // ALWAYS return official paper prescription document!
-  if (
-    id.includes('citycare') ||
-    id.includes('drskroy') ||
-    doc.includes('s. k. roy') ||
-    doc.includes('রায়') ||
-    doc.includes('roy') ||
-    hosp.includes('city care') ||
-    hosp.includes('সিটি কেয়ার')
-  ) {
-    return '/images/prescription_citycare.jpg';
-  }
-
-  // Real user photo taken via camera or uploaded: strictly preserve!
-  if (url.startsWith('data:image')) {
+  // Real user photo taken via camera or uploaded from device: strictly preserve!
+  if (url.startsWith('data:image') || url.startsWith('blob:')) {
     return url;
   }
 
-  return url || '/images/prescription_citycare.jpg';
+  // Sample 2 Template: Apex Heart & Diabetes Institute
+  if (id === 'rx-sample-apex-dranirbanroy') {
+    return '/images/prescription_apex.jpg';
+  }
+
+  // Sample 1 Template: City Care Hospital & Medical Research Centre
+  if (id === 'rx-sample-citycare-drskroy') {
+    return '/images/prescription_citycare.jpg';
+  }
+
+  // If a custom image URL exists, use it
+  if (url) {
+    return url;
+  }
+
+  return '/images/prescription_citycare.jpg';
 }
 
 export function parseDurationToDays(durationStr?: string): number | null {
