@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { getTranslation } from '../../i18n/translations';
 import { ALL_LANGUAGES } from '../../i18n/languages';
-import { storageService } from '../../services/storageService';
+import { storageService, NOTIFICATION_TONES, type NotificationToneId } from '../../services/storageService';
 import { notificationService } from '../../services/notificationService';
 import type { ScannedPrescription } from '../../types/prescription';
 import {
@@ -58,10 +58,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   const [activeTab, setActiveTab] = useState<'accounts' | 'theme' | 'tutorial' | 'reminders'>('accounts');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedTone, setSelectedTone] = useState<NotificationToneId>(() => storageService.getNotificationTone());
   const [confirmDeleteModal, setConfirmDeleteModal] = useState<{
     show: boolean;
     ids: string[];
   }>({ show: false, ids: [] });
+
+  const handleSelectTone = (toneId: NotificationToneId) => {
+    setSelectedTone(toneId);
+    storageService.setNotificationTone(toneId);
+    notificationService.playTonePreview(toneId);
+  };
 
   if (!isOpen) return null;
 
@@ -467,16 +474,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              {/* NOTIFICATION TONE SELECTOR */}
+              <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-3.5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
                   <div className="flex items-center gap-2.5 text-emerald-400">
                     <Volume2 className="w-5 h-5 shrink-0" />
                     <div>
                       <h3 className="text-sm sm:text-base font-black text-white">
-                        Gentle Chime Sound
+                        Notification Tone / Reminder Sound
                       </h3>
                       <p className="text-xs text-slate-400">
-                        Soft, soothing, and pleasant — never loud or disturbing
+                        Choose a soothing, pleasant tone — never loud, piercing, or disturbing
                       </p>
                     </div>
                   </div>
@@ -486,32 +494,91 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     onClick={() => {
                       notificationService.sendTestSampleReminder(userName);
                     }}
-                    className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-black flex items-center justify-center gap-2 shadow-md transition-all shrink-0 cursor-pointer"
+                    className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-black flex items-center justify-center gap-2 shadow-md transition-all shrink-0 cursor-pointer"
                   >
-                    <Volume2 className="w-4 h-4" />
-                    <span>🔊 Test Gentle Chime</span>
+                    <BellRing className="w-4 h-4" />
+                    <span>🔔 Test Reminder Banner</span>
                   </button>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Tap &quot;Test Gentle Chime&quot; to preview how the notification rings and pops up on your phone. It uses a peaceful 3-tone marimba chime calibrated to alert you without being harsh.
-                </p>
+
+                {/* Tone Options List */}
+                <div className="space-y-2 pt-1">
+                  {NOTIFICATION_TONES.map((tone) => {
+                    const isSelected = selectedTone === tone.id;
+                    return (
+                      <div
+                        key={tone.id}
+                        onClick={() => handleSelectTone(tone.id)}
+                        className={`p-3.5 rounded-2xl border cursor-pointer transition-all flex items-center justify-between gap-3 ${
+                          isSelected
+                            ? 'bg-emerald-950/30 border-emerald-500/80 ring-1 ring-emerald-500/40 shadow-md shadow-emerald-950/30'
+                            : 'bg-slate-900/80 border-slate-800 hover:border-slate-700 hover:bg-slate-900'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className="text-2xl shrink-0 select-none">{tone.icon}</span>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-sm text-white truncate">
+                                {tone.name}
+                              </span>
+                              {tone.isDefault && (
+                                <span className="px-2 py-0.5 rounded-md bg-blue-950 text-blue-300 text-[10px] font-bold border border-blue-800 shrink-0">
+                                  Default
+                                </span>
+                              )}
+                              {isSelected && (
+                                <span className="px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-300 text-[10px] font-bold border border-emerald-800 shrink-0 flex items-center gap-1">
+                                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                                  <span>Active</span>
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[11px] text-slate-400 mt-0.5 truncate">
+                              {tone.description}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Dedicated Preview Play Button */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectTone(tone.id);
+                          }}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
+                            isSelected
+                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30'
+                              : 'bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white'
+                          }`}
+                          title={`Listen to ${tone.name}`}
+                        >
+                          <Volume2 className="w-3.5 h-3.5" />
+                          <span>🔊 Listen</span>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
 
           {/* Quick Access to Language & Name at the bottom of modal */}
-          <div className="pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2">
+          <div className="pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={() => {
                   onClose();
                   onOpenLanguageModal();
                 }}
-                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold flex items-center gap-1.5 border border-slate-700 transition-colors"
+                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold flex items-center gap-2 border border-slate-700 transition-colors cursor-pointer"
+                title="Change language"
               >
-                <Globe className="w-3.5 h-3.5 text-emerald-400" />
-                <span>{currentLangObj.nativeName}</span>
+                <Globe className="w-4 h-4 text-emerald-400" />
+                <span>🌐 {currentLangObj.nativeName} ({t.changeLanguage})</span>
               </button>
 
               <button
@@ -520,12 +587,26 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   onClose();
                   onOpenNameModal();
                 }}
-                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold flex items-center gap-1.5 border border-slate-700 transition-colors"
+                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold flex items-center gap-2 border border-slate-700 transition-colors cursor-pointer"
+                title="Change user name"
               >
-                <User className="w-3.5 h-3.5 text-blue-400" />
-                <span>{userName || t.changeName}</span>
+                <User className="w-4 h-4 text-blue-400" />
+                <span>👤 {userName || t.changeName}</span>
               </button>
             </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onReplayTutorial();
+              }}
+              className="px-3.5 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 font-bold flex items-center gap-2 border border-emerald-800/60 transition-colors cursor-pointer"
+              title="Watch tutorial video"
+            >
+              <Video className="w-4 h-4 text-emerald-400" />
+              <span>🎥 {t.watchTutorialButton} (10s)</span>
+            </button>
           </div>
         </div>
       </div>

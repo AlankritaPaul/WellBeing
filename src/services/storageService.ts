@@ -12,7 +12,57 @@ const STORAGE_KEYS = {
   DOSE_LOGS: 'wellbeing_dose_logs',
   THEME: 'wellbeing_theme',
   REMINDER_SETTINGS: 'wellbeing_reminder_preferences',
+  NOTIFICATION_TONE: 'wellbeing_notification_tone',
 };
+
+export type NotificationToneId = 
+  | 'gentle_harp' 
+  | 'soft_marimba' 
+  | 'temple_bowl' 
+  | 'birdsong' 
+  | 'zen_wind';
+
+export interface NotificationToneOption {
+  id: NotificationToneId;
+  name: string;
+  description: string;
+  icon: string;
+  isDefault?: boolean;
+}
+
+export const NOTIFICATION_TONES: NotificationToneOption[] = [
+  {
+    id: 'gentle_harp',
+    name: 'Gentle Harp Chime',
+    description: '3-tone peaceful ascending harp (C5 - E5 - G5)',
+    icon: '🎵',
+    isDefault: true,
+  },
+  {
+    id: 'soft_marimba',
+    name: 'Soft Marimba Bell',
+    description: 'Warm acoustic wooden double-tap with gentle warmth',
+    icon: '🪵',
+  },
+  {
+    id: 'temple_bowl',
+    name: 'Calm Temple Bowl',
+    description: 'Deep meditative resonant singing bowl (220Hz)',
+    icon: '🧘',
+  },
+  {
+    id: 'birdsong',
+    name: 'Morning Birdsong Chirp',
+    description: 'Light, playful two-chirp morning birdsong slide',
+    icon: '🐦',
+  },
+  {
+    id: 'zen_wind',
+    name: 'Zen Wind Chime',
+    description: '4-note breezing pentatonic chime (D5 - F#5 - A5 - D6)',
+    icon: '🎐',
+  },
+];
 
 export interface ReminderPreferences {
   morningWindow: '6:30' | '6:45' | '7:00';
@@ -688,6 +738,33 @@ export const storageService = {
       window.dispatchEvent(new CustomEvent('wellbeing_reminder_preferences_changed', { detail: updated }));
     } catch (e) {
       console.warn('Could not save reminder preferences:', e);
+    }
+  },
+
+  getNotificationTone(): NotificationToneId {
+    try {
+      const tone = localStorage.getItem(STORAGE_KEYS.NOTIFICATION_TONE);
+      if (
+        tone === 'gentle_harp' ||
+        tone === 'soft_marimba' ||
+        tone === 'temple_bowl' ||
+        tone === 'birdsong' ||
+        tone === 'zen_wind'
+      ) {
+        return tone;
+      }
+      return 'gentle_harp'; // default
+    } catch {
+      return 'gentle_harp';
+    }
+  },
+
+  setNotificationTone(tone: NotificationToneId): void {
+    try {
+      localStorage.setItem(STORAGE_KEYS.NOTIFICATION_TONE, tone);
+      window.dispatchEvent(new CustomEvent('wellbeing_notification_tone_changed', { detail: tone }));
+    } catch (e) {
+      console.warn('Could not save notification tone:', e);
     }
   },
 

@@ -1,5 +1,5 @@
 import type { ScannedPrescription, Medication } from '../types/prescription';
-import { storageService, isMedicationCourseCompleted } from './storageService';
+import { storageService, isMedicationCourseCompleted, type NotificationToneId } from './storageService';
 import { getReminderLocalization } from '../i18n/reminderTranslations';
 
 // Browser & Device Native Notification Service
@@ -73,8 +73,9 @@ class NotificationService {
   }
 
   // Play a GENTLE, soothing, non-disturbing melodic chime
-  // Crystal clear and audible on phone/laptop speakers, but never harsh or piercing
-  public playAlertChime(volumeLevel: number = 0.32): void {
+  // Crystal clear and audible on phone/laptop speakers, but never harsh or piercing.
+  // Supports user-selected tone (or default 'gentle_harp')
+  public playAlertChime(volumeLevel: number = 0.32, overrideToneId?: NotificationToneId): void {
     try {
       const ctx = this.initAudio();
       if (!ctx) return;
@@ -83,6 +84,7 @@ class NotificationService {
         ctx.resume();
       }
 
+      const toneId: NotificationToneId = overrideToneId || storageService.getNotificationTone();
       const now = ctx.currentTime;
 
       // Soft limiter for smooth acoustic dynamics (zero harsh clipping)
@@ -99,17 +101,15 @@ class NotificationService {
       masterGain.gain.setValueAtTime(volumeLevel, now);
       masterGain.connect(limiter);
 
-      // Helper to synthesize a gentle, warm bell chime with soft envelope
-      const playGentleTone = (freq: number, startTime: number, duration: number, peakGain: number) => {
-        // Warm sine wave fundamental
+      // Helper to synthesize a gentle bell tone with attack and smooth decay
+      const playBell = (freq: number, startTime: number, duration: number, peakGain: number, type: OscillatorType = 'sine') => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.type = 'sine';
+        osc.type = type;
         osc.frequency.setValueAtTime(freq, startTime);
 
-        // Smooth gradual attack (0.04s) to prevent clicking, followed by pleasant exponential ring
         gain.gain.setValueAtTime(0, startTime);
-        gain.gain.linearRampToValueAtTime(peakGain, startTime + 0.04);
+        gain.gain.linearRampToValueAtTime(peakGain, startTime + 0.03);
         gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
 
         osc.connect(gain);
@@ -117,14 +117,14 @@ class NotificationService {
         osc.start(startTime);
         osc.stop(startTime + duration + 0.05);
 
-        // Soft warm harmonic overtone (low amplitude for warmth, not sharpness)
+        // Soft overtone
         const overtone = ctx.createOscillator();
         const overGain = ctx.createGain();
         overtone.type = 'triangle';
         overtone.frequency.setValueAtTime(freq * 2, startTime);
         overGain.gain.setValueAtTime(0, startTime);
-        overGain.gain.linearRampToValueAtTime(peakGain * 0.2, startTime + 0.03);
-        overGain.gain.exponentialRampToValueAtTime(0.0005, startTime + duration * 0.6);
+        overGain.gain.linearRampToValueAtTime(peakGain * 0.2, startTime + 0.02);
+        overGain.gain.exponentialRampToValueAtTime(0.0005, startTime + duration * 0.55);
 
         overtone.connect(overGain);
         overGain.connect(masterGain);
@@ -132,11 +132,85 @@ class NotificationService {
         overtone.stop(startTime + duration + 0.05);
       };
 
-      // A gentle, peaceful 3-note ascending harp/marimba chime (C5 -> E5 -> G5)
-      // Plays ONCE smoothly without harsh repetitions
-      playGentleTone(523.25, now, 0.45, 0.70);        // C5 (warm base)
-      playGentleTone(659.25, now + 0.16, 0.50, 0.75); // E5 (bright pleasant center)
-      playGentleTone(783.99, now + 0.34, 0.90, 0.85); // G5 (peaceful lingering bell)
+      // Synthesis routines for the 5 distinct soothing tones
+      switch (toneId) {
+        case 'soft_marimba': {
+          // Warm woody marimba double-tap (A4 -> E5)
+          playBell(440.00, now, 0.32, 0.70, 'triangle');
+          playBell(659.25, now + 0.13, 0.42, 0.75, 'sine');
+          break;
+        }
+
+        case 'temple_bowl': {
+          // Deep meditative Tibetan singing bowl with warm resonant harmonics (A3 220Hz fundamental)
+          const osc1 = ctx.createOscillator();
+          const gain1 = ctx.createGain();
+          osc1.type = 'sine';
+          osc1.frequency.setValueAtTime(220.00, now);
+          gain1.gain.setValueAtTime(0, now);
+          gain1.gain.linearRampToValueAtTime(0.75, now + 0.08);
+          gain1.gain.exponentialRampToValueAtTime(0.001, now + 1.45);
+          osc1.connect(gain1);
+          gain1.connect(masterGain);
+          osc1.start(now);
+          osc1.stop(now + 1.5);
+
+          // E4 warm overtone
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          osc2.type = 'sine';
+          osc2.frequency.setValueAtTime(329.63, now);
+          gain2.gain.setValueAtTime(0, now);
+          gain2.gain.linearRampToValueAtTime(0.28, now + 0.06);
+          gain2.gain.exponentialRampToValueAtTime(0.0005, now + 1.2);
+          osc2.connect(gain2);
+          gain2.connect(masterGain);
+          osc2.start(now);
+          osc2.stop(now + 1.25);
+          break;
+        }
+
+        case 'birdsong': {
+          // Light, playful morning birdsong chirp with gentle rising pitch sweeps
+          const chirp = (fStart: number, fEnd: number, tStart: number, dur: number) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(fStart, tStart);
+            osc.frequency.exponentialRampToValueAtTime(fEnd, tStart + dur);
+
+            gain.gain.setValueAtTime(0, tStart);
+            gain.gain.linearRampToValueAtTime(0.45, tStart + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, tStart + dur);
+
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.start(tStart);
+            osc.stop(tStart + dur + 0.02);
+          };
+          chirp(1200, 1750, now, 0.12);
+          chirp(1400, 2100, now + 0.16, 0.15);
+          break;
+        }
+
+        case 'zen_wind': {
+          // 4-note peaceful pentatonic wind chime breeze (D5 -> F#5 -> A5 -> D6)
+          playBell(587.33, now, 0.50, 0.60);
+          playBell(739.99, now + 0.14, 0.55, 0.65);
+          playBell(880.00, now + 0.28, 0.65, 0.70);
+          playBell(1174.66, now + 0.44, 0.95, 0.75);
+          break;
+        }
+
+        case 'gentle_harp':
+        default: {
+          // Default: Gentle 3-note ascending harp chime (C5 -> E5 -> G5)
+          playBell(523.25, now, 0.45, 0.70);        // C5
+          playBell(659.25, now + 0.16, 0.50, 0.75); // E5
+          playBell(783.99, now + 0.34, 0.90, 0.85); // G5
+          break;
+        }
+      }
     } catch (e) {
       console.warn('Audio chime playback error:', e);
     }
@@ -149,6 +223,11 @@ class NotificationService {
         // Ignored if vibration not permitted
       }
     }
+  }
+
+  // Play an instant preview of a specific tone (e.g. from Settings tone picker)
+  public playTonePreview(toneId: NotificationToneId): void {
+    this.playAlertChime(0.38, toneId);
   }
 
   private initAudio(): AudioContext | null {
