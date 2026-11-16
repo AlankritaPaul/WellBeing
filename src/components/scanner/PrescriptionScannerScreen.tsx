@@ -447,23 +447,6 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
           }`}>
             {t.scannerSubtitle}
           </p>
-          <div className="mt-2 flex items-center justify-center">
-            {geminiVisionService.isConfigured() ? (
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                <span>{currentLangObj.code === 'bn' ? '✓ গুগল জেমিনাই ভিশন এআই সক্রিয়' : '✓ Google Gemini Vision AI Active'}</span>
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setShowApiKeyModal(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/60 hover:bg-cyan-900 text-cyan-300 text-xs font-bold transition-all cursor-pointer shadow-sm hover:scale-105"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                <span>{currentLangObj.code === 'bn' ? '⚡ এআই হাতের লেখা রিডার সক্রিয় করতে ট্যাপ করুন' : '⚡ Tap to Connect Gemini Vision AI for Doctor Handwriting'}</span>
-              </button>
-            )}
-          </div>
         </div>
 
         {/* Right spacing (removed redundant language pill per user instruction) */}
