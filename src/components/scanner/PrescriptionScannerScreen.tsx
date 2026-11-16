@@ -34,7 +34,8 @@ import {
   Layers,
   ChevronRight,
   FlaskConical,
-  FileCheck2
+  FileCheck2,
+  Edit3
 } from 'lucide-react';
 
 interface PrescriptionScannerScreenProps {
@@ -116,6 +117,40 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
   const [newMedFreq, setNewMedFreq] = useState<string>('1-0-1');
   const [newMedTiming, setNewMedTiming] = useState<'before_food' | 'after_food'>('after_food');
   const [newMedDuration, setNewMedDuration] = useState<string>('5 days');
+
+  // Edit Prescription Details Modal State
+  const [isEditHeaderOpen, setIsEditHeaderOpen] = useState<boolean>(false);
+  const [editHospital, setEditHospital] = useState<string>('');
+  const [editDoctor, setEditDoctor] = useState<string>('');
+  const [editPatient, setEditPatient] = useState<string>('');
+  const [editDate, setEditDate] = useState<string>('');
+
+  const handleOpenEditHeader = () => {
+    if (!scannedData) return;
+    setEditHospital(scannedData.hospitalName || '');
+    setEditDoctor(scannedData.doctorName || '');
+    setEditPatient(userName || scannedData.patientName || '');
+    setEditDate(scannedData.date || '');
+    setIsEditHeaderOpen(true);
+  };
+
+  const handleSaveHeaderEdits = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!scannedData) return;
+    const updated: ScannedPrescription = {
+      ...scannedData,
+      hospitalName: editHospital.trim() || scannedData.hospitalName,
+      doctorName: editDoctor.trim() || scannedData.doctorName,
+      patientName: editPatient.trim() || scannedData.patientName,
+      date: editDate.trim(),
+    };
+    if (editPatient.trim()) {
+      storageService.setUserName(editPatient.trim());
+    }
+    setScannedData(updated);
+    storageService.savePrescription(updated);
+    setIsEditHeaderOpen(false);
+  };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -682,18 +717,29 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
             <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b ${
               isLight ? 'border-slate-200' : 'border-slate-800'
             }`}>
-              <div className="flex items-start gap-3.5">
+              <div className="flex items-start gap-3.5 flex-1 min-w-0">
                 <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center shrink-0 ${
                   isLight ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-blue-600/20 border-blue-500/40 text-blue-400'
                 }`}>
                   <Building2 className="w-6 h-6" />
                 </div>
-                <div>
-                  <h2 className={`text-lg sm:text-xl font-bold tracking-tight ${
-                    isLight ? 'text-slate-950 font-black' : 'text-white'
-                  }`}>
-                    {scannedData.hospitalName}
-                  </h2>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className={`text-lg sm:text-xl font-bold tracking-tight truncate ${
+                      isLight ? 'text-slate-950 font-black' : 'text-white'
+                    }`}>
+                      {scannedData.hospitalName}
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={handleOpenEditHeader}
+                      className="px-2.5 py-1 rounded-xl text-xs font-bold bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                      title="Edit Doctor, Hospital, Patient, and Date details"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>{currentLangObj.code === 'bn' ? 'সংশোধন করুন' : 'Edit Details'}</span>
+                    </button>
+                  </div>
                   <p className={`text-xs sm:text-sm font-semibold mt-0.5 ${
                     isLight ? 'text-blue-900 font-extrabold' : 'text-blue-300'
                   }`}>
@@ -763,17 +809,31 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
 
             {/* Patient & Date Meta Info */}
             <div className="pt-3.5 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
-              <div className={`flex items-center gap-2 ${isLight ? 'text-slate-800' : 'text-slate-300'}`}>
+              <div 
+                onClick={handleOpenEditHeader}
+                className={`flex items-center gap-2 cursor-pointer hover:opacity-85 transition-opacity ${
+                  isLight ? 'text-slate-800' : 'text-slate-300'
+                }`}
+                title="Click to edit patient name"
+              >
                 <UserCheck className={`w-4 h-4 ${isLight ? 'text-emerald-700' : 'text-emerald-400'}`} />
                 <span className={`font-semibold ${isLight ? 'text-slate-700' : 'text-slate-400'}`}>{t.patientName}:</span>
                 <span className={`font-bold ${isLight ? 'text-slate-950 font-black' : 'text-white'}`}>
-                  {userName || scannedData.patientName}
+                  {userName || (scannedData.patientName !== 'Patient' ? scannedData.patientName : '') || (currentLangObj.code === 'bn' ? 'নাম লিখুন ✎' : 'Tap to enter name ✎')}
                 </span>
               </div>
 
-              <div className={`flex items-center gap-2 ${isLight ? 'text-slate-700 font-bold' : 'text-slate-400'}`}>
+              <div 
+                onClick={handleOpenEditHeader}
+                className={`flex items-center gap-2 cursor-pointer hover:opacity-85 transition-opacity ${
+                  isLight ? 'text-slate-700 font-bold' : 'text-slate-400'
+                }`}
+                title="Click to edit visit date"
+              >
                 <Calendar className={`w-4 h-4 ${isLight ? 'text-blue-700' : 'text-blue-400'}`} />
-                <span>{scannedData.date}</span>
+                <span>
+                  {scannedData.date || (currentLangObj.code === 'bn' ? 'তারিখ দিন ✎' : 'Set date ✎')}
+                </span>
               </div>
             </div>
 
@@ -1084,46 +1144,83 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
               </button>
             </div>
 
-            {/* DUAL VIEW OPTIONS TABS:
-                Option 1: "Which medicine should be taken at what time" (Schedule, 1-0-1, Before/After Food)
-                Option 2: "For which medicine is used for what?" (Short name in Rx, full form, purpose, why & how)
-            */}
-            <div className={`grid grid-cols-2 gap-2 p-1 rounded-2xl border ${
-              isLight ? 'bg-slate-100 border-slate-200' : 'bg-slate-950 border-slate-800'
-            }`}>
-              <button
-                type="button"
-                onClick={() => setMedicineViewMode('schedule')}
-                className={`py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
-                  medicineViewMode === 'schedule'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : isLight
-                      ? 'text-slate-700 hover:text-slate-950'
-                      : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <Clock className="w-4 h-4" />
-                <span>{t.scheduleTimingTitle}</span>
-              </button>
+            {/* IF NO MEDICINES COULD BE SAFELY READ BY OCR (HANDWRITTEN) */}
+            {scannedData.medicines.length === 0 ? (
+              <div className={`p-6 sm:p-8 rounded-3xl border-2 text-center space-y-4 ${
+                isLight 
+                  ? 'bg-amber-50/90 border-amber-300 text-slate-900' 
+                  : 'bg-amber-950/20 border-amber-500/40 text-slate-100'
+              }`}>
+                <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center mx-auto shadow-md">
+                  <Pill className="w-7 h-7" />
+                </div>
+                <div className="space-y-1.5 max-w-lg mx-auto">
+                  <h4 className="text-base sm:text-lg font-black tracking-tight text-white">
+                    {currentLangObj.code === 'bn' 
+                      ? 'হাতের লেখা প্রেসক্রিপশন সনাক্ত হয়েছে' 
+                      : 'Handwritten Doctor Prescription Detected'}
+                  </h4>
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    {currentLangObj.code === 'bn'
+                      ? 'ডাক্তারদের হাতের লেখা ভিন্ন হওয়ায় এবং আপনার ওষুধের সুরক্ষার জন্য, ভুল এড়াতে আমরা কোনো কাল্পনিক ওষুধের নাম দেই না। আপনার প্রেসক্রিপশন কাগজটি দেখে নিচের বোতামে চাপ দিয়ে ২-৩টি ওষুধের নাম লিখে সময় নির্ধারণ করুন।'
+                      : 'Doctor cursive handwriting varies widely. For your medical safety, we never guess or generate false medicine names. Please add your prescribed medicines directly from your paper using the button below.'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold text-sm sm:text-base inline-flex items-center gap-2.5 shadow-xl shadow-blue-900/40 transition-all cursor-pointer"
+                >
+                  <Plus className="w-5 h-5" />
+                  <span>
+                    {currentLangObj.code === 'bn' ? '+ প্রেসক্রিপশনের ওষুধ যোগ করুন' : '+ Add Prescribed Medicines (From Paper)'}
+                  </span>
+                </button>
+              </div>
+            ) : (
+              <>
+                {/* DUAL VIEW OPTIONS TABS:
+                    Option 1: "Which medicine should be taken at what time" (Schedule, 1-0-1, Before/After Food)
+                    Option 2: "For which medicine is used for what?" (Short name in Rx, full form, purpose, why & how)
+                */}
+                <div className={`grid grid-cols-2 gap-2 p-1 rounded-2xl border ${
+                  isLight ? 'bg-slate-100 border-slate-200' : 'bg-slate-950 border-slate-800'
+                }`}>
+                  <button
+                    type="button"
+                    onClick={() => setMedicineViewMode('schedule')}
+                    className={`py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
+                      medicineViewMode === 'schedule'
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : isLight
+                          ? 'text-slate-700 hover:text-slate-950'
+                          : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <Clock className="w-4 h-4" />
+                    <span>{t.scheduleTimingTitle}</span>
+                  </button>
 
-              <button
-                type="button"
-                onClick={() => setMedicineViewMode('purpose')}
-                className={`py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
-                  medicineViewMode === 'purpose'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : isLight
-                      ? 'text-slate-700 hover:text-slate-950'
-                      : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <HelpCircle className={`w-4 h-4 ${isLight ? 'text-blue-600' : 'text-cyan-300'}`} />
-                <span>{t.medicinePurposeTitle}</span>
-              </button>
-            </div>
+                  <button
+                    type="button"
+                    onClick={() => setMedicineViewMode('purpose')}
+                    className={`py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
+                      medicineViewMode === 'purpose'
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : isLight
+                          ? 'text-slate-700 hover:text-slate-950'
+                          : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <HelpCircle className={`w-4 h-4 ${isLight ? 'text-blue-600' : 'text-cyan-300'}`} />
+                    <span>{t.medicinePurposeTitle}</span>
+                  </button>
+                </div>
+              </>
+            )}
 
             {/* OPTION 1 CONTENT: "Which medicine should be taken at what time" (Schedule View) */}
-            {medicineViewMode === 'schedule' && (
+            {medicineViewMode === 'schedule' && scannedData.medicines.length > 0 && (
               <div className="space-y-3 animate-in fade-in duration-200">
                 {scannedData.medicines.map((med) => {
                   const isBeforeFood = med.timing === 'before_food';
@@ -1234,7 +1331,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
             )}
 
             {/* OPTION 2 CONTENT: "For which medicine is used for what?" (Purpose & Explanation View) */}
-            {medicineViewMode === 'purpose' && (
+            {medicineViewMode === 'purpose' && scannedData.medicines.length > 0 && (
               <div className="space-y-4 animate-in fade-in duration-200">
                 {scannedData.medicines.map((med) => (
                   <div
@@ -1490,14 +1587,14 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
             <form onSubmit={handleAddMedication} className="space-y-4">
               <div>
                 <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-800' : 'text-slate-300'}`}>
-                  {currentLangObj.code === 'bn' ? 'ঔষধের নাম' : 'Medicine Name'}
+                  {currentLangObj.code === 'bn' ? 'ওষুধের নাম' : 'Medicine Name'} <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={newMedName}
                   onChange={(e) => setNewMedName(e.target.value)}
-                  placeholder={currentLangObj.code === 'bn' ? 'যেমন: প্যারাসিটামল' : 'e.g. Paracetamol'}
+                  placeholder={currentLangObj.code === 'bn' ? 'যেমন: অগমেন্টিন ৬২৫, প্যারাসিটামল' : 'e.g. Augmentin 625, Paracetamol'}
                   className={`w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none ${
                     isLight
                       ? 'bg-slate-50 border-2 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-blue-600'
@@ -1509,76 +1606,19 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-800' : 'text-slate-300'}`}>
-                    {t.shortNameLabel}
-                  </label>
-                  <input
-                    type="text"
-                    value={newMedShortName}
-                    onChange={(e) => setNewMedShortName(e.target.value)}
-                    placeholder="Tab. PCM 650"
-                    className={`w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none ${
-                      isLight
-                        ? 'bg-slate-50 border-2 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-blue-600'
-                        : 'bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:border-blue-500'
-                    }`}
-                  />
-                </div>
-
-                <div>
-                  <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-800' : 'text-slate-300'}`}>
                     {t.dosageLabel}
                   </label>
                   <input
                     type="text"
                     value={newMedDosage}
                     onChange={(e) => setNewMedDosage(e.target.value)}
-                    placeholder="500 mg"
+                    placeholder="e.g. 500 mg / 1 tab"
                     className={`w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none ${
                       isLight
                         ? 'bg-slate-50 border-2 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-blue-600'
                         : 'bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:border-blue-500'
                     }`}
                   />
-                </div>
-              </div>
-
-              <div>
-                <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-800' : 'text-slate-300'}`}>
-                  {t.usePurposeLabel}
-                </label>
-                <input
-                  type="text"
-                  value={newMedPurpose}
-                  onChange={(e) => setNewMedPurpose(e.target.value)}
-                  placeholder={currentLangObj.code === 'bn' ? 'যেমন: জ্বর ও শরীর ব্যথার উপশম' : 'e.g. Pain relief & fever reduction'}
-                  className={`w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none ${
-                    isLight
-                      ? 'bg-slate-50 border-2 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-blue-600'
-                      : 'bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:border-blue-500'
-                  }`}
-                />
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-800' : 'text-slate-300'}`}>
-                    {t.frequencyLabel}
-                  </label>
-                  <select
-                    value={newMedFreq}
-                    onChange={(e) => setNewMedFreq(e.target.value)}
-                    className={`w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm focus:outline-none ${
-                      isLight
-                        ? 'bg-slate-50 border-2 border-slate-300 text-slate-900 focus:border-blue-600'
-                        : 'bg-slate-950 border border-slate-700 text-white focus:border-blue-500'
-                    }`}
-                  >
-                    <option value="1-0-1">1-0-1</option>
-                    <option value="1-0-0">1-0-0</option>
-                    <option value="0-0-1">0-0-1</option>
-                    <option value="1-1-1">1-1-1</option>
-                    <option value="SOS">SOS</option>
-                  </select>
                 </div>
 
                 <div>
@@ -1596,6 +1636,29 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                   >
                     <option value="after_food">{t.timingAfterFood}</option>
                     <option value="before_food">{t.timingBeforeFood}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-800' : 'text-slate-300'}`}>
+                    {t.frequencyLabel}
+                  </label>
+                  <select
+                    value={newMedFreq}
+                    onChange={(e) => setNewMedFreq(e.target.value)}
+                    className={`w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm focus:outline-none ${
+                      isLight
+                        ? 'bg-slate-50 border-2 border-slate-300 text-slate-900 focus:border-blue-600'
+                        : 'bg-slate-950 border border-slate-700 text-white focus:border-blue-500'
+                    }`}
+                  >
+                    <option value="1-0-1">1-0-1 (সকাল-রাত / Morning-Night)</option>
+                    <option value="1-0-0">1-0-0 (সকালে ১ বার / Morning Only)</option>
+                    <option value="0-0-1">0-0-1 (রাতে ১ বার / Night Only)</option>
+                    <option value="1-1-1">1-1-1 (দিনে ৩ বার / Thrice daily)</option>
+                    <option value="SOS">SOS (প্রয়োজনে / As needed)</option>
                   </select>
                 </div>
 
@@ -1621,7 +1684,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+                  className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
                     isLight
                       ? 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300'
                       : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
@@ -1631,9 +1694,104 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold shadow-md"
+                  className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold shadow-md shadow-blue-900/40 cursor-pointer"
                 >
-                  {t.addMedicineButton}
+                  {currentLangObj.code === 'bn' ? '+ ওষুধ যোগ করুন' : '+ Add to Prescription'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 3: EDIT PRESCRIPTION DETAILS MODAL */}
+      {isEditHeaderOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className={`w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4 ${
+            isLight ? 'bg-white border-2 border-slate-200 text-slate-900' : 'bg-slate-900 border border-slate-700 text-white'
+          }`}>
+            <div className={`flex items-center justify-between pb-3 border-b ${
+              isLight ? 'border-slate-200' : 'border-slate-800'
+            }`}>
+              <h4 className="text-base font-bold flex items-center gap-2 text-white">
+                <Edit3 className="w-5 h-5 text-blue-400" />
+                <span>{currentLangObj.code === 'bn' ? 'প্রেসক্রিপশন বিবরণ সংশোধন' : 'Edit Prescription Details'}</span>
+              </h4>
+              <button
+                type="button"
+                onClick={() => setIsEditHeaderOpen(false)}
+                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveHeaderEdits} className="space-y-3.5">
+              <div>
+                <label className="block text-xs font-bold mb-1 text-slate-300">
+                  {currentLangObj.code === 'bn' ? 'রোগীর নাম' : 'Patient Name'}
+                </label>
+                <input
+                  type="text"
+                  value={editPatient}
+                  onChange={(e) => setEditPatient(e.target.value)}
+                  placeholder={currentLangObj.code === 'bn' ? 'রোগীর আসল নাম' : 'Patient Name'}
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold mb-1 text-slate-300">
+                  {currentLangObj.code === 'bn' ? 'ডাক্তারের নাম' : 'Doctor Name'}
+                </label>
+                <input
+                  type="text"
+                  value={editDoctor}
+                  onChange={(e) => setEditDoctor(e.target.value)}
+                  placeholder="e.g. Dr. Mukherjee"
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold mb-1 text-slate-300">
+                  {currentLangObj.code === 'bn' ? 'হাসপাতাল বা ক্লিনিক' : 'Hospital or Clinic'}
+                </label>
+                <input
+                  type="text"
+                  value={editHospital}
+                  onChange={(e) => setEditHospital(e.target.value)}
+                  placeholder="e.g. Medical Clinic"
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold mb-1 text-slate-300">
+                  {currentLangObj.code === 'bn' ? 'প্রেসক্রিপশন ভিজিটের তারিখ' : 'Prescription Visit Date'}
+                </label>
+                <input
+                  type="text"
+                  value={editDate}
+                  onChange={(e) => setEditDate(e.target.value)}
+                  placeholder="e.g. 12/10/2026 or 12 Oct 2026"
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditHeaderOpen(false)}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
+                >
+                  {t.backButton}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-md transition-all cursor-pointer"
+                >
+                  {currentLangObj.code === 'bn' ? 'সংরক্ষণ করুন' : 'Save Details'}
                 </button>
               </div>
             </form>

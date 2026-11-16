@@ -565,12 +565,6 @@ export const ocrService = {
     // PATH 2: REAL USER PRESCRIPTION (Authentic OCR & Storage)
     // ========================================================
     const uniqueRxId = 'rx-user-' + Date.now();
-    const todayDate = new Date().toLocaleDateString(isBengali ? 'bn-IN' : 'en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
-
     let rawOcrText = '';
 
     // Run Tesseract Optical Character Recognition with local offline bundle (100% money-free, zero network calls, zero CDN fails)
@@ -596,7 +590,16 @@ export const ocrService = {
     let extractedDoctorName = '';
     let extractedSpecialty = '';
     for (const line of lines) {
-      if (/Dr\.|Doctor|MBBS|MD|MS|FRCS|Consultant|BAMS|BHMS|DNB/i.test(line)) {
+      // Clean tokens
+      const words = line.split(/[\s,.:]+/).filter((w) => w.length > 0);
+      const shortWordCount = words.filter((w) => w.length <= 2).length;
+      const isNoise = words.length > 0 && shortWordCount > words.length * 0.45;
+
+      // Must explicitly have Dr. or Doctor or clear physician title, and NOT be OCR noise
+      const hasDrPrefix = /^Dr[\.\s]/i.test(line) || /\bDr\.?\s+[A-Za-z]{3,}/i.test(line) || /\bDoctor\s+[A-Za-z]{3,}/i.test(line);
+      const hasDoctorTitle = /\b(Consultant|Physician|Surgeon|Cardiologist|Pediatrician|Gynecologist)\b/i.test(line);
+
+      if ((hasDrPrefix || (hasDoctorTitle && words.length >= 2)) && !isNoise) {
         extractedDoctorName = line.replace(/^[=\-—\s:.]+/g, '').trim();
         if (/Cardio/i.test(line)) extractedSpecialty = isBengali ? 'হৃদরোগ বিশেষজ্ঞ' : 'Cardiologist';
         else if (/Pediatric|Child/i.test(line)) extractedSpecialty = isBengali ? 'শিশু বিশেষজ্ঞ' : 'Pediatrician';
@@ -609,39 +612,57 @@ export const ocrService = {
     }
 
     if (!extractedDoctorName) {
-      extractedDoctorName = isBengali ? 'ডাঃ (প্রেসক্রিপশন অনুযায়ী)' : 'Consulting Doctor (From Prescription)';
-      extractedSpecialty = isBengali ? 'প্রেসক্রিপশন অনুযায়ী চিকিৎসা' : 'General Clinical Consultation';
+      extractedDoctorName = isBengali ? 'চিকিৎসক (প্রেসক্রিপশন অনুযায়ী)' : 'Doctor (From Prescription)';
+      extractedSpecialty = isBengali ? 'প্রেসক্রিপশন অনুযায়ী চিকিৎসা' : 'Clinical Consultation';
     }
 
     // 2. Hospital / Clinical Facility Extraction
     let extractedHospitalName = '';
     for (let i = 0; i < Math.min(6, lines.length); i++) {
       const line = lines[i];
+      const words = line.split(/[\s,.:]+/).filter((w) => w.length > 0);
+      const shortWordCount = words.filter((w) => w.length <= 2).length;
+      const isNoise = words.length > 0 && shortWordCount > words.length * 0.45;
+
       if (
-        /Hospital|Clinic|Centre|Center|Care|Health|Institute|Dispensary|Nursing\s*Home|Chamber|Medical/i.test(line) &&
-        !/Dr\.|Doctor/i.test(line)
+        /Hospital|Clinic|Centre|Center|Care|Health|Institute|Dispensary|Nursing\s*Home|Chamber/i.test(line) &&
+        !/Dr\.|Doctor/i.test(line) &&
+        !isNoise &&
+        line.length >= 5
       ) {
         extractedHospitalName = line.replace(/^[=\-—\s:.]+/g, '').trim();
         break;
       }
     }
     if (!extractedHospitalName) {
-      extractedHospitalName = isBengali ? 'চিকিৎসা ক্লিনিক / হাসপাতাল' : 'Medical Clinic & Health Facility';
+      extractedHospitalName = isBengali ? 'চিকিৎসা প্রতিষ্ঠান' : 'Medical Health Facility';
     }
 
-    // 3. Contact Phone Numbers Extraction
+    // 3. Contact Phone Numbers Extraction (Only genuine numbers with keywords or 10-digit mobile)
     const extractedPhones: ContactPhone[] = [];
     for (const line of lines) {
-      const match = line.match(/(?:\+?91[\-\s]?)?[6-9]\d{9}|(?:\+?91[\-\s]?)?\d{5}[\-\s]\d{5}|\b\d{3,5}[\-\s]\d{6,8}\b/);
-      if (match) {
-        const phoneClean = match[0].trim();
+      const hasPhoneKeyword = /Phone|Ph|Tel|Mobile|Call|Contact|Helpline|Booking/i.test(line);
+      const mobileMatch = line.match(/(?:\+?91[\-\s]?)?[6-9]\d{9}/);
+      const landlineMatch = line.match(/\b0\d{2,4}[\-\s]?\d{6,8}\b/);
+
+      if (mobileMatch) {
+        const phoneClean = mobileMatch[0].trim();
         if (!extractedPhones.some((p) => p.number === phoneClean)) {
           extractedPhones.push({
             number: phoneClean,
             type: /Emergency|24x7|ICU|Casualty/i.test(line) ? 'emergency' : 'booking',
             label: /Emergency|24x7/i.test(line)
               ? (isBengali ? 'জরুরি হেল্পলাইন' : 'Emergency Helpline')
-              : (isBengali ? 'চেম্বার অ্যাপয়েন্টমেন্ট' : 'Chamber Appointment Desk'),
+              : (isBengali ? 'চেম্বার অ্যাপয়েন্টমেন্ট' : 'Appointment Desk'),
+          });
+        }
+      } else if (hasPhoneKeyword && landlineMatch) {
+        const phoneClean = landlineMatch[0].trim();
+        if (!extractedPhones.some((p) => p.number === phoneClean)) {
+          extractedPhones.push({
+            number: phoneClean,
+            type: 'booking',
+            label: isBengali ? 'যোগাযোগ নম্বর' : 'Contact Phone',
           });
         }
       }
@@ -650,18 +671,19 @@ export const ocrService = {
     // 4. Patient Name Extraction
     let extractedPatientName = patientNameFallback || '';
     for (const line of lines) {
-      const ptMatch = line.match(/(?:Patient|Pt|Name)[\s:=]+([A-Za-z\s]+?)(?:\s+Age|\s+Date|\s+Sex|\s+BP|$)/i);
-      if (ptMatch && ptMatch[1].trim().length > 2) {
-        extractedPatientName = ptMatch[1].trim();
-        break;
+      const ptMatch = line.match(/(?:Patient\s*Name|Pt\.?\s*Name|Patient|Pt)[\s:=]+([A-Za-z\s]{3,30})(?:\s+Age|\s+Date|\s+Sex|\s+BP|\s+Y\/M|$)/i);
+      if (ptMatch) {
+        const candidate = ptMatch[1].trim();
+        const words = candidate.split(/\s+/);
+        if (words.every((w) => w.length >= 2) && candidate.length >= 3) {
+          extractedPatientName = candidate;
+          break;
+        }
       }
     }
-    if (!extractedPatientName) {
-      extractedPatientName = patientNameFallback || (isBengali ? 'রোগী' : 'Patient');
-    }
 
-    // 5. Date Extraction
-    let extractedDate = todayDate;
+    // 5. Date Extraction (DO NOT fake today's date if not found!)
+    let extractedDate = '';
     for (const line of lines) {
       const dateMatch = line.match(/\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4})\b/);
       if (dateMatch) {
@@ -793,39 +815,35 @@ export const ocrService = {
       }
     }
 
-    // Fallback if handwriting is too faint or handwriting cursive prevented automatic medicine detection
-    if (extractedMedicines.length === 0) {
-      extractedMedicines.push({
-        id: 'med-' + Math.random().toString(36).substring(2, 9),
-        name: isBengali ? 'প্রেসক্রিপশন ওষুধ ১ (ক্লিক করে নাম লিখুন)' : 'Prescription Medicine 1 (Click to Edit)',
-        shortName: isBengali ? 'ট্যাবলেট ১' : 'Tab. Medicine 1',
-        fullForm: isBengali ? 'ডাক্তারের প্রেসক্রিপশন অনুযায়ী ওষুধ' : 'Doctor Prescribed Medication',
-        purpose: isBengali ? 'চিকিৎসা ও রোগ নিরাময়' : 'Therapeutic healing and treatment',
-        whyPrescribed: isBengali ? 'প্রেসক্রিপশন অনুযায়ী নির্ধারিত' : 'Prescribed as per scanned consultation',
-        howItWorks: isBengali ? 'রোগ উপশমে সাহায্য করে' : 'Aids in health recovery',
-        dosage: '1 tab',
-        form: 'tablet',
-        frequency: '1-0-1',
-        timing: 'after_food',
-        duration: isBengali ? '৫ দিন' : '5 days',
-        instructions: isBengali ? 'খাবারের পর পানির সাথে সেব্য' : 'Take with water after meals',
-      });
-    }
-
-    // 7. Diagnostic Tests Extraction
+    // 7. Diagnostic Tests Extraction (Strict matching: only multi-word tests or explicit lab context)
     const extractedDiagnosticTests: DiagnosticTest[] = [];
     for (const line of lines) {
-      if (/\b(CBC|Hemogram|Lipid|HbA1c|Sugar|FBS|PPBS|Creatinine|Urea|LFT|KFT|Urine|ECG|X-Ray|USG)\b/i.test(line)) {
-        const testMatch = line.match(/\b(CBC|Hemogram|Lipid\s*Profile|HbA1c|Blood\s*Sugar|FBS|PPBS|Creatinine|Urea|LFT|KFT|Urine\s*R\/E|ECG|X-Ray|Ultrasound)\b/i);
-        const name = testMatch ? testMatch[0] : 'Laboratory Investigation';
+      const isTestContext = /Test|Lab|Investigation|Advised|Report|Profile|Panel/i.test(line);
+      const multiWordTestMatch = line.match(/\b(Lipid\s*Profile|Blood\s*Sugar|Complete\s*Blood\s*Count|Liver\s*Function\s*Test|Kidney\s*Function\s*Test|Thyroid\s*Profile|Urine\s*R\/E|Chest\s*X-Ray|ECG\s*12\s*Lead)\b/i);
+
+      if (multiWordTestMatch) {
+        const name = multiWordTestMatch[0];
         extractedDiagnosticTests.push({
           id: 'test-user-' + Math.random().toString(36).substring(2, 7),
           prescriptionId: uniqueRxId,
           testName: name,
-          category: /ECG|X-Ray|Ultrasound/i.test(name) ? 'imaging' : /Urine/i.test(name) ? 'urine' : 'blood',
+          category: /Urine/i.test(name) ? 'urine' : /ECG|X-Ray/i.test(name) ? 'imaging' : 'blood',
           instructions: isBengali ? 'ল্যাবরেটরি থেকে পরীক্ষা করান' : 'Complete at clinical laboratory',
           status: 'pending',
         });
+      } else if (isTestContext) {
+        const abbrevMatch = line.match(/\b(CBC|HbA1c|FBS|PPBS|Creatinine|Urea|ECG)\b/i);
+        if (abbrevMatch) {
+          const name = abbrevMatch[0];
+          extractedDiagnosticTests.push({
+            id: 'test-user-' + Math.random().toString(36).substring(2, 7),
+            prescriptionId: uniqueRxId,
+            testName: name,
+            category: /ECG/i.test(name) ? 'imaging' : 'blood',
+            instructions: isBengali ? 'ল্যাবরেটরি থেকে পরীক্ষা করান' : 'Complete at clinical laboratory',
+            status: 'pending',
+          });
+        }
       }
     }
 
