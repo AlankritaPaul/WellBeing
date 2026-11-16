@@ -5,7 +5,7 @@ import { ocrService } from '../../services/ocrService';
 import { storageService, resolvePrescriptionImageUrl } from '../../services/storageService';
 import { optimizePrescriptionImage } from '../../utils/imageUtils';
 import { geminiVisionService } from '../../services/geminiVisionService';
-import type { ScannedPrescription, Medication } from '../../types/prescription';
+import type { ScannedPrescription, Medication, ContactPhone } from '../../types/prescription';
 import {
   Camera,
   Upload,
@@ -125,6 +125,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
   const [editDoctor, setEditDoctor] = useState<string>('');
   const [editPatient, setEditPatient] = useState<string>('');
   const [editDate, setEditDate] = useState<string>('');
+  const [editPhone, setEditPhone] = useState<string>('');
 
   const handleOpenEditHeader = () => {
     if (!scannedData) return;
@@ -132,18 +133,31 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
     setEditDoctor(scannedData.doctorName || '');
     setEditPatient(scannedData.patientName || userName || '');
     setEditDate(scannedData.date || '');
+    setEditPhone(scannedData.phoneNumbers?.[0]?.number || '');
     setIsEditHeaderOpen(true);
   };
 
   const handleSaveHeaderEdits = (e: React.FormEvent) => {
     e.preventDefault();
     if (!scannedData) return;
+    const updatedPhones: ContactPhone[] = editPhone.trim()
+      ? [
+          {
+            number: editPhone.trim(),
+            type: 'booking',
+            label: t.bookingPhoneTitle || 'Appointment / Contact Phone',
+          },
+          ...(scannedData.phoneNumbers?.slice(1) || []),
+        ]
+      : (scannedData.phoneNumbers || []);
+
     const updated: ScannedPrescription = {
       ...scannedData,
       hospitalName: editHospital.trim() || scannedData.hospitalName,
       doctorName: editDoctor.trim() || scannedData.doctorName,
       patientName: editPatient.trim() || scannedData.patientName,
       date: editDate.trim(),
+      phoneNumbers: updatedPhones,
     };
     if (editPatient.trim() && !userName) {
       storageService.setUserName(editPatient.trim());
@@ -932,7 +946,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
             <div className={`mt-3 pt-3 border-t grid grid-cols-2 sm:grid-cols-4 gap-2 ${
               isLight ? 'border-slate-200' : 'border-slate-800'
             }`}>
-              {onOpenLabDesk && (
+              {onOpenLabDesk && scannedData.diagnosticTests && scannedData.diagnosticTests.length > 0 && (
                 <button
                   type="button"
                   onClick={onOpenLabDesk}
@@ -1793,6 +1807,19 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                   onChange={(e) => setEditDate(e.target.value)}
                   placeholder="e.g. 12/10/2026 or 12 Oct 2026"
                   className="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold mb-1 text-slate-300">
+                  {currentLangObj.code === 'bn' ? 'ডাক্তার বা চেম্বার ফোন নম্বর' : 'Doctor / Clinic Phone Number'}
+                </label>
+                <input
+                  type="text"
+                  value={editPhone}
+                  onChange={(e) => setEditPhone(e.target.value)}
+                  placeholder="e.g. +91 98301 23456 or 033 2288273"
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-blue-500 font-mono"
                 />
               </div>
 

@@ -404,45 +404,6 @@ const CLINICAL_CATALOG: Record<string, ClinicalMedDef> = {
   },
 };
 
-// Algorithmic Fuzzy Matching Engine for Messy Doctor Handwriting
-function levenshteinDistance(a: string, b: string): number {
-  const m = a.length, n = b.length;
-  const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
-  for (let i = 0; i <= m; i++) dp[i][0] = i;
-  for (let j = 0; j <= n; j++) dp[0][j] = j;
-  for (let i = 1; i <= m; i++) {
-    for (let j = 1; j <= n; j++) {
-      dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
-    }
-  }
-  return dp[m][n];
-}
-
-function isAbbrMatch(abbr: string, target: string): boolean {
-  if (abbr.length < 3 || target.length < 3) return false;
-  if (abbr[0] !== target[0]) return false;
-  let i = 0, j = 0;
-  while (i < abbr.length && j < target.length) {
-    if (abbr[i] === target[j]) i++;
-    j++;
-  }
-  return i === abbr.length && (abbr.length / target.length >= 0.45);
-}
-
-function matchFuzzyWord(rawWord: string, alias: string): boolean {
-  const w = rawWord.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const a = alias.toLowerCase().replace(/[^a-z0-9]/g, '');
-  if (!w || !a) return false;
-  if (w === a || w.includes(a) || a.includes(w)) return true;
-  if (isAbbrMatch(w, a)) return true;
-  if (w.length >= 4 && a.length >= 4) {
-    const dist = levenshteinDistance(w, a);
-    const maxLen = Math.max(w.length, a.length);
-    if (dist <= 2 && dist / maxLen <= 0.3) return true;
-  }
-  return false;
-}
-
 // Multilingual clinical string resolver supporting all 32 languages (English, Hindi, Bengali, etc.)
 export function getLocalizedClinicalText(
   lang: string,
@@ -938,32 +899,39 @@ export const ocrService = {
       });
     }
 
-    // 3. Contact Phone Numbers Extraction (Only genuine numbers with keywords or 10-digit mobile)
+    // 3. Contact Phone Numbers Extraction (Accurately captures any phone format: spaced, hyphenated, prefixed)
     const extractedPhones: ContactPhone[] = [];
     for (const line of lines) {
-      const hasPhoneKeyword = /Phone|Ph|Tel|Mobile|Call|Contact|Helpline|Booking/i.test(line);
-      const mobileMatch = line.match(/(?:\+?91[\-\s]?)?[6-9]\d{9}/);
-      const landlineMatch = line.match(/\b0\d{2,4}[\-\s]?\d{6,8}\b/);
+      const hasPhoneKeyword = /(?:Phone|Ph|Tel|Mobile|Mob|Call|Contact|Helpline|Booking|Appointment|Cell)[\s.:=]*/i.test(line);
 
-      if (mobileMatch) {
-        const phoneClean = mobileMatch[0].trim();
-        if (!extractedPhones.some((p) => p.number === phoneClean)) {
-          extractedPhones.push({
-            number: phoneClean,
-            type: /Emergency|24x7|ICU|Casualty/i.test(line) ? 'emergency' : 'booking',
-            label: /Emergency|24x7/i.test(line)
-              ? getLocalizedClinicalText(languageCode, { en: 'Emergency Helpline', hi: 'आपातकालीन हेल्पलाइन', bn: 'জরুরি হেল্পলাইন' })
-              : getLocalizedClinicalText(languageCode, { en: 'Appointment Desk', hi: 'अपॉइंटमेंट डेस्क', bn: 'চেম্বার অ্যাপয়েন্টমেন্ট' }),
-          });
-        }
-      } else if (hasPhoneKeyword && landlineMatch) {
-        const phoneClean = landlineMatch[0].trim();
-        if (!extractedPhones.some((p) => p.number === phoneClean)) {
-          extractedPhones.push({
-            number: phoneClean,
-            type: 'booking',
-            label: getLocalizedClinicalText(languageCode, { en: 'Contact Phone', hi: 'संपर्क फोन', bn: 'যোগাযোগ নম্বর' }),
-          });
+      // Match 10-digit mobile numbers with optional +91 and optional spaces/hyphens
+      // e.g., "+91 98301 23456", "98301 23456", "98301-23456", "9830123456", "983 012 3456"
+      const formattedMobile = line.match(/(?:\+?91[\s\-]?)?[6-9]\d{2,4}[\s\-]?\d{2,4}[\s\-]?\d{2,4}\b/);
+      
+      // Match landline with STD code (e.g. "033 22882730", "033-2288273", "080 23456789")
+      const landlineMatch = line.match(/\b0\d{2,4}[\s\-]?\d{3,4}[\s\-]?\d{3,4}\b/);
+
+      // If line has a phone keyword, also match any 7 to 11 digit cluster
+      const keywordPhone = hasPhoneKeyword ? line.match(/(?:(?:\+?91|0)[\s\-]?)?\b\d{3,5}[\s\-]?\d{4,7}\b/) : null;
+
+      const candidateMatch = formattedMobile || landlineMatch || keywordPhone;
+      if (candidateMatch) {
+        const rawNumber = candidateMatch[0].trim();
+        const digitsOnly = rawNumber.replace(/\D/g, '');
+        const isDatePattern = /^\d{1,2}(?:0[1-9]|1[0-2])\d{4}$/.test(digitsOnly); // e.g. 16112026
+        const isPincode = digitsOnly.length === 6;
+
+        if (digitsOnly.length >= 7 && digitsOnly.length <= 13 && !isDatePattern && !isPincode) {
+          const normalized = rawNumber.replace(/\s+/g, ' ');
+          if (!extractedPhones.some((p) => p.number.replace(/\D/g, '') === digitsOnly)) {
+            extractedPhones.push({
+              number: normalized,
+              type: /Emergency|24x7|ICU|Casualty/i.test(line) ? 'emergency' : 'booking',
+              label: /Emergency|24x7/i.test(line)
+                ? getLocalizedClinicalText(languageCode, { en: 'Emergency Helpline', hi: 'आपातकालीन हेल्पलाइन', bn: 'জরুরি হেল্পলাইন' })
+                : getLocalizedClinicalText(languageCode, { en: 'Appointment Desk', hi: 'अपॉइंटमेंट डेस्क', bn: 'চেম্বার অ্যাপয়েন্টমেন্ট' }),
+            });
+          }
         }
       }
     }
@@ -1009,34 +977,22 @@ export const ocrService = {
       }
     }
 
-    // 6. Medication Entities Parsing (Universal Medical Recognition for ANY Drug in the World)
+    // 6. Medication Entities Parsing (Universal Medical Recognition - NEVER hallucinate out-of-syllabus catalog drugs)
     const extractedMedicines: Medication[] = [];
 
-    // Helper to find catalog definition with fuzzy and abbreviation matching
-    const findInCatalog = (str: string): { def: ClinicalMedDef; matchedAlias?: string } | null => {
-      const cleanedTokens = str
-        .split(/[\s,.:;+\-\/]+/)
-        .filter((w) => w.length >= 3 && !/^(tab|cap|syr|inj|drops|mg|mcg|gm|ml|day|days|od|bd|tds|qid|hs|sos)$/i.test(w));
+    // Helper to find catalog definition using exact whole-word matching
+    const findInCatalogStrict = (wordOrPhrase: string): { def: ClinicalMedDef; matchedAlias?: string } | null => {
+      const lower = wordOrPhrase.toLowerCase().trim();
+      if (lower.length < 3) return null;
 
-      for (const token of cleanedTokens) {
-        for (const def of Object.values(CLINICAL_CATALOG)) {
-          for (const alias of def.aliases) {
-            if (matchFuzzyWord(token, alias)) {
-              return { def, matchedAlias: alias };
-            }
-          }
-        }
-      }
-
-      const lowerStr = str.toLowerCase();
       for (const def of Object.values(CLINICAL_CATALOG)) {
         for (const alias of def.aliases) {
-          if (lowerStr.includes(alias.toLowerCase())) {
+          // Exact word match or full string equality
+          if (lower === alias.toLowerCase() || new RegExp(`\\b${alias.toLowerCase()}\\b`).test(lower)) {
             return { def, matchedAlias: alias };
           }
         }
       }
-
       return null;
     };
 
@@ -1045,20 +1001,36 @@ export const ocrService = {
       const nextLine = i + 1 < lines.length ? lines[i + 1] : '';
       const combined = `${line} ${nextLine}`;
 
-      const catMatch = findInCatalog(combined);
-      
-      // Universal Prescription Medicine Pattern Matching:
-      // Accepts ANY medicine with dosage units (mg, mcg, gm, ml, %, iu, etc.),
-      // pharmaceutical forms (tab, cap, syr, inj, cream, gel, drops, inhaler, etc.),
-      // frequency timing (1-0-1, OD, BD, TDS, etc.), or Rx line bullet
-      const hasFormWord = /\b(Tab|Tablet|Tablets|Cap|Capsule|Capsules|Syr|Syrup|Susp|Suspension|Inj|Injection|Drops|Drop|Eye\s*Drop|Ear\s*Drop|Oint|Ointment|Cream|Gel|Inhaler|Rotacap|Respule|Lotion|Soap|Spray|Solution|Powder|Sachet|Patch)\b/i.test(line);
+      // Skip non-medicine metadata lines
+      const isHeaderOrMeta = /^(?:Hospital|Clinic|Centre|Address|Dr\.|Doctor|Patient|Pt\.?\s*Name|Date|Visit|Contact|Phone|Ph\.|Tel|Mobile|Booking|Age|Sex|Gender|Weight|Pulse|BP|Signature)[\s.:=]/i.test(line);
+      if (isHeaderOrMeta) continue;
+
+      const hasRxBullet = /^(?:\d+[\.\)]|Rx|R\/)\s+/i.test(line);
+      const hasFormWord = /\b(Tab|Tablet|Tablets|Cap|Capsule|Capsules|Syr|Syrup|Susp|Suspension|Inj|Injection|Drops|Drop|Eye\s*Drop|Ear\s*Drop|Oint|Ointment|Cream|Gel|Inhaler|Rotacap|Respule|Lotion|Spray)\b\.?/i.test(line);
       const hasDosage = /\b\d+(\.\d+)?\s*(mg|mcg|gm|g|ml|iu|units|%|puffs|drops)\b/i.test(combined);
-      const hasSchedule = /\b(1-0-1|1-0-0|0-0-1|1-1-1|0-1-0|0-1-1|1-1-0|2-0-2|OD|BD|BID|TDS|TID|QID|HS|SOS|PRN|STAT)\b/i.test(combined);
-      const hasRxBullet = /^(\d+[\.\)]|Rx|R\/)\s+[A-Za-z]/i.test(line);
+      const hasSchedule = /\b(1-0-1|1-0-0|0-0-1|1-1-1|0-1-0|0-1-1|1-1-0|2-0-2|OD|BD|BID|TDS|TID|QID|HS|SOS)\b/i.test(combined);
 
-      const isMedLine = Boolean(catMatch) || hasFormWord || hasDosage || (hasSchedule && hasRxBullet);
+      // Clean candidate medicine name directly from this line
+      const medNameClean = line
+        .replace(/^(?:\d+[\.\)]|Rx|R\/)\s*/i, '')
+        .replace(/\b(Tab|Tablet|Tablets|Cap|Capsule|Capsules|Syr|Syrup|Susp|Suspension|Inj|Injection|Drops|Oint|Ointment|Cream|Gel|Inhaler|Lotion|Spray)\b\.?/gi, '')
+        .replace(/\b\d+(\.\d+)?\s*(mg|mcg|gm|g|ml|iu|units|%|puffs|drops)\b/gi, '')
+        .replace(/\b(1-0-1|1-0-0|0-0-1|1-1-1|0-1-0|0-1-1|1-1-0|2-0-2|OD|BD|BID|TDS|TID|QID|HS|SOS)\b/gi, '')
+        .replace(/\b(before\s*food|after\s*food|empty\s*stomach|with\s*food|ac|pc|po)\b/gi, '')
+        .replace(/^[=\-—\d.:\s\)\(]+/, '')
+        .replace(/[=\-—.:\s\)\(]+$/, '')
+        .trim();
 
-      if (isMedLine) {
+      // STRICT VALIDATION: Line must have genuine prescription structure!
+      // Must have bullet (e.g. "1. "), or dosage with form, or schedule with form/bullet.
+      // NEVER trigger on random words without prescription structure!
+      const isGenuinePrescriptionLine = hasRxBullet || (hasFormWord && (hasDosage || hasSchedule || medNameClean.length >= 3)) || (hasDosage && hasSchedule);
+
+      if (isGenuinePrescriptionLine && medNameClean.length >= 3) {
+        // Reject common non-drug words
+        const isForbiddenWord = /^(Patient|Doctor|Hospital|Clinic|Address|Phone|Booking|Date|Signature|Years|Male|Female|Weight|Blood|Advised|Follow|Report|Tests?)$/i.test(medNameClean);
+        if (isForbiddenWord) continue;
+
         // Extract dosage
         const dosageMatch = combined.match(/\b\d+(\.\d+)?\s*(mg|mcg|gm|g|ml|iu|units|%|puffs|drops)\b/i);
         const dosage = dosageMatch ? dosageMatch[0] : '';
@@ -1105,29 +1077,18 @@ export const ocrService = {
         else if (/Drop/i.test(line)) form = 'drops';
         else if (/Cream|Gel|Oint/i.test(line)) form = 'cream';
 
-        // Clean medicine name directly from prescription text
-        const medNameClean = line
-          .replace(/^(Rx|R\/)\s*/i, '')
-          .replace(/^[=\-—\d.:\s\)\(]+/, '')
-          .replace(/\b(Tab|Tablet|Tablets|Cap|Capsule|Capsules|Syr|Syrup|Susp|Suspension|Inj|Injection|Drops|Oint|Ointment|Cream|Gel|Inhaler|Lotion|Spray)\b\.?/gi, '')
-          .replace(/\b\d+(\.\d+)?\s*(mg|mcg|gm|g|ml|iu|units|%|puffs|drops)\b/gi, '')
-          .replace(/\b(1-0-1|1-0-0|0-0-1|1-1-1|0-1-0|0-1-1|1-1-0|2-0-2|OD|BD|BID|TDS|TID|QID|HS|SOS)\b/gi, '')
-          .replace(/\b(before\s*food|after\s*food|empty\s*stomach|with\s*food)\b/gi, '')
-          .replace(/^[=\-—\d.:\s\)\(]+/, '')
-          .trim();
+        // Check if the clean extracted name strictly matches catalog
+        const catMatch = findInCatalogStrict(medNameClean);
+        const displayName = medNameClean.split(/[-—(]/)[0].trim();
 
-        if (catMatch) {
-          const cat = catMatch.def;
-          const displayMedName = catMatch.matchedAlias && catMatch.matchedAlias.length >= 4
-            ? catMatch.matchedAlias.charAt(0).toUpperCase() + catMatch.matchedAlias.slice(1)
-            : cat.name;
-
-          // Avoid duplicate entry
-          if (!extractedMedicines.some((m) => m.name.toLowerCase() === displayMedName.toLowerCase() || m.name.toLowerCase() === cat.name.toLowerCase())) {
+        // Avoid duplicate entry of same drug
+        if (!extractedMedicines.some((m) => m.name.toLowerCase() === displayName.toLowerCase())) {
+          if (catMatch) {
+            const cat = catMatch.def;
             extractedMedicines.push({
               id: 'med-' + Math.random().toString(36).substring(2, 9),
-              name: languageCode === 'bn' && cat.name === 'Paracetamol' ? 'প্যারাসিটামল' : displayMedName,
-              shortName: `${form === 'capsule' ? 'Cap.' : 'Tab.'} ${displayMedName} ${dosage || cat.defaultDosage}`,
+              name: displayName,
+              shortName: `${form === 'capsule' ? 'Cap.' : form === 'syrup' ? 'Syr.' : 'Tab.'} ${displayName} ${dosage || cat.defaultDosage}`,
               fullForm: `${cat.generic} ${dosage || cat.defaultDosage}`,
               purpose: languageCode === 'bn' ? cat.purposeBn : cat.purpose,
               whyPrescribed: languageCode === 'bn' ? cat.whyPrescribedBn : cat.whyPrescribed,
@@ -1149,87 +1110,64 @@ export const ocrService = {
                     bn: 'খাবারের পর পানির সাথে সেব্য',
                   }),
             });
-          }
-        } else if (medNameClean.length >= 3) {
-          // General uncatalogued medicine: supports ANY drug worldwide
-          const isMetadataWord = /^(Patient|Doctor|Hospital|Clinic|Address|Phone|Booking|Date|Signature|Years|Male|Female|Weight|Blood)$/i.test(medNameClean);
-          const hasRealLetters = /^[A-Za-z\s\-]+$/.test(medNameClean) && medNameClean.split(/\s+/).some((w) => w.length >= 3);
-          
-          if (!isMetadataWord && hasRealLetters) {
-            const cleanDisplayName = medNameClean.split(/[-—(]/)[0].trim();
-            if (!extractedMedicines.some((m) => m.name.toLowerCase() === cleanDisplayName.toLowerCase())) {
-              extractedMedicines.push({
-                id: 'med-' + Math.random().toString(36).substring(2, 9),
-                name: cleanDisplayName,
-                shortName: `${form === 'capsule' ? 'Cap.' : form === 'syrup' ? 'Syr.' : form === 'cream' ? 'Cream' : 'Tab.'} ${cleanDisplayName} ${dosage || '1 tab'}`.trim(),
-                fullForm: `${cleanDisplayName} ${dosage || '1 tab'}`.trim(),
-                purpose: getLocalizedClinicalText(languageCode, {
-                  en: 'Physician-prescribed therapeutic treatment',
-                  hi: 'चिकित्सक द्वारा निर्धारित चिकित्सीय उपचार',
-                  bn: 'প্রেসক্রিপশন অনুযায়ী নিরাময় চিকিৎসা',
-                }),
-                whyPrescribed: getLocalizedClinicalText(languageCode, {
-                  en: 'Prescribed by the doctor for symptom resolution and patient recovery.',
-                  hi: 'लक्षणों के समाधान और मरीज के स्वस्थ होने के लिए डॉक्टर द्वारा निर्धारित।',
-                  bn: 'ডাক্তারের প্রেসক্রিপশন অনুযায়ী রোগীর দ্রুত সুস্থতার জন্য নির্দেশিত।',
-                }),
-                howItWorks: getLocalizedClinicalText(languageCode, {
-                  en: 'Acts on target biological pathways to manage health symptoms.',
-                  hi: 'स्वास्थ्य लक्षणों को नियंत्रित करने के लिए जैविक तंत्र पर कार्य करती है।',
-                  bn: 'শারীরিক উপসর্গ নিয়ন্ত্রণ করে আরোগ্য লাভে সহায়তা করে।',
-                }),
-                dosage: dosage || '1 tab',
-                form,
-                frequency,
-                timing,
-                duration,
-                instructions: timing === 'before_food'
-                  ? getLocalizedClinicalText(languageCode, {
-                      en: 'Take before meals on empty stomach',
-                      hi: 'भोजन से पहले खाली पेट लें',
-                      bn: 'খাবারের পূর্বে সেব্য',
-                    })
-                  : getLocalizedClinicalText(languageCode, {
-                      en: 'Take with water after meals',
-                      hi: 'भोजन के बाद पानी के साथ लें',
-                      bn: 'খাবারের পর সেব্য',
-                    }),
-              });
-            }
+          } else {
+            // Authentic extracted prescription medicine from paper
+            extractedMedicines.push({
+              id: 'med-' + Math.random().toString(36).substring(2, 9),
+              name: displayName,
+              shortName: `${form === 'capsule' ? 'Cap.' : form === 'syrup' ? 'Syr.' : form === 'cream' ? 'Cream' : 'Tab.'} ${displayName} ${dosage || '1 tab'}`.trim(),
+              fullForm: `${displayName} ${dosage || '1 tab'}`.trim(),
+              purpose: getLocalizedClinicalText(languageCode, {
+                en: 'Physician-prescribed therapeutic treatment',
+                hi: 'चिकित्सक द्वारा निर्धारित चिकित्सीय उपचार',
+                bn: 'প্রেসক্রিপশন অনুযায়ী নিরাময় চিকিৎসা',
+              }),
+              whyPrescribed: getLocalizedClinicalText(languageCode, {
+                en: 'Prescribed by the doctor for symptom resolution and patient recovery.',
+                hi: 'लक्षणों के समाधान और मरीज के स्वस्थ होने के लिए डॉक्टर द्वारा निर्धारित।',
+                bn: 'ডাক্তারের প্রেসক্রিপশন অনুযায়ী রোগীর দ্রুত সুস্থতার জন্য নির্দেশিত।',
+              }),
+              howItWorks: getLocalizedClinicalText(languageCode, {
+                en: 'Acts on target biological pathways to manage health symptoms.',
+                hi: 'स्वास्थ्य लक्षणों को नियंत्रित करने के लिए जैविक तंत्र पर कार्य करती है।',
+                bn: 'শারীরিক উপসর্গ নিয়ন্ত্রণ করে আরোগ্য লাভে সহায়তা করে।',
+              }),
+              dosage: dosage || '1 tab',
+              form,
+              frequency,
+              timing,
+              duration,
+              instructions: timing === 'before_food'
+                ? getLocalizedClinicalText(languageCode, {
+                    en: 'Take before meals on empty stomach',
+                    hi: 'भोजन से पहले खाली पेट लें',
+                    bn: 'খাবারের পূর্বে সেব্য',
+                  })
+                : getLocalizedClinicalText(languageCode, {
+                    en: 'Take with water after meals',
+                    hi: 'भोजन के बाद पानी के साथ लें',
+                    bn: 'খাবারের পর সেব্য',
+                  }),
+            });
           }
         }
       }
     }
 
-    // 7. Diagnostic Tests Extraction (Strict matching: only multi-word tests or explicit lab context)
+    // 7. Diagnostic Tests Extraction (STRICT: ONLY if doctor explicitly wrote an investigation header)
     const extractedDiagnosticTests: DiagnosticTest[] = [];
     for (const line of lines) {
-      const isTestContext = /Test|Lab|Investigation|Advised|Report|Profile|Panel/i.test(line);
-      const multiWordTestMatch = line.match(/\b(Lipid\s*Profile|Blood\s*Sugar|Complete\s*Blood\s*Count|Liver\s*Function\s*Test|Kidney\s*Function\s*Test|Thyroid\s*Profile|Urine\s*R\/E|Chest\s*X-Ray|ECG\s*12\s*Lead)\b/i);
+      const hasExplicitLabHeader = /^(?:Investigations?|Lab\s*Tests?|Tests?\s*Advised|Tests?\s*Ordered|Diagnostic\s*Tests?)[\s.:=]+/i.test(line);
+      const multiWordTestMatch = line.match(/\b(Lipid\s*Profile|Blood\s*Sugar\s*(?:F|PP|Fasting)?|Complete\s*Blood\s*Count|Liver\s*Function\s*Test|Kidney\s*Function\s*Test|Thyroid\s*Profile|Urine\s*R\/E|Chest\s*X-Ray|12[\s\-]Lead\s*ECG)\b/i);
 
-      if (multiWordTestMatch) {
+      if (multiWordTestMatch && (hasExplicitLabHeader || /\b(Profile|Count|Panel)\b/i.test(line))) {
         const name = multiWordTestMatch[0];
-        extractedDiagnosticTests.push({
-          id: 'test-user-' + Math.random().toString(36).substring(2, 7),
-          prescriptionId: uniqueRxId,
-          testName: name,
-          category: /Urine/i.test(name) ? 'urine' : /ECG|X-Ray/i.test(name) ? 'imaging' : 'blood',
-          instructions: getLocalizedClinicalText(languageCode, {
-            en: 'Complete at clinical laboratory',
-            hi: 'क्लिनिकल प्रयोगशाला से जांच कराएं',
-            bn: 'ল্যাবরেটরি থেকে পরীক্ষা করান',
-          }),
-          status: 'pending',
-        });
-      } else if (isTestContext) {
-        const abbrevMatch = line.match(/\b(CBC|HbA1c|FBS|PPBS|Creatinine|Urea|ECG)\b/i);
-        if (abbrevMatch) {
-          const name = abbrevMatch[0];
+        if (!extractedDiagnosticTests.some((t) => t.testName.toLowerCase() === name.toLowerCase())) {
           extractedDiagnosticTests.push({
             id: 'test-user-' + Math.random().toString(36).substring(2, 7),
             prescriptionId: uniqueRxId,
             testName: name,
-            category: /ECG/i.test(name) ? 'imaging' : 'blood',
+            category: /Urine/i.test(name) ? 'urine' : /ECG|X-Ray/i.test(name) ? 'imaging' : 'blood',
             instructions: getLocalizedClinicalText(languageCode, {
               en: 'Complete at clinical laboratory',
               hi: 'क्लिनिकल प्रयोगशाला से जांच कराएं',
@@ -1237,6 +1175,26 @@ export const ocrService = {
             }),
             status: 'pending',
           });
+        }
+      } else if (hasExplicitLabHeader) {
+        const afterHeader = line.replace(/^(?:Investigations?|Lab\s*Tests?|Tests?\s*Advised|Tests?\s*Ordered|Diagnostic\s*Tests?)[\s.:=]+/i, '').trim();
+        const abbrevMatch = afterHeader.match(/\b(CBC|HbA1c|FBS|PPBS|Creatinine|Urea|ECG)\b/i);
+        if (abbrevMatch) {
+          const name = abbrevMatch[0];
+          if (!extractedDiagnosticTests.some((t) => t.testName.toLowerCase() === name.toLowerCase())) {
+            extractedDiagnosticTests.push({
+              id: 'test-user-' + Math.random().toString(36).substring(2, 7),
+              prescriptionId: uniqueRxId,
+              testName: name,
+              category: /ECG/i.test(name) ? 'imaging' : 'blood',
+              instructions: getLocalizedClinicalText(languageCode, {
+                en: 'Complete at clinical laboratory',
+                hi: 'क्लिनिकल प्रयोगशाला से जांच कराएं',
+                bn: 'ল্যাবরেটরি থেকে পরীক্ষা করান',
+              }),
+              status: 'pending',
+            });
+          }
         }
       }
     }
