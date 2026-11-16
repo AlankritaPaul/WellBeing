@@ -280,8 +280,8 @@ class NotificationService {
       // Use ServiceWorkerRegistration when available (enables action buttons on Android Lock Screen & Notification Bar)
       if (this.swRegistration && 'showNotification' in this.swRegistration) {
         await this.swRegistration.showNotification(title, {
-          icon: '/images/wellbeing_heart_logo.png',
-          badge: '/favicon.svg',
+          icon: '/images/wellbeing_app_icon.png',
+          badge: '/images/wellbeing_app_icon.png',
           ...options,
         });
         return true;
@@ -289,8 +289,8 @@ class NotificationService {
 
       // Fallback to standard Window Notification
       const notif = new Notification(title, {
-        icon: '/images/wellbeing_heart_logo.png',
-        badge: '/favicon.svg',
+        icon: '/images/wellbeing_app_icon.png',
+        badge: '/images/wellbeing_app_icon.png',
         ...options,
       });
 

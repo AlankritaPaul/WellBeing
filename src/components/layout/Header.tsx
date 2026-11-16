@@ -36,8 +36,12 @@ export const Header: React.FC<HeaderProps> = ({
           className={`flex items-center gap-2.5 ${onHomeClick ? 'cursor-pointer hover:opacity-90 active:scale-98 transition-transform' : ''}`}
           title="Return to Landing Page"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-950/40">
-            W
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center p-1 shadow-md shadow-emerald-950/40 shrink-0">
+            <img 
+              src="/images/wellbeing_app_icon_emblem.png" 
+              alt="WellBeing Logo" 
+              className="w-full h-full object-contain" 
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">

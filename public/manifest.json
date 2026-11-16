@@ -4,12 +4,12 @@
   "description": "100% money-free, local-first patient medical utility with individual medication alarms and lockscreen alerts",
   "icons": [
     {
-      "src": "/images/wellbeing_heart_logo.png",
+      "src": "/images/wellbeing_app_icon_192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/images/wellbeing_heart_logo.png",
+      "src": "/images/wellbeing_app_icon_512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
