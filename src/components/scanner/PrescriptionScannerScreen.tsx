@@ -4,7 +4,6 @@ import { ALL_LANGUAGES } from '../../i18n/languages';
 import { ocrService } from '../../services/ocrService';
 import { storageService, resolvePrescriptionImageUrl } from '../../services/storageService';
 import { optimizePrescriptionImage } from '../../utils/imageUtils';
-import { geminiVisionService } from '../../services/geminiVisionService';
 import type { ScannedPrescription, Medication, ContactPhone } from '../../types/prescription';
 import {
   Camera,
@@ -127,24 +126,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
   const [editDate, setEditDate] = useState<string>('');
   const [editPhone, setEditPhone] = useState<string>('');
 
-  // Gemini Vision AI API Key Setup Modal
-  const [showApiKeyModal, setShowApiKeyModal] = useState<boolean>(false);
-  const [apiKeyInput, setApiKeyInput] = useState<string>(() => storageService.getGeminiApiKey());
-  const [pendingDataUrl, setPendingDataUrl] = useState<string | null>(null);
   const [scanErrorMessage, setScanErrorMessage] = useState<string | null>(null);
-
-  const handleSaveApiKeyAndAnalyze = (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmed = apiKeyInput.trim();
-    if (!trimmed) return;
-    storageService.setGeminiApiKey(trimmed);
-    setShowApiKeyModal(false);
-    if (pendingDataUrl) {
-      const urlToProcess = pendingDataUrl;
-      setPendingDataUrl(null);
-      handleProcessImage(urlToProcess, false);
-    }
-  };
 
   const handleOpenEditHeader = () => {
     if (!scannedData) return;
@@ -229,21 +211,11 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
       }
     } catch (err: any) {
       console.warn('Prescription Vision AI processing status:', err);
-      if (
-        err?.message === 'NO_API_KEY' || 
-        !geminiVisionService.isConfigured() ||
-        err?.message?.toLowerCase().includes('api key') ||
-        err?.message?.toLowerCase().includes('api_key')
-      ) {
-        setPendingDataUrl(dataUrl);
-        setShowApiKeyModal(true);
-      } else {
-        setScanErrorMessage(
-          currentLangObj.code === 'bn'
-            ? 'প্রেসক্রিপশনটি বিশ্লেষণ করতে সমস্যা হয়েছে। ইন্টারনেট সংযোগ পরীক্ষা করে পুনরায় চেষ্টা করুন।'
-            : 'Could not analyze prescription. Please check your network connection and lighting, then try again.'
-        );
-      }
+      setScanErrorMessage(
+        currentLangObj.code === 'bn'
+          ? 'প্রেসক্রিপশনটি বিশ্লেষণ করতে সমস্যা হয়েছে। দয়া করে আলোর নিচে সোজা রেখে পুনরায় চেষ্টা করুন।'
+          : 'Could not analyze prescription. Please ensure good lighting and try again.'
+      );
     } finally {
       clearTimeout(step1);
       clearTimeout(step2);
@@ -1882,87 +1854,6 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
         </div>
       )}
 
-      {/* MODAL 4: GEMINI VISION AI KEY SETUP MODAL */}
-      {showApiKeyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-4 animate-in fade-in duration-200">
-          <div className={`w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-4 ${
-            isLight ? 'bg-white border-2 border-slate-200 text-slate-900' : 'bg-slate-900 border border-cyan-500/50 text-white'
-          }`}>
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-cyan-600/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-base font-bold text-white leading-tight">
-                    {currentLangObj.code === 'bn' ? 'গুগল জেমিনাই ভিশন এআই সংযোগ করুন' : 'Connect Google Gemini Vision AI'}
-                  </h4>
-                  <p className="text-xs text-cyan-400 font-medium">
-                    {currentLangObj.code === 'bn' ? 'ডাক্তারের জটিল হাতের লেখা ১০০% নির্ভুলভাবে পড়ার প্রযুক্তি' : 'Deciphers messy doctor cursive handwriting accurately'}
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowApiKeyModal(false)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveApiKeyAndAnalyze} className="space-y-4">
-              <div className="p-3.5 rounded-2xl bg-cyan-950/30 border border-cyan-800/40 text-xs text-slate-300 space-y-2">
-                <p className="font-bold text-cyan-300">
-                  {currentLangObj.code === 'bn' ? 'বিনামূল্যে এআই কি পেতে ৩টি সহজ ধাপ:' : 'How to get your free key in 10 seconds:'}
-                </p>
-                <ol className="list-decimal list-inside space-y-1 text-slate-300 text-[11px]">
-                  <li>
-                    Visit <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="text-cyan-400 underline font-bold">aistudio.google.com/apikey</a>
-                  </li>
-                  <li>Click <strong>&quot;Create API key&quot;</strong> (100% free forever, no payment needed).</li>
-                  <li>Paste the key below and tap <strong>Connect & Scan Prescription</strong>.</li>
-                </ol>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold mb-1.5 text-slate-300">
-                  {currentLangObj.code === 'bn' ? 'গুগল জেমিনাই এপিআই কি পেস্ট করুন:' : 'Paste Google Gemini API Key:'}
-                </label>
-                <input
-                  type="password"
-                  value={apiKeyInput}
-                  onChange={(e) => setApiKeyInput(e.target.value)}
-                  placeholder="Paste AIzaSy... here"
-                  className="w-full px-4 py-3 rounded-xl text-sm bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 font-mono shadow-inner"
-                  autoFocus
-                />
-                <p className="text-[10px] text-slate-400 italic mt-1.5">
-                  * Stored 100% locally on your device storage. Never transmitted or shared.
-                </p>
-              </div>
-
-              <div className="pt-2 flex items-center justify-end gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setShowApiKeyModal(false)}
-                  className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
-                >
-                  {t.backButton}
-                </button>
-                <button
-                  type="submit"
-                  disabled={!apiKeyInput.trim()}
-                  className="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-white shadow-lg shadow-cyan-950/50 transition-all cursor-pointer flex items-center gap-1.5"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>{currentLangObj.code === 'bn' ? 'সংযোগ করুন ও প্রেসক্রিপশন বিশ্লেষণ করুন' : 'Connect & Scan Prescription'}</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

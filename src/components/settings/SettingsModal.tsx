@@ -25,13 +25,11 @@ import {
   BellRing,
   Volume2,
   ChevronRight,
-  ChevronLeft,
-  Sparkles,
-  Check
+  ChevronLeft
 } from 'lucide-react';
 
 export type AppTheme = 'dark' | 'light';
-export type SettingsSection = 'main' | 'tones' | 'theme' | 'tutorial' | 'accounts' | 'gemini';
+export type SettingsSection = 'main' | 'tones' | 'theme' | 'tutorial' | 'accounts';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -71,15 +69,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   }>({ show: false, ids: [] });
 
   const activeTone = NOTIFICATION_TONES.find((tone) => tone.id === selectedTone) || NOTIFICATION_TONES[0];
-
-  const [apiKeyInput, setApiKeyInput] = useState<string>(() => storageService.getGeminiApiKey());
-  const [isKeySaved, setIsKeySaved] = useState<boolean>(false);
-
-  const handleSaveApiKey = () => {
-    storageService.setGeminiApiKey(apiKeyInput.trim());
-    setIsKeySaved(true);
-    setTimeout(() => setIsKeySaved(false), 2000);
-  };
 
   const handleSelectTone = (toneId: NotificationToneId) => {
     setSelectedTone(toneId);
@@ -163,7 +152,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   {currentSection === 'theme' && sLoc.themeTitle}
                   {currentSection === 'tutorial' && sLoc.tutorialTitle}
                   {currentSection === 'accounts' && sLoc.deleteAccountsTitle}
-                  {currentSection === 'gemini' && (currentLangObj.code === 'bn' ? 'এআই হাতের লেখা রিডার' : 'AI Handwriting Reader')}
                 </span>
               </div>
             </button>
@@ -339,38 +327,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-red-400 group-hover:translate-x-0.5 transition-all shrink-0" />
-              </div>
-
-              {/* Item 7: AI Prescription Vision Scanner (Doctor Handwriting Reader) */}
-              <div
-                onClick={() => setCurrentSection('gemini')}
-                className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 hover:border-cyan-500/60 hover:bg-slate-900/90 transition-all cursor-pointer flex items-center justify-between gap-3.5 group"
-              >
-                <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-cyan-600/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0 group-hover:scale-105 transition-transform">
-                    <Sparkles className="w-5 h-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-white text-sm sm:text-base">
-                        {currentLangObj.code === 'bn' ? 'এআই হাতের লেখা রিডার' : 'AI Handwriting Reader'}
-                      </h3>
-                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${
-                        apiKeyInput
-                          ? 'bg-emerald-950 text-emerald-300 border-emerald-800'
-                          : 'bg-cyan-950 text-cyan-300 border-cyan-800'
-                      }`}>
-                        {apiKeyInput ? '✓ Active' : 'Free Setup'}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-400 truncate mt-0.5">
-                      {currentLangObj.code === 'bn'
-                        ? 'ডাক্তারদের পেঁচানো ও অস্পষ্ট হাতের লেখা পড়ার প্রযুক্তি'
-                        : 'Decipher messy doctor cursive handwriting with Vision AI'}
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all shrink-0" />
               </div>
             </div>
           )}
@@ -701,75 +657,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   })}
                 </div>
               )}
-            </div>
-          )}
-
-          {/* 6. SUBVIEW: AI PRESCRIPTION HANDWRITING READER (GEMINI VISION) */}
-          {currentSection === 'gemini' && (
-            <div className="space-y-4 animate-in fade-in">
-              <div className="p-4 sm:p-5 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-cyan-600/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
-                    <Sparkles className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-black text-white text-base">
-                      {currentLangObj.code === 'bn'
-                        ? 'ডাক্তারদের হাতের লেখা পড়ার এআই ইঞ্জিন'
-                        : 'Doctor Handwriting Vision AI Engine'}
-                    </h3>
-                    <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                      {currentLangObj.code === 'bn'
-                        ? 'ডাক্তারদের পেঁচানো ও অস্পষ্ট হাতের লেখা সঠিক ওষুধের নামসহ বুঝতে গুগল জেমিনাই ভিশন এআই ব্যবহার করুন। এটি ১০০% বিনামূল্যে ব্যবহারযোগ্য।'
-                        : 'Decipher messy doctor cursive handwriting, dosages, and instructions with Google Gemini Vision AI. 100% free forever with zero payment required.'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold text-slate-300">
-                    {currentLangObj.code === 'bn' ? 'গুগল জেমিনাই এপিআই কি (API Key)' : 'Google Gemini API Key'}
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="password"
-                      value={apiKeyInput}
-                      onChange={(e) => setApiKeyInput(e.target.value)}
-                      placeholder="Paste your free API key here (AIzaSy...)"
-                      className="flex-1 px-4 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 font-mono"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleSaveApiKey}
-                      className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs sm:text-sm font-bold shadow-md transition-all shrink-0 cursor-pointer"
-                    >
-                      {isKeySaved ? '✓ Saved!' : 'Save Key'}
-                    </button>
-                  </div>
-                  {apiKeyInput && (
-                    <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-bold pt-1">
-                      <Check className="w-4 h-4" />
-                      <span>{currentLangObj.code === 'bn' ? 'এআই হাতের লেখা রিডার সক্রিয়' : 'AI Handwriting Reader Active & Ready'}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-cyan-950/30 border border-cyan-800/40 text-xs text-slate-300 space-y-2">
-                  <span className="font-bold text-cyan-300 block">
-                    {currentLangObj.code === 'bn' ? 'বিনামূল্যে কীভাবে এপিআই কি পাবেন:' : 'How to get your free key in 10 seconds:'}
-                  </span>
-                  <ol className="list-decimal list-inside space-y-1 text-slate-300 text-[11px]">
-                    <li>
-                      Visit <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="text-cyan-400 underline font-bold">aistudio.google.com/apikey</a>
-                    </li>
-                    <li>Click <strong>&quot;Create API key&quot;</strong> with your Google account.</li>
-                    <li>Copy and paste it into the box above, then tap <strong>Save Key</strong>.</li>
-                  </ol>
-                  <p className="text-[10px] text-slate-400 italic pt-1">
-                    * Your API key is stored 100% locally on your device in private storage. It is never transmitted to any third party.
-                  </p>
-                </div>
-              </div>
             </div>
           )}
 
