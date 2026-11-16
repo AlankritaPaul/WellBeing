@@ -1,16 +1,12 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/AlankritaPaul/WellBeing/main/public/images/wellbeing_meditation_logo.png" alt="WellBeing Brand Logo" width="160" />
+<div align="center">
+  <img src="./public/images/wellbeing_heart_logo.png" alt="WellBeing Heart Logo" width="160" />
   <br />
-  <img src="https://raw.githubusercontent.com/AlankritaPaul/WellBeing/main/public/images/wellbeing_header.svg" alt="WellBeing - Thoughtful Technology. Meaningful Healthcare." width="820" />
-</p>
+  <img src="./public/images/wellbeing_header.svg" alt="WellBeing - Thoughtful Technology. Meaningful Healthcare." width="820" />
+</div>
 
 ---
 
 ## 🌟 Overview
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/AlankritaPaul/WellBeing/main/public/images/wellbeing_meditation_logo.png" alt="WellBeing Brand Logo" width="180" />
-</p>
 
 **WellBeing** is a 100% money-free, local-first medical utility designed to operate entirely on the patient's device storage (`localStorage` & `IndexedDB`). It runs seamlessly both online and offline, requiring **zero account creation, zero email IDs, and zero phone number inputs**, guaranteeing absolute data privacy and eliminating cybersecurity risks.
 
