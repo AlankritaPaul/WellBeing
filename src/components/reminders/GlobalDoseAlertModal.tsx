@@ -92,6 +92,17 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
 
     const todayStr = new Date().toISOString().split('T')[0];
 
+    // If taking a before-food medicine, record that food will be eaten shortly so after-food medicine triggers 15-20 min later!
+    if (currentAlert.isBeforeFood) {
+      if (currentAlert.slotType === 'morning') {
+        localStorage.setItem(`wellbeing_taken_before_breakfast_${todayStr}`, Date.now().toString());
+      } else if (currentAlert.slotType === 'afternoon') {
+        localStorage.setItem(`wellbeing_taken_before_lunch_${todayStr}`, Date.now().toString());
+      } else if (currentAlert.slotType === 'night') {
+        localStorage.setItem(`wellbeing_taken_before_dinner_${todayStr}`, Date.now().toString());
+      }
+    }
+
     storageService.logDoseAction({
       prescriptionId: doc.id,
       medicationId: currentAlert.med.id,
@@ -238,9 +249,7 @@ export const GlobalDoseAlertModal: React.FC<GlobalDoseAlertModalProps> = ({
               {currentAlert.med.name} ({currentAlert.med.dosage})
             </h2>
             <p className={`text-xs sm:text-sm font-bold mt-1 ${isLight ? 'text-slate-800' : 'text-slate-200'}`}>
-              {isBefore
-                ? 'Meal is coming up in 5-10 minutes. Please take this medicine on an empty stomach before food.'
-                : 'Meal finishing in 5-10 minutes. Please keep this medicine ready to take right after food.'}
+              Reminder, {currentAlert.userName || 'Maa'}: Please take {currentAlert.med.name} ({currentAlert.med.dosage}) {currentAlert.timeLabel}.
             </p>
           </div>
         </div>

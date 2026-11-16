@@ -1,4 +1,4 @@
-import type { ScannedPrescription, DiagnosticTest, DoseLogEntry } from '../types/prescription';
+import type { ScannedPrescription, Medication, DiagnosticTest, DoseLogEntry } from '../types/prescription';
 
 // Local-First Device Storage Service
 // Zero account, zero email, zero phone number, 100% device persistence
@@ -107,6 +107,50 @@ export function resolvePrescriptionImageUrl(p: ScannedPrescription | null | unde
   }
 
   return url || '/images/prescription_citycare.jpg';
+}
+
+export function parseDurationToDays(durationStr?: string): number | null {
+  if (!durationStr) return null;
+  const lower = durationStr.toLowerCase().trim();
+  if (
+    lower.includes('ongoing') ||
+    lower.includes('continuous') ||
+    lower.includes('regular') ||
+    lower.includes('life') ||
+    lower.includes('daily') ||
+    lower.includes('চলবে')
+  ) {
+    return Infinity;
+  }
+  const match = lower.match(/(\d+)\s*(day|দিন|week|সপ্তাহ|month|মাস|year|বছর)/);
+  if (match) {
+    const val = parseInt(match[1], 10);
+    const unit = match[2];
+    if (unit.startsWith('day') || unit.startsWith('দিন')) return val;
+    if (unit.startsWith('week') || unit.startsWith('সপ্তাহ')) return val * 7;
+    if (unit.startsWith('month') || unit.startsWith('মাস')) return val * 30;
+    if (unit.startsWith('year') || unit.startsWith('বছর')) return val * 365;
+  }
+  const numOnly = parseInt(lower, 10);
+  if (!isNaN(numOnly) && numOnly > 0) return numOnly;
+  return null;
+}
+
+export function isMedicationCourseCompleted(med: Medication, prescriptionDate?: string): boolean {
+  if (med.isCourseCompleted) return true;
+  const durationDays = med.durationDays || parseDurationToDays(med.duration);
+  if (!durationDays || durationDays === Infinity) return false;
+
+  const startStr = med.startDate || prescriptionDate;
+  if (!startStr) return false;
+
+  const startDate = new Date(startStr);
+  if (isNaN(startDate.getTime())) return false;
+
+  const now = new Date();
+  const diffTime = now.getTime() - startDate.getTime();
+  const daysElapsed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  return daysElapsed >= durationDays;
 }
 
 export const storageService = {
@@ -513,6 +557,34 @@ export const storageService = {
       window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: updated }));
     } catch (e) {
       console.warn('Could not update medication stock:', e);
+    }
+  },
+
+  updateMedicationSchedule(
+    prescriptionId: string,
+    medicationId: string,
+    updates: Partial<Medication>
+  ): void {
+    try {
+      const current = this.getPrescriptions();
+      const updated = current.map((p) => {
+        if (p.id !== prescriptionId) return p;
+        const meds = (p.medicines || []).map((m) => {
+          if (m.id !== medicationId) return m;
+          const newDuration = updates.duration !== undefined ? updates.duration : m.duration;
+          const parsedDays = parseDurationToDays(newDuration);
+          return {
+            ...m,
+            ...updates,
+            durationDays: updates.durationDays !== undefined ? updates.durationDays : (parsedDays || m.durationDays),
+          };
+        });
+        return { ...p, medicines: meds };
+      });
+      localStorage.setItem(STORAGE_KEYS.PRESCRIPTIONS, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('wellbeing_prescriptions_changed', { detail: updated }));
+    } catch (e) {
+      console.warn('Could not update medication schedule:', e);
     }
   },
 

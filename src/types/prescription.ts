@@ -12,6 +12,9 @@ export interface Medication {
   timing: 'before_food' | 'after_food' | 'with_food' | 'as_needed';
   duration: string; // e.g. "5 days", "14 days", "1 month"
   instructions?: string;
+  startDate?: string; // YYYY-MM-DD when course started
+  durationDays?: number; // Parsed numeric duration in days (e.g. 5, 7, 14, 30)
+  isCourseCompleted?: boolean;
   // Page 8: Inventory & Refill Tracking
   totalQuantity?: number;
   remainingQuantity?: number;

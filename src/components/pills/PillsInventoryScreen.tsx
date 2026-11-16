@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { getTranslation } from '../../i18n/translations';
 import { ALL_LANGUAGES } from '../../i18n/languages';
-import { storageService } from '../../services/storageService';
+import { storageService, isMedicationCourseCompleted } from '../../services/storageService';
 import type { ScannedPrescription, Medication } from '../../types/prescription';
 import {
   Pill,
@@ -17,7 +17,10 @@ import {
   FileCheck2,
   FlaskConical,
   ShieldCheck,
-  PackageCheck
+  PackageCheck,
+  Edit3,
+  CheckCircle2,
+  Calendar
 } from 'lucide-react';
 
 interface PillsInventoryScreenProps {
@@ -78,6 +81,40 @@ export const PillsInventoryScreen: React.FC<PillsInventoryScreenProps> = ({
 
   // Shopping List Modal State
   const [showShoppingModal, setShowShoppingModal] = useState<boolean>(false);
+
+  // When & How to Take (Schedule & Duration Editor) Modal State
+  const [editingScheduleMed, setEditingScheduleMed] = useState<Medication | null>(null);
+  const [editFoodTiming, setEditFoodTiming] = useState<'before_food' | 'after_food'>('before_food');
+  const [editBreakfast, setEditBreakfast] = useState<boolean>(true);
+  const [editLunch, setEditLunch] = useState<boolean>(false);
+  const [editDinner, setEditDinner] = useState<boolean>(true);
+  const [editDuration, setEditDuration] = useState<string>('7 days');
+  const [editInstructions, setEditInstructions] = useState<string>('');
+
+  const handleOpenScheduleEditor = (med: Medication) => {
+    setEditingScheduleMed(med);
+    setEditFoodTiming(med.timing === 'before_food' ? 'before_food' : 'after_food');
+    const freq = med.frequency || '1-0-1';
+    const parts = freq.split('-').map((p) => parseInt(p.trim(), 10) || 0);
+    setEditBreakfast(Boolean(parts[0] && parts[0] > 0));
+    setEditLunch(Boolean(parts[1] && parts[1] > 0));
+    setEditDinner(Boolean(parts[2] && parts[2] > 0));
+    setEditDuration(med.duration || '7 days');
+    setEditInstructions(med.instructions || '');
+  };
+
+  const handleSaveSchedule = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingScheduleMed || !currentDoc) return;
+    const frequency = `${editBreakfast ? 1 : 0}-${editLunch ? 1 : 0}-${editDinner ? 1 : 0}`;
+    storageService.updateMedicationSchedule(currentDoc.id, editingScheduleMed.id, {
+      timing: editFoodTiming,
+      frequency,
+      duration: editDuration.trim() || 'Ongoing',
+      instructions: editInstructions.trim() || undefined,
+    });
+    setEditingScheduleMed(null);
+  };
 
   if (!currentDoc) {
     return (
@@ -430,20 +467,44 @@ export const PillsInventoryScreen: React.FC<PillsInventoryScreenProps> = ({
                   />
                 </div>
 
-                {/* Timing Badge */}
-                <div className="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
-                  <span className="flex items-center gap-1 font-mono font-semibold">
-                    <Clock className="w-3 h-3 text-slate-500" />
-                    <span>{med.frequency}</span>
-                  </span>
-                  <span className="font-semibold text-slate-300">
-                    {med.timing === 'before_food' ? t.timingBeforeFood : t.timingAfterFood}
-                  </span>
+                {/* Timing & Duration Badge */}
+                <div className="flex flex-col gap-2 pt-1 border-t border-slate-800/80">
+                  <div className="flex flex-wrap items-center justify-between gap-1.5 text-[11px]">
+                    <div className="flex items-center gap-1.5 font-bold">
+                      <Clock className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                      <span className="font-mono text-white">{med.frequency || '1-0-1'}</span>
+                      <span className="text-slate-500">•</span>
+                      <span className={med.timing === 'before_food' ? 'text-amber-400 font-bold' : 'text-emerald-400 font-bold'}>
+                        {med.timing === 'before_food' ? 'খাওয়ার আগে (Before Food)' : 'খাওয়ার পরে (After Food)'}
+                      </span>
+                    </div>
+
+                    <div>
+                      {isMedicationCourseCompleted(med, currentDoc.date) ? (
+                        <span className="px-2 py-0.5 rounded-lg bg-emerald-950/80 border border-emerald-600/70 text-emerald-300 font-bold text-[10px] flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                          <span>✓ Course Completed</span>
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-lg bg-blue-950/80 border border-blue-700/60 text-blue-300 font-bold text-[10px] flex items-center gap-1">
+                          <Calendar className="w-3 h-3 text-blue-400" />
+                          <span>Course: {med.duration || 'Ongoing'}</span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Special Doctor's Instructions if present */}
+                  {med.instructions && (
+                    <p className="text-[11px] text-blue-300/90 font-medium italic">
+                      Note: {med.instructions}
+                    </p>
+                  )}
                 </div>
               </div>
 
-              {/* Action Buttons: Quick - / + and Log Refill */}
-              <div className="flex items-center gap-2 pt-1 border-t border-slate-800/80">
+              {/* Action Buttons: Quick - / + pill, Refill, and When & How to Take */}
+              <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800/80">
                 <div className="flex items-center gap-1 bg-slate-950 border border-slate-800 rounded-xl p-0.5">
                   <button
                     type="button"
@@ -469,11 +530,21 @@ export const PillsInventoryScreen: React.FC<PillsInventoryScreenProps> = ({
 
                 <button
                   type="button"
+                  onClick={() => handleOpenScheduleEditor(med)}
+                  className="flex-1 py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-all border border-slate-700 cursor-pointer"
+                  title="Provide when and how to take (before/after food, breakfast/lunch/dinner, duration)"
+                >
+                  <Edit3 className="w-3.5 h-3.5 text-amber-400" />
+                  <span>When & How to Take</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => {
                     setRefillMed(med);
                     setRefillAmount(med.form === 'capsule' ? 14 : 30);
                   }}
-                  className="flex-1 py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md shadow-blue-950/50"
+                  className="py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md shadow-blue-950/50 cursor-pointer"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>{t.refillButton}</span>
@@ -618,6 +689,173 @@ export const PillsInventoryScreen: React.FC<PillsInventoryScreenProps> = ({
                 {t.backButton}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 3: WHEN & HOW TO TAKE (SCHEDULE & DURATION EDITOR) */}
+      {editingScheduleMed && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-slate-900 rounded-3xl border border-amber-500/70 p-6 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <h3 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
+                <Edit3 className="w-5 h-5 text-amber-400" />
+                <span>When & How to Take (যখন ও যেভাবে খাবেন)</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setEditingScheduleMed(null)}
+                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div>
+              <p className="text-base font-black text-white">{editingScheduleMed.name}</p>
+              <p className="text-xs text-slate-400 mt-0.5">{editingScheduleMed.dosage} • <span className="capitalize">{editingScheduleMed.form}</span></p>
+            </div>
+
+            <form onSubmit={handleSaveSchedule} className="space-y-4">
+              {/* Field 1: How to Take (Before Food vs After Food) */}
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-2">
+                  1. How to take? (খাওয়ার আগে না পরে?):
+                </label>
+                <div className="grid grid-cols-2 gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setEditFoodTiming('before_food')}
+                    className={`py-3 px-3 rounded-2xl border-2 text-xs font-black flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                      editFoodTiming === 'before_food'
+                        ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md'
+                        : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800'
+                    }`}
+                  >
+                    <span>🟡 খাওয়ার আগে (Before Food)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setEditFoodTiming('after_food')}
+                    className={`py-3 px-3 rounded-2xl border-2 text-xs font-black flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                      editFoodTiming === 'after_food'
+                        ? 'bg-emerald-600 text-white border-emerald-500 shadow-md'
+                        : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800'
+                    }`}
+                  >
+                    <span>🟢 খাওয়ার পরে (After Food)</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Field 2: When to Take (Meal Times) */}
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-2">
+                  2. Which meals? (কোন কোন বেলা খাবেন?):
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditBreakfast(!editBreakfast)}
+                    className={`py-2.5 px-2 rounded-xl border text-xs font-bold flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
+                      editBreakfast
+                        ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800'
+                    }`}
+                  >
+                    <span>🌅 সকাল (Breakfast)</span>
+                    <span className="text-[10px] opacity-80">{editBreakfast ? '✓ Selected' : 'Off'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setEditLunch(!editLunch)}
+                    className={`py-2.5 px-2 rounded-xl border text-xs font-bold flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
+                      editLunch
+                        ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800'
+                    }`}
+                  >
+                    <span>☀️ দুপুর (Lunch)</span>
+                    <span className="text-[10px] opacity-80">{editLunch ? '✓ Selected' : 'Off'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setEditDinner(!editDinner)}
+                    className={`py-2.5 px-2 rounded-xl border text-xs font-bold flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
+                      editDinner
+                        ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800'
+                    }`}
+                  >
+                    <span>🌙 রাত (Dinner)</span>
+                    <span className="text-[10px] opacity-80">{editDinner ? '✓ Selected' : 'Off'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Field 3: Course Duration */}
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-1.5">
+                  3. Course Duration (কতদিন খাবেন?):
+                </label>
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {['3 days', '5 days', '7 days', '10 days', '14 days', '1 month', 'Ongoing'].map((d) => (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => setEditDuration(d)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors ${
+                        editDuration.toLowerCase() === d.toLowerCase()
+                          ? 'bg-amber-500 border-amber-400 text-slate-950 font-black'
+                          : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800'
+                      }`}
+                    >
+                      {d}
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="text"
+                  value={editDuration}
+                  onChange={(e) => setEditDuration(e.target.value)}
+                  placeholder="Or enter custom duration e.g. 10 days"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-bold focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              {/* Field 4: Special Instructions */}
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-1">
+                  4. Special Instructions (বিশেষ নির্দেশ - Optional):
+                </label>
+                <input
+                  type="text"
+                  value={editInstructions}
+                  onChange={(e) => setEditInstructions(e.target.value)}
+                  placeholder="e.g. প্রচুর জল দিয়ে খাবেন, খালি পেটে"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-medium focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setEditingScheduleMed(null)}
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+                >
+                  {t.backButton}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 text-xs sm:text-sm font-black shadow-lg shadow-amber-950/60 transition-all cursor-pointer"
+                >
+                  ✓ Save Permanently (সংরক্ষণ করুন)
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

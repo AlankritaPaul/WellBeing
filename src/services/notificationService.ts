@@ -1,5 +1,5 @@
 import type { ScannedPrescription, Medication } from '../types/prescription';
-import { storageService } from './storageService';
+import { storageService, isMedicationCourseCompleted } from './storageService';
 
 // Browser & Device Native Notification Service
 // 100% money-free, zero account, operating via Web Notifications, Service Worker & Web Audio API
@@ -200,14 +200,22 @@ class NotificationService {
   }
 
   // 1. Morning Daily Overview Notification (Between 06:30 AM and 07:00 AM)
-  // Reminds patient of their full day course before leaving home
+  // Addresses user by their chosen name (e.g. "Good morning, Maa!"), lists day's course, and reminds to keep medicines ready
   public sendMorningBriefing(userName: string, prescription: ScannedPrescription): boolean {
     const meds = prescription.medicines || [];
     if (meds.length === 0) return false;
 
-    const medNames = meds.map((m) => `${m.name} (${m.timing === 'before_food' ? 'Before food' : 'After food'})`).join(', ');
-    const title = `☀️ Good Morning ${userName ? userName : 'Patient'}! Today's Medicine Plan`;
-    const body = `🌅 Morning Reminder (6:30 - 7:00 AM):\nYour full day course: ${medNames}.\nPlease keep your medicines handy with you before leaving home!`;
+    // Filter out medications whose course duration has completed
+    const activeMeds = meds.filter((m) => !isMedicationCourseCompleted(m, prescription.date));
+    if (activeMeds.length === 0) return false;
+
+    const medNames = activeMeds
+      .map((m) => `${m.name} (${m.timing === 'before_food' ? 'Before food' : 'After food'})`)
+      .join(', ');
+
+    const displayName = userName.trim() || 'Maa';
+    const title = `☀️ Good morning, ${displayName}!`;
+    const body = `Today's medicine course: ${medNames}.\nPlease keep your medicines with you and ready for the day.`;
 
     this.sendNotification(title, {
       body,
@@ -216,20 +224,19 @@ class NotificationService {
     return true;
   }
 
-  // 2. INDIVIDUAL MEDICINE REMINDER (One by One, strictly separating Before Food and After Food, 5-10 mins in advance!)
+  // 2. INDIVIDUAL MEDICINE REMINDER
+  // Formatted with user's chosen name and natural meal relationship (e.g. "Reminder, Maa: Please take Pantoprazole 40mg before breakfast")
   public sendSingleMedicineReminder(
     userName: string, 
     med: Medication, 
-    timeLabel: string, 
+    mealLabel: string, 
     slotType: 'morning' | 'afternoon' | 'night'
   ): boolean {
-    const isBeforeFood = med.timing === 'before_food';
-    const timingBadge = isBeforeFood ? 'Take Before Food' : 'Take After Food';
+    const isBeforeFood = med.timing === 'before_food' || mealLabel.toLowerCase().includes('before');
+    const displayName = userName.trim() || 'Maa';
 
-    const title = `💊 ${med.name} (${med.dosage}) • ${timingBadge}`;
-    const body = isBeforeFood 
-      ? `⏰ 5-10 min advance reminder: Meal coming up. Please take ${med.name} on an empty stomach before food.`
-      : `⏰ 5-10 min advance reminder: Meal finishing soon. Please keep ${med.name} ready to take right after food.`;
+    const title = `💊 Medicine Reminder for ${displayName}`;
+    const body = `Reminder, ${displayName}: Please take ${med.name} (${med.dosage}) ${mealLabel}.`;
 
     const todayStr = new Date().toISOString().split('T')[0];
 
@@ -243,7 +250,7 @@ class NotificationService {
         { action: 'delayed', title: '⏱ Delay (15m)' },
         { action: 'skipped', title: '✕ Skip' },
       ],
-      data: { med, timeLabel, slotType, isBeforeFood, userName },
+      data: { med, timeLabel: mealLabel, slotType, isBeforeFood, userName: displayName },
     };
 
     this.sendNotification(title, options as NotificationOptions);
@@ -254,10 +261,10 @@ class NotificationService {
         new CustomEvent('wellbeing_single_dose_popup', {
           detail: {
             med,
-            timeLabel,
+            timeLabel: mealLabel,
             slotType,
             isBeforeFood,
-            userName,
+            userName: displayName,
             timestamp: Date.now(),
           },
         })
@@ -267,9 +274,10 @@ class NotificationService {
     return true;
   }
 
-  // 3. Night / End-of-Day Adherence Summary Report (09:30 PM)
+  // 3. Night / End-of-Day Adherence Summary Report (09:45 PM)
   public sendNightSummary(userName: string, totalScheduled: number, takenCount: number, delayedCount: number, skippedCount: number): boolean {
-    const title = `🌙 Daily Medicine Summary for ${userName ? userName : 'Today'}`;
+    const displayName = userName.trim() || 'Maa';
+    const title = `🌙 Daily Medicine Summary for ${displayName}`;
     const adherencePercent = totalScheduled > 0 ? Math.round((takenCount / totalScheduled) * 100) : 100;
 
     let detail = `${takenCount} of ${totalScheduled} taken on time (${adherencePercent}%)`;
@@ -285,17 +293,18 @@ class NotificationService {
     return true;
   }
 
-  // Preview test reminder so user can hear the pleasant, gentle chime and see the 5-10 min advance notification
+  // Preview test reminder so user can hear the pleasant, gentle chime and see the natural reminder format
   public sendTestSampleReminder(userName: string): void {
+    const displayName = userName.trim() || 'Maa';
     this.playAlertChime();
-    this.sendNotification(`💊 Pantoprazole 40mg • Take Before Food`, {
-      body: `⏰ 5-10 min advance reminder for ${userName ? userName : 'Patient'}: Breakfast is in 10 minutes. Please take Pantoprazole 40mg on an empty stomach. (Sound is set to gentle chime)`,
+    this.sendNotification(`💊 Medicine Reminder for ${displayName}`, {
+      body: `Reminder, ${displayName}: Please take Pantoprazole 40mg before breakfast.`,
       tag: 'wellbeing-test-sample-reminder',
     });
   }
 
   // Background Auto-Scheduler
-  // Checks current time every 30 seconds and checks each medicine individually at its exact Before/After food time
+  // Checks current time every 30 seconds, enforces course durations, and follows the natural meal sequence
   public startScheduler(): void {
     if (this.schedulerInterval) return;
 
@@ -325,7 +334,8 @@ class NotificationService {
     const currentDoc = (activeId ? prescriptions.find((p) => p.id === activeId) : null) || prescriptions[0];
     if (!currentDoc || !currentDoc.medicines || currentDoc.medicines.length === 0) return;
 
-    const userName = storageService.getUserName();
+    const userName = storageService.getUserName() || 'Maa';
+    const displayName = userName.trim() || 'Maa';
     const todayStr = new Date().toISOString().split('T')[0];
     const now = new Date();
     const currentHour = now.getHours();
@@ -341,104 +351,137 @@ class NotificationService {
       return slotIndex === 0;
     };
 
+    // 0. COURSE DURATION TRACKING: Check if any medicine course duration has completed
+    currentDoc.medicines.forEach((med) => {
+      if (isMedicationCourseCompleted(med, currentDoc.date)) {
+        const completeKey = `wellbeing_course_completed_sent_${med.id}`;
+        if (!localStorage.getItem(completeKey)) {
+          this.sendNotification(`🎉 Course Completed for ${displayName}!`, {
+            body: `${displayName}, your ${med.duration || 'prescribed'} course of ${med.name} (${med.dosage}) is now successfully completed! Well done.`,
+            tag: `wellbeing-course-completed-${med.id}`,
+          });
+          localStorage.setItem(completeKey, 'true');
+        }
+      }
+    });
+
+    // Only active medicines (whose course duration is still ongoing) will receive reminders!
+    const activeMedicines = currentDoc.medicines.filter((m) => !isMedicationCourseCompleted(m, currentDoc.date));
+    if (activeMedicines.length === 0) return;
+
     // A. 06:30 AM to 07:00 AM Morning Full-Day Overview Briefing
     // Triggered strictly between 6:30 AM and 7:00 AM (with catch-up up to 8:30 AM if the device was asleep/offline)
     const isMorningTime = (currentHour === 6 && currentMinute >= 30) || (currentHour === 7 && currentMinute <= 15) || (currentHour === 7 || currentHour === 8);
     if (isMorningTime) {
       const briefingKey = `wellbeing_briefing_sent_${todayStr}`;
       if (!localStorage.getItem(briefingKey)) {
-        this.sendMorningBriefing(userName, currentDoc);
+        this.sendMorningBriefing(displayName, currentDoc);
         localStorage.setItem(briefingKey, 'true');
       }
     }
 
-    // B. MORNING MEDICINES (At least 5 to 10 minutes before):
-    // 1. Morning BEFORE Food: (07:20 AM to 07:55 AM — 5-10 mins advance before food / dose)
-    if (currentHour === 7 && currentMinute >= 20 && currentMinute <= 55) {
-      currentDoc.medicines.forEach((med) => {
+    // B. BREAKFAST SEQUENCE (Normal household breakfast time ~ 9:00 AM to 9:30 AM):
+    // 1. Morning BEFORE Breakfast: (Sent around 8:45 AM – 9:15 AM before breakfast)
+    if ((currentHour === 8 && currentMinute >= 45) || (currentHour === 9 && currentMinute <= 15)) {
+      activeMedicines.forEach((med) => {
         if (hasDoseInSlot(med, 0) && med.timing === 'before_food') {
           const medKey = `wellbeing_dose_${med.id}_morning_beforefood_${todayStr}`;
           if (!localStorage.getItem(medKey)) {
-            this.sendSingleMedicineReminder(userName, med, 'Morning (5-10 min Before Breakfast)', 'morning');
+            this.sendSingleMedicineReminder(displayName, med, 'before breakfast', 'morning');
             localStorage.setItem(medKey, 'true');
           }
         }
       });
     }
 
-    // 2. Morning AFTER Food: (08:20 AM to 08:55 AM — 5-10 mins advance before finishing breakfast)
-    if (currentHour === 8 && currentMinute >= 20 && currentMinute <= 55) {
-      currentDoc.medicines.forEach((med) => {
+    // 2. Morning AFTER Breakfast:
+    // Triggered 15 to 20 minutes after taking Before Breakfast, OR during normal after-breakfast window (9:25 AM to 10:15 AM)
+    const bfTakenTime = localStorage.getItem(`wellbeing_taken_before_breakfast_${todayStr}`);
+    const is15MinsAfterBreakfast = bfTakenTime ? (Date.now() - parseInt(bfTakenTime, 10)) >= 15 * 60 * 1000 : false;
+    const isAfterBreakfastWindow = (currentHour === 9 && currentMinute >= 25) || (currentHour === 10 && currentMinute <= 15);
+
+    if (is15MinsAfterBreakfast || isAfterBreakfastWindow) {
+      activeMedicines.forEach((med) => {
         if (hasDoseInSlot(med, 0) && med.timing !== 'before_food') {
           const medKey = `wellbeing_dose_${med.id}_morning_afterfood_${todayStr}`;
           if (!localStorage.getItem(medKey)) {
-            this.sendSingleMedicineReminder(userName, med, 'Morning (5-10 min Before Finishing Breakfast)', 'morning');
+            this.sendSingleMedicineReminder(displayName, med, 'after breakfast', 'morning');
             localStorage.setItem(medKey, 'true');
           }
         }
       });
     }
 
-    // C. AFTERNOON MEDICINES (At least 5 to 10 minutes before):
-    // 1. Afternoon BEFORE Food: (12:20 PM to 12:55 PM — 5-10 mins advance before lunch)
-    if (currentHour === 12 && currentMinute >= 20 && currentMinute <= 55) {
-      currentDoc.medicines.forEach((med) => {
+    // C. LUNCH SEQUENCE (Normal household lunch time ~ 1:30 PM to 2:00 PM):
+    // 1. Afternoon BEFORE Lunch: (Sent around 1:00 PM – 1:30 PM before lunch)
+    if (currentHour === 13 && currentMinute <= 30) {
+      activeMedicines.forEach((med) => {
         if (hasDoseInSlot(med, 1) && med.timing === 'before_food') {
           const medKey = `wellbeing_dose_${med.id}_afternoon_beforefood_${todayStr}`;
           if (!localStorage.getItem(medKey)) {
-            this.sendSingleMedicineReminder(userName, med, 'Afternoon (5-10 min Before Lunch)', 'afternoon');
+            this.sendSingleMedicineReminder(displayName, med, 'before lunch', 'afternoon');
             localStorage.setItem(medKey, 'true');
           }
         }
       });
     }
 
-    // 2. Afternoon AFTER Food: (01:20 PM to 01:55 PM — 5-10 mins advance before finishing lunch)
-    if (currentHour === 13 && currentMinute >= 20 && currentMinute <= 55) {
-      currentDoc.medicines.forEach((med) => {
+    // 2. Afternoon AFTER Lunch:
+    // Triggered 15 to 20 minutes after taking Before Lunch, OR during normal after-lunch window (1:45 PM to 2:30 PM)
+    const lunchTakenTime = localStorage.getItem(`wellbeing_taken_before_lunch_${todayStr}`);
+    const is15MinsAfterLunch = lunchTakenTime ? (Date.now() - parseInt(lunchTakenTime, 10)) >= 15 * 60 * 1000 : false;
+    const isAfterLunchWindow = (currentHour === 13 && currentMinute >= 45) || (currentHour === 14 && currentMinute <= 30);
+
+    if (is15MinsAfterLunch || isAfterLunchWindow) {
+      activeMedicines.forEach((med) => {
         if (hasDoseInSlot(med, 1) && med.timing !== 'before_food') {
           const medKey = `wellbeing_dose_${med.id}_afternoon_afterfood_${todayStr}`;
           if (!localStorage.getItem(medKey)) {
-            this.sendSingleMedicineReminder(userName, med, 'Afternoon (5-10 min Before Finishing Lunch)', 'afternoon');
+            this.sendSingleMedicineReminder(displayName, med, 'after lunch', 'afternoon');
             localStorage.setItem(medKey, 'true');
           }
         }
       });
     }
 
-    // D. NIGHT MEDICINES (At least 5 to 10 minutes before):
-    // 1. Night BEFORE Food: (07:50 PM to 08:25 PM — 5-10 mins advance before dinner)
-    if ((currentHour === 19 && currentMinute >= 50) || (currentHour === 20 && currentMinute <= 25)) {
-      currentDoc.medicines.forEach((med) => {
+    // D. DINNER SEQUENCE (Normal household dinner time ~ 8:30 PM to 9:30 PM):
+    // 1. Night BEFORE Dinner: (Sent around 8:00 PM – 8:30 PM before dinner)
+    if (currentHour === 20 && currentMinute <= 30) {
+      activeMedicines.forEach((med) => {
         if (hasDoseInSlot(med, 2) && med.timing === 'before_food') {
           const medKey = `wellbeing_dose_${med.id}_night_beforefood_${todayStr}`;
           if (!localStorage.getItem(medKey)) {
-            this.sendSingleMedicineReminder(userName, med, 'Night (5-10 min Before Dinner)', 'night');
+            this.sendSingleMedicineReminder(displayName, med, 'before dinner', 'night');
             localStorage.setItem(medKey, 'true');
           }
         }
       });
     }
 
-    // 2. Night AFTER Food: (08:50 PM to 09:25 PM — 5-10 mins advance before finishing dinner)
-    if ((currentHour === 20 && currentMinute >= 50) || (currentHour === 21 && currentMinute <= 25)) {
-      currentDoc.medicines.forEach((med) => {
+    // 2. Night AFTER Dinner:
+    // Triggered 15 to 20 minutes after taking Before Dinner, OR during normal after-dinner window (9:00 PM to 9:45 PM)
+    const dinnerTakenTime = localStorage.getItem(`wellbeing_taken_before_dinner_${todayStr}`);
+    const is15MinsAfterDinner = dinnerTakenTime ? (Date.now() - parseInt(dinnerTakenTime, 10)) >= 15 * 60 * 1000 : false;
+    const isAfterDinnerWindow = (currentHour === 21 && currentMinute >= 0 && currentMinute <= 45);
+
+    if (is15MinsAfterDinner || isAfterDinnerWindow) {
+      activeMedicines.forEach((med) => {
         if (hasDoseInSlot(med, 2) && med.timing !== 'before_food') {
           const medKey = `wellbeing_dose_${med.id}_night_afterfood_${todayStr}`;
           if (!localStorage.getItem(medKey)) {
-            this.sendSingleMedicineReminder(userName, med, 'Night (5-10 min Before Finishing Dinner)', 'night');
+            this.sendSingleMedicineReminder(displayName, med, 'after dinner', 'night');
             localStorage.setItem(medKey, 'true');
           }
         }
       });
     }
 
-    // E. 09:30 PM to 10:00 PM Bedtime Adherence Summary for Doctor
-    if (currentHour === 21 && currentMinute >= 30) {
+    // E. 09:45 PM Bedtime Adherence Summary for Doctor
+    if (currentHour === 21 && currentMinute >= 45) {
       const nightSummaryKey = `wellbeing_night_summary_sent_${todayStr}`;
       if (!localStorage.getItem(nightSummaryKey)) {
         let totalScheduled = 0;
-        currentDoc.medicines.forEach((med) => {
+        activeMedicines.forEach((med) => {
           if (hasDoseInSlot(med, 0)) totalScheduled++;
           if (hasDoseInSlot(med, 1)) totalScheduled++;
           if (hasDoseInSlot(med, 2)) totalScheduled++;
@@ -449,7 +492,7 @@ class NotificationService {
         const delayedCount = logs.filter((l) => l.status === 'delayed').length;
         const skippedCount = logs.filter((l) => l.status === 'skipped').length;
 
-        this.sendNightSummary(userName, totalScheduled, takenCount, delayedCount, skippedCount);
+        this.sendNightSummary(displayName, totalScheduled, takenCount, delayedCount, skippedCount);
         localStorage.setItem(nightSummaryKey, 'true');
       }
     }
