@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { storageService } from './services/storageService';
+import { notificationService } from './services/notificationService';
 import { ALL_LANGUAGES } from './i18n/languages';
 import { getTranslation } from './i18n/translations';
 import { Header } from './components/layout/Header';
@@ -142,11 +143,15 @@ export const App: React.FC = () => {
 
     window.addEventListener('wellbeing_prescriptions_changed', handlePrescriptionsChange);
 
+    // Start background notification scheduler
+    notificationService.startScheduler();
+
     return () => {
       window.removeEventListener('wellbeing_language_changed', handleLangChange);
       window.removeEventListener('wellbeing_name_changed', handleNameChange);
       window.removeEventListener('wellbeing_theme_changed', handleThemeChange);
       window.removeEventListener('wellbeing_prescriptions_changed', handlePrescriptionsChange);
+      notificationService.stopScheduler();
     };
   }, [appPhase]);
 

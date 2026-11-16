@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { getTranslation } from '../../i18n/translations';
 import { ALL_LANGUAGES } from '../../i18n/languages';
 import { storageService } from '../../services/storageService';
+import { notificationService } from '../../services/notificationService';
 import type { ScannedPrescription, Medication, DoseLogEntry } from '../../types/prescription';
 import {
   Clock,
@@ -15,7 +16,10 @@ import {
   Sparkles,
   ArrowLeft,
   X,
-  FileCheck2
+  FileCheck2,
+  Bell,
+  BellRing,
+  Volume2
 } from 'lucide-react';
 
 interface DailyPillAccountabilityScreenProps {
@@ -60,6 +64,52 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
   // Skip Modal State
   const [skippingItem, setSkippingItem] = useState<{ med: Medication; slot: 'morning' | 'afternoon' | 'evening' | 'night'; scheduledTime: string } | null>(null);
   const [customSkipReason, setCustomSkipReason] = useState<string>('');
+
+  // Device Notification State
+  const [notifPermission, setNotifPermission] = useState<NotificationPermission | 'unsupported'>(() => notificationService.getPermission());
+  const [testFeedback, setTestFeedback] = useState<string | null>(null);
+
+  const handleEnableNotifications = async () => {
+    const perm = await notificationService.requestPermission();
+    setNotifPermission(perm);
+    if (perm === 'granted') {
+      notificationService.playAlertChime();
+      setTestFeedback(currentLangObj.code === 'bn' ? '✅ নোটিফিকেশন চালু হয়েছে! অ্যালার্ট সাউন্ড পরীক্ষা করা হয়েছে।' : '✅ Notifications enabled! Medical chime sounded.');
+      setTimeout(() => setTestFeedback(null), 4000);
+    }
+  };
+
+  const handleTestDoseAlert = () => {
+    if (notifPermission !== 'granted') {
+      handleEnableNotifications();
+      return;
+    }
+    const meds = currentDoc?.medicines || [];
+    notificationService.sendDoseReminder(userName, 'Morning (08:00 AM)', meds.slice(0, 2));
+    setTestFeedback(currentLangObj.code === 'bn' ? '🔔 ওষুধের সময় হলে এই নোটিফিকেশন আসবে!' : '🔔 Sample Pill Dose reminder sent with chime!');
+    setTimeout(() => setTestFeedback(null), 4000);
+  };
+
+  const handleTestMorningBriefing = () => {
+    if (notifPermission !== 'granted') {
+      handleEnableNotifications();
+      return;
+    }
+    if (!currentDoc) return;
+    notificationService.sendMorningBriefing(userName, currentDoc);
+    setTestFeedback(currentLangObj.code === 'bn' ? '☀️ সকালের পুরো দিনের ওষুধের তালিকা পাঠানো হয়েছে!' : '☀️ Morning Course Plan briefing sent to device!');
+    setTimeout(() => setTestFeedback(null), 4000);
+  };
+
+  const handleTestNightSummary = () => {
+    if (notifPermission !== 'granted') {
+      handleEnableNotifications();
+      return;
+    }
+    notificationService.sendNightSummary(userName, totalScheduled, takenCount, delayedCount, skippedCount);
+    setTestFeedback(currentLangObj.code === 'bn' ? '🌙 রাতের সারাদিনের রিপোর্ট পাঠানো হয়েছে (ডাক্তারকে দেখানোর জন্য জমা থাকবে)!' : '🌙 Bedtime Adherence summary sent (saved for doctor visit)!');
+    setTimeout(() => setTestFeedback(null), 4000);
+  };
 
   if (!currentDoc) {
     return (
@@ -183,42 +233,66 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
         key={`${med.id}-${slot}`}
         className={`p-4 rounded-2xl border transition-all flex flex-col justify-between gap-3 ${
           isTaken
-            ? 'bg-slate-900/60 border-emerald-800/60 shadow-md'
+            ? isLight
+              ? 'bg-emerald-50/80 border-emerald-300 shadow-sm'
+              : 'bg-slate-900/60 border-emerald-800/60 shadow-md'
             : isDelayed
-            ? 'bg-amber-950/40 border-amber-600/70 shadow-lg'
+            ? isLight
+              ? 'bg-amber-50 border-amber-300 shadow-sm'
+              : 'bg-amber-950/40 border-amber-600/70 shadow-lg'
             : isSkipped
-            ? 'bg-slate-950/80 border-slate-800 opacity-70'
+            ? isLight
+              ? 'bg-slate-100 border-slate-300 opacity-80'
+              : 'bg-slate-950/80 border-slate-800 opacity-70'
+            : isLight
+            ? 'bg-white border-2 border-slate-200 shadow-sm hover:border-blue-400'
             : 'bg-slate-900/90 border-slate-800 hover:border-blue-500/50 shadow-md'
         }`}
       >
         <div className="flex items-start justify-between gap-2">
           <div>
-            <h4 className={`text-sm sm:text-base font-black ${isTaken ? 'text-slate-300 line-through' : 'text-white'}`}>
+            <h4 className={`text-sm sm:text-base font-black ${
+              isTaken
+                ? isLight ? 'text-slate-500 line-through' : 'text-slate-300 line-through'
+                : isLight ? 'text-slate-950' : 'text-white'
+            }`}>
               {med.name}
             </h4>
-            <p className="text-xs text-blue-300 font-bold mt-0.5">
+            <p className={`text-xs font-bold mt-0.5 ${isLight ? 'text-blue-800' : 'text-blue-300'}`}>
               {med.dosage} • <span className="capitalize">{med.form}</span>
             </p>
-            <p className="text-[11px] text-slate-400 mt-1 font-medium">
+            <p className={`text-[11px] mt-1 font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
               {med.timing === 'before_food' ? t.timingBeforeFood : t.timingAfterFood}
             </p>
           </div>
 
           {/* Status Badge */}
           {isTaken && (
-            <span className="px-2.5 py-1 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-300 text-xs font-bold flex items-center gap-1">
+            <span className={`px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1 ${
+              isLight
+                ? 'bg-emerald-100 border border-emerald-400 text-emerald-900'
+                : 'bg-emerald-950 border border-emerald-600/70 text-emerald-300'
+            }`}>
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>{t.takePillButton}</span>
             </span>
           )}
           {isDelayed && (
-            <span className="px-2.5 py-1 rounded-xl bg-amber-950 border border-amber-600/70 text-amber-300 text-xs font-bold flex items-center gap-1">
+            <span className={`px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1 ${
+              isLight
+                ? 'bg-amber-100 border border-amber-400 text-amber-900'
+                : 'bg-amber-950 border border-amber-600/70 text-amber-300'
+            }`}>
               <Clock className="w-3.5 h-3.5" />
               <span>+{log?.delayedUntil || '15m'}</span>
             </span>
           )}
           {isSkipped && (
-            <span className="px-2.5 py-1 rounded-xl bg-slate-800 border border-slate-700 text-slate-400 text-xs font-bold flex items-center gap-1">
+            <span className={`px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1 ${
+              isLight
+                ? 'bg-slate-200 border border-slate-300 text-slate-800'
+                : 'bg-slate-800 border border-slate-700 text-slate-400'
+            }`}>
               <AlertCircle className="w-3.5 h-3.5" />
               <span>{t.skipDoseButton}</span>
             </span>
@@ -227,14 +301,18 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
 
         {/* Skipped reason display */}
         {isSkipped && log?.skipReason && (
-          <p className="text-[11px] text-amber-300 font-medium pl-2 border-l-2 border-amber-600/60">
+          <p className={`text-[11px] font-medium pl-2 border-l-2 ${
+            isLight ? 'text-amber-800 border-amber-500' : 'text-amber-300 border-amber-600/60'
+          }`}>
             {log.skipReason}
           </p>
         )}
 
         {/* 3-Button Smart Action Protocol */}
         {!isTaken && (
-          <div className="grid grid-cols-3 gap-1.5 pt-2 border-t border-slate-800/80">
+          <div className={`grid grid-cols-3 gap-1.5 pt-2 border-t ${
+            isLight ? 'border-slate-200' : 'border-slate-800/80'
+          }`}>
             <button
               type="button"
               onClick={() => handleTakeDose(med, slot, scheduledTime)}
@@ -247,7 +325,11 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
             <button
               type="button"
               onClick={() => setSnoozingItem({ med, slot, scheduledTime })}
-              className="py-2 px-1.5 rounded-xl bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/50 text-amber-300 font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1 transition-all"
+              className={`py-2 px-1.5 rounded-xl border font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1 transition-all ${
+                isLight
+                  ? 'bg-amber-100 hover:bg-amber-200 border-amber-300 text-amber-900'
+                  : 'bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/50 text-amber-300'
+              }`}
             >
               <Clock className="w-3 h-3" />
               <span>{t.delayAlarmButton}</span>
@@ -256,7 +338,11 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
             <button
               type="button"
               onClick={() => setSkippingItem({ med, slot, scheduledTime })}
-              className="py-2 px-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-400 hover:text-white font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1 transition-all"
+              className={`py-2 px-1.5 rounded-xl font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1 transition-all ${
+                isLight
+                  ? 'bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700'
+                  : 'bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-400 hover:text-white'
+              }`}
             >
               <X className="w-3 h-3" />
               <span>{t.skipDoseButton}</span>
@@ -371,47 +457,214 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
         </div>
       )}
 
+      {/* PATIENT DEVICE NOTIFICATION & ALARM CENTER */}
+      <div className={`p-5 sm:p-6 rounded-3xl border-2 shadow-xl transition-all ${
+        isLight
+          ? notifPermission === 'granted'
+            ? 'bg-emerald-50/90 border-emerald-300 text-emerald-950 shadow-emerald-100/50'
+            : 'bg-amber-50/90 border-amber-300 text-amber-950 shadow-amber-100/50'
+          : notifPermission === 'granted'
+          ? 'bg-emerald-950/40 border-emerald-600/70 text-emerald-200'
+          : 'bg-amber-950/40 border-amber-600/70 text-amber-200'
+      }`}>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-start gap-3.5">
+            <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center shrink-0 ${
+              notifPermission === 'granted'
+                ? isLight
+                  ? 'bg-emerald-100 border-emerald-300 text-emerald-700'
+                  : 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
+                : isLight
+                ? 'bg-amber-100 border-amber-300 text-amber-800'
+                : 'bg-amber-500/20 border-amber-500/50 text-amber-400'
+            }`}>
+              {notifPermission === 'granted' ? (
+                <BellRing className="w-6 h-6 animate-pulse" />
+              ) : (
+                <Bell className="w-6 h-6" />
+              )}
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className={`text-base sm:text-lg font-black tracking-tight ${
+                  isLight ? 'text-slate-950' : 'text-white'
+                }`}>
+                  {currentLangObj.code === 'bn' ? '🔔 মোবাইল ও কম্পিউটার নোটিফিকেশন অ্যালার্ম' : '🔔 Device Reminders & Alarm Notifications'}
+                </h3>
+                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                  notifPermission === 'granted'
+                    ? isLight
+                      ? 'bg-emerald-200 text-emerald-900 border border-emerald-400'
+                      : 'bg-emerald-900/80 text-emerald-300 border border-emerald-600'
+                    : isLight
+                    ? 'bg-amber-200 text-amber-900 border border-amber-400'
+                    : 'bg-amber-900/80 text-amber-300 border border-amber-600'
+                }`}>
+                  {notifPermission === 'granted' ? 'Active' : 'Action Needed'}
+                </span>
+              </div>
+              <p className={`text-xs sm:text-sm mt-1 max-w-2xl font-medium ${
+                isLight ? 'text-slate-700' : 'text-slate-300'
+              }`}>
+                {notifPermission === 'granted'
+                  ? (currentLangObj.code === 'bn'
+                      ? 'স্বয়ংক্রিয়ভাবে সকালে বের হওয়ার আগে পুরো দিনের সূচি, প্রতিটি ওষুধের সময় ঘণ্টা বাজিয়ে অ্যালার্ট এবং রাতে সারাদিনের রিপোর্ট চিকিৎসকের জন্য জমা থাকবে।'
+                      : 'Automatic morning briefing before leaving home, timely dose reminders with chime alert, and nightly adherence report saved for your doctor.')
+                  : (currentLangObj.code === 'bn'
+                      ? 'একটি ওষুধও যেন বাদ না পড়ে — সকালে বের হওয়ার আগে পুরো তালিকা, সঠিক সময়ে অ্যালার্ট এবং রাতের রিপোর্ট পেতে অনুমতি দিন।'
+                      : 'Never miss a single dose. Enable device notifications to receive morning packing plans, dose chime alerts, and nightly doctor compliance reports.')}
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Action Button */}
+          {notifPermission !== 'granted' && (
+            <button
+              type="button"
+              onClick={handleEnableNotifications}
+              className="px-5 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-amber-950/30 transition-all shrink-0"
+            >
+              <Bell className="w-4 h-4" />
+              <span>{currentLangObj.code === 'bn' ? 'নোটিফিকেশন চালু করুন' : 'Enable Device Notifications'}</span>
+            </button>
+          )}
+        </div>
+
+        {/* Live Test Controls (Visible when active) */}
+        {notifPermission === 'granted' && (
+          <div className={`mt-4 pt-4 border-t flex flex-wrap items-center justify-between gap-3 ${
+            isLight ? 'border-emerald-200' : 'border-emerald-800/60'
+          }`}>
+            <span className={`text-xs font-bold flex items-center gap-1.5 ${
+              isLight ? 'text-emerald-900' : 'text-emerald-300'
+            }`}>
+              <Volume2 className="w-4 h-4 text-emerald-500" />
+              <span>{currentLangObj.code === 'bn' ? 'অ্যালার্ট পরীক্ষা করুন:' : 'Test Notifications on Your Device:'}</span>
+            </span>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={handleTestDoseAlert}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  isLight
+                    ? 'bg-white hover:bg-emerald-100 text-emerald-950 border border-emerald-300 shadow-sm'
+                    : 'bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 border border-emerald-700/60'
+                }`}
+                title="Trigger immediate dose chime alert"
+              >
+                <span>⏰ Test Pill Chime Alert</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleTestMorningBriefing}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  isLight
+                    ? 'bg-white hover:bg-amber-100 text-amber-950 border border-amber-300 shadow-sm'
+                    : 'bg-amber-950/60 hover:bg-amber-900 text-amber-200 border border-amber-700/60'
+                }`}
+                title="Trigger 8:00 AM morning full day packing briefing"
+              >
+                <span>☀️ Test Morning Plan</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleTestNightSummary}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  isLight
+                    ? 'bg-white hover:bg-blue-100 text-blue-950 border border-blue-300 shadow-sm'
+                    : 'bg-blue-950/60 hover:bg-blue-900 text-blue-200 border border-blue-700/60'
+                }`}
+                title="Trigger bedtime adherence summary report"
+              >
+                <span>🌙 Test Bedtime Report</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Feedback Alert toast */}
+        {testFeedback && (
+          <div className="mt-3 px-3.5 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold flex items-center gap-2 animate-in fade-in shadow-md">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <span>{testFeedback}</span>
+          </div>
+        )}
+      </div>
+
       {/* MORNING AGENDA BLUEPRINT CARD (Summary & Packing List) */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900/95 to-blue-950/40 border border-blue-800/50 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+      <div className={`p-5 sm:p-6 rounded-3xl border shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5 ${
+        isLight
+          ? 'bg-gradient-to-br from-blue-50 via-white to-blue-100/60 border-2 border-blue-200'
+          : 'bg-gradient-to-br from-slate-900 via-slate-900/95 to-blue-950/40 border border-blue-800/50'
+      }`}>
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/20 border border-blue-500/40 text-blue-300 text-xs font-bold">
-            <Sun className="w-4 h-4 text-amber-400" />
+          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold ${
+            isLight
+              ? 'bg-blue-100 border border-blue-300 text-blue-900'
+              : 'bg-blue-600/20 border border-blue-500/40 text-blue-300'
+          }`}>
+            <Sun className={`w-4 h-4 ${isLight ? 'text-amber-600' : 'text-amber-400'}`} />
             <span>{t.morningBlueprintTitle}</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-white leading-snug">
+          <h2 className={`text-xl sm:text-2xl font-black leading-snug ${
+            isLight ? 'text-slate-950' : 'text-white'
+          }`}>
             {userName ? `${userName}, ` : ''}{currentLangObj.code === 'bn' ? 'আজকের ঔষধ সূচি' : 'Today\'s Medicine Agenda'}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
+          <p className={`text-xs sm:text-sm max-w-xl font-medium ${
+            isLight ? 'text-slate-700' : 'text-slate-300'
+          }`}>
             {currentDoc.hospitalName} • {currentDoc.doctorName}
           </p>
         </div>
 
         {/* Daily Adherence Metric Box */}
-        <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800/90 text-right min-w-[140px]">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+        <div className={`p-4 rounded-2xl border text-right min-w-[140px] ${
+          isLight
+            ? 'bg-white border-2 border-slate-200 shadow-sm'
+            : 'bg-slate-950/80 border border-slate-800/90'
+        }`}>
+          <span className={`text-[11px] font-bold uppercase tracking-wider block mb-1 ${
+            isLight ? 'text-slate-600' : 'text-slate-400'
+          }`}>
             {t.adherenceScoreLabel}
           </span>
-          <p className="text-2xl sm:text-3xl font-black text-emerald-400 font-mono">
+          <p className={`text-2xl sm:text-3xl font-black font-mono ${
+            isLight ? 'text-emerald-700' : 'text-emerald-400'
+          }`}>
             {scorePercent}%
           </p>
-          <span className="text-[10px] text-slate-400 font-semibold">
+          <span className={`text-[10px] font-semibold ${
+            isLight ? 'text-slate-600' : 'text-slate-400'
+          }`}>
             {takenCount} {currentLangObj.code === 'bn' ? 'টি নেওয়া হয়েছে' : 'doses completed'}
           </span>
         </div>
       </div>
 
       {/* STRIP PACKING CHECKLIST FOR GOING OUTSIDE */}
-      <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-start gap-3">
-        <Briefcase className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+      <div className={`p-4 rounded-2xl border flex items-start gap-3 ${
+        isLight
+          ? 'bg-white border-2 border-slate-200 shadow-sm'
+          : 'bg-slate-900/80 border border-slate-800'
+      }`}>
+        <Briefcase className={`w-5 h-5 shrink-0 mt-0.5 ${isLight ? 'text-blue-700' : 'text-blue-400'}`} />
         <div>
-          <h4 className="text-xs font-bold text-slate-300">
+          <h4 className={`text-xs font-bold ${isLight ? 'text-slate-900' : 'text-slate-300'}`}>
             {t.stripPackingListTitle}:
           </h4>
           <div className="flex flex-wrap gap-2 mt-1.5">
             {medicines.map((m) => (
               <span
                 key={m.id}
-                className="px-2.5 py-0.5 rounded-lg bg-slate-950 border border-slate-800 text-[11px] text-slate-300 font-bold"
+                className={`px-2.5 py-0.5 rounded-lg text-[11px] font-bold ${
+                  isLight
+                    ? 'bg-slate-100 border border-slate-300 text-slate-800'
+                    : 'bg-slate-950 border border-slate-800 text-slate-300'
+                }`}
               >
                 ✓ {m.name} ({m.frequency})
               </span>
@@ -423,13 +676,21 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
       {/* TIME SLOTS: MORNING, AFTERNOON, NIGHT */}
       <div className="space-y-6">
         {/* Slot 1: Morning */}
-        <div className="p-5 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <h3 className="text-base font-black text-white flex items-center gap-2">
-              <Sun className="w-5 h-5 text-amber-400" />
+        <div className={`p-5 rounded-3xl border shadow-xl space-y-4 ${
+          isLight
+            ? 'bg-white border-2 border-slate-200'
+            : 'bg-slate-900/90 border border-slate-800'
+        }`}>
+          <div className={`flex items-center justify-between pb-3 border-b ${
+            isLight ? 'border-slate-200' : 'border-slate-800'
+          }`}>
+            <h3 className={`text-base font-black flex items-center gap-2 ${
+              isLight ? 'text-slate-950' : 'text-white'
+            }`}>
+              <Sun className={`w-5 h-5 ${isLight ? 'text-amber-600' : 'text-amber-400'}`} />
               <span>{t.morningSlotLabel} (08:00 AM)</span>
             </h3>
-            <span className="text-xs text-slate-400 font-bold">
+            <span className={`text-xs font-bold ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
               {morningMeds.length} {t.totalMedicinesCountLabel}
             </span>
           </div>
@@ -441,13 +702,21 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
 
         {/* Slot 2: Afternoon */}
         {afternoonMeds.length > 0 && (
-          <div className="p-5 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-base font-black text-white flex items-center gap-2">
-                <Sunset className="w-5 h-5 text-orange-400" />
+          <div className={`p-5 rounded-3xl border shadow-xl space-y-4 ${
+            isLight
+              ? 'bg-white border-2 border-slate-200'
+              : 'bg-slate-900/90 border border-slate-800'
+          }`}>
+            <div className={`flex items-center justify-between pb-3 border-b ${
+              isLight ? 'border-slate-200' : 'border-slate-800'
+            }`}>
+              <h3 className={`text-base font-black flex items-center gap-2 ${
+                isLight ? 'text-slate-950' : 'text-white'
+              }`}>
+                <Sunset className={`w-5 h-5 ${isLight ? 'text-orange-600' : 'text-orange-400'}`} />
                 <span>{t.afternoonSlotLabel} (01:30 PM)</span>
               </h3>
-              <span className="text-xs text-slate-400 font-bold">
+              <span className={`text-xs font-bold ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
                 {afternoonMeds.length} {t.totalMedicinesCountLabel}
               </span>
             </div>
@@ -459,13 +728,21 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
         )}
 
         {/* Slot 3: Night */}
-        <div className="p-5 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <h3 className="text-base font-black text-white flex items-center gap-2">
-              <Moon className="w-5 h-5 text-indigo-400" />
+        <div className={`p-5 rounded-3xl border shadow-xl space-y-4 ${
+          isLight
+            ? 'bg-white border-2 border-slate-200'
+            : 'bg-slate-900/90 border border-slate-800'
+        }`}>
+          <div className={`flex items-center justify-between pb-3 border-b ${
+            isLight ? 'border-slate-200' : 'border-slate-800'
+          }`}>
+            <h3 className={`text-base font-black flex items-center gap-2 ${
+              isLight ? 'text-slate-950' : 'text-white'
+            }`}>
+              <Moon className={`w-5 h-5 ${isLight ? 'text-indigo-600' : 'text-indigo-400'}`} />
               <span>{t.nightSlotLabel} (09:00 PM)</span>
             </h3>
-            <span className="text-xs text-slate-400 font-bold">
+            <span className={`text-xs font-bold ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
               {nightMeds.length} {t.totalMedicinesCountLabel}
             </span>
           </div>
@@ -477,9 +754,15 @@ export const DailyPillAccountabilityScreen: React.FC<DailyPillAccountabilityScre
       </div>
 
       {/* NIGHTLY COURSE SUMMARY CARD */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-slate-900/95 border border-slate-800 shadow-xl space-y-3">
-        <h3 className="text-base font-black text-white flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-amber-400" />
+      <div className={`p-5 sm:p-6 rounded-3xl border shadow-xl space-y-3 ${
+        isLight
+          ? 'bg-white border-2 border-slate-200'
+          : 'bg-slate-900/95 border border-slate-800'
+      }`}>
+        <h3 className={`text-base font-black flex items-center gap-2 ${
+          isLight ? 'text-slate-950' : 'text-white'
+        }`}>
+          <Sparkles className={`w-5 h-5 ${isLight ? 'text-amber-600' : 'text-amber-400'}`} />
           <span>{t.nightlySummaryTitle}</span>
         </h3>
         <p className="text-xs text-slate-400 leading-relaxed">

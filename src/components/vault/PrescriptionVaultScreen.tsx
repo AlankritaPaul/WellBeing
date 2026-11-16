@@ -415,11 +415,15 @@ export const PrescriptionVaultScreen: React.FC<PrescriptionVaultScreenProps> = (
 
               {/* Allergy Alert Tag if present */}
               {currentDoc?.allergies && currentDoc.allergies.length > 0 && (
-                <div className="p-3 rounded-2xl bg-amber-950/40 border border-amber-700/60 flex items-start gap-2.5 text-amber-300 text-xs">
-                  <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <div className={`p-3 rounded-2xl border flex items-start gap-2.5 text-xs ${
+                  isLight
+                    ? 'bg-amber-50 border-amber-300 text-amber-950 shadow-sm'
+                    : 'bg-amber-950/40 border-amber-700/60 text-amber-300'
+                }`}>
+                  <ShieldAlert className={`w-4 h-4 shrink-0 mt-0.5 ${isLight ? 'text-amber-700' : 'text-amber-400'}`} />
                   <div>
-                    <span className="font-extrabold block mb-0.5">{t.allergyShieldTitle}:</span>
-                    <span className="text-[11px] text-amber-200 font-medium">
+                    <span className={`font-extrabold block mb-0.5 ${isLight ? 'text-amber-950' : 'text-amber-300'}`}>{t.allergyShieldTitle}:</span>
+                    <span className={`text-[11px] font-medium ${isLight ? 'text-amber-900' : 'text-amber-200'}`}>
                       {currentDoc.allergies.join(', ')}
                     </span>
                   </div>
