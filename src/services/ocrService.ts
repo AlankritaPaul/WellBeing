@@ -11,6 +11,7 @@ export interface OCRProcessOptions {
 interface ClinicalMedDef {
   name: string;
   generic: string;
+  aliases: string[];
   purpose: string;
   purposeBn: string;
   whyPrescribed: string;
@@ -26,6 +27,7 @@ const CLINICAL_CATALOG: Record<string, ClinicalMedDef> = {
   paracetamol: {
     name: 'Paracetamol',
     generic: 'Paracetamol (Acetaminophen)',
+    aliases: ['paracetamol', 'dolo', 'calpol', 'crocin', 'pacimol', 'pcm', 'pyregesic', 'metacin'],
     purpose: 'Fever reduction & rapid alleviation of body ache',
     purposeBn: 'জ্বর নিরাময় ও তীব্র শরীর ব্যথার দ্রুত উপশম',
     whyPrescribed: 'Prescribed to rapidly bring down elevated body temperature and relieve muscle aches and joint pain.',
@@ -39,6 +41,7 @@ const CLINICAL_CATALOG: Record<string, ClinicalMedDef> = {
   amoxicillin: {
     name: 'Amoxicillin + Clavulanic Acid',
     generic: 'Amoxicillin & Potassium Clavulanate',
+    aliases: ['augmentin', 'clavam', 'moxikind', 'amoxyclav', 'amoxicillin', 'mox', 'novamox'],
     purpose: 'Eradication of bacterial infections & inflammation',
     purposeBn: 'ব্যাকটেরিয়া জনিত তীব্র সংক্রমণ ও প্রদাহ নির্মূল',
     whyPrescribed: 'Prescribed to eliminate bacterial infections of the respiratory tract, throat, and tissues.',
@@ -52,6 +55,7 @@ const CLINICAL_CATALOG: Record<string, ClinicalMedDef> = {
   pantoprazole: {
     name: 'Pantoprazole',
     generic: 'Pantoprazole Sodium Gastro-resistant',
+    aliases: ['pantoprazole', 'pantocid', 'pan', 'pan-d', 'pantop', 'pantodac', 'pantosec'],
     purpose: 'Relief of gastric irritation, GERD & acidity protection',
     purposeBn: 'গ্যাস্ট্রিক আলসার, তীব্র বুকজ্বালা ও এসিডিটি নিরাময়',
     whyPrescribed: 'Prescribed as a protective gastric shield to prevent acid rebound and stomach ulcers caused by medications or stress.',
@@ -65,6 +69,7 @@ const CLINICAL_CATALOG: Record<string, ClinicalMedDef> = {
   omeprazole: {
     name: 'Omeprazole',
     generic: 'Omeprazole Magnesium Gastro-resistant',
+    aliases: ['omeprazole', 'omez', 'omez-d', 'ocid'],
     purpose: 'Gastric acid suppression, heartburn & ulcer healing',
     purposeBn: 'বুকজ্বালা, পেপটিক আলসার ও এসিডিটি নিরাময়',
     whyPrescribed: 'Prescribed to heal stomach ulcerations and treat acid reflux disease.',
@@ -75,9 +80,24 @@ const CLINICAL_CATALOG: Record<string, ClinicalMedDef> = {
     defaultTiming: 'before_food',
     defaultFreq: '1-0-0',
   },
+  rabeprazole: {
+    name: 'Rabeprazole',
+    generic: 'Rabeprazole Sodium',
+    aliases: ['rabeprazole', 'rabekind', 'razo', 'cyra', 'cyra-d', 'happi', 'rabicip'],
+    purpose: 'Rapid gastric acid suppression & peptic protection',
+    purposeBn: 'তীব্র গ্যাস্ট্রিক আলসার ও বুকজ্বালার দ্রুত উপশম',
+    whyPrescribed: 'Prescribed to fast-track healing of stomach mucosal lining and halt hyperacidity.',
+    whyPrescribedBn: 'পাকস্থলীর ভেতরের আবরণের ক্ষত দ্রুত সারিয়ে তোলা এবং অতিরিক্ত অ্যাসিড বন্ধ করার জন্য দেওয়া হয়েছে।',
+    howItWorks: 'Inhibits gastric H+/K+-ATPase enzyme system in gastric parietal cells.',
+    howItWorksBn: 'পাকস্থলীর অ্যাসিড প্রস্তুতকারী এনজাইম নিষ্ক্রিয় করে এসিডিটি দূর করে।',
+    defaultDosage: '20 mg',
+    defaultTiming: 'before_food',
+    defaultFreq: '1-0-0',
+  },
   cetirizine: {
     name: 'Cetirizine',
     generic: 'Cetirizine Dihydrochloride',
+    aliases: ['cetirizine', 'cetzine', 'okacet', 'alercet', 'zyrtec'],
     purpose: 'Allergy relief, anti-histamine & anti-sneezing',
     purposeBn: 'অ্যালার্জি, অনবরত হাঁচি, সর্দি ও ত্বকের চুলকানি নিরাময়',
     whyPrescribed: 'Prescribed to relieve runny nose, constant sneezing, itchy eyes, and allergic skin irritation.',
@@ -91,6 +111,7 @@ const CLINICAL_CATALOG: Record<string, ClinicalMedDef> = {
   levocetirizine: {
     name: 'Levocetirizine',
     generic: 'Levocetirizine Hydrochloride',
+    aliases: ['levocetirizine', 'levocet', '1-cet', 'hatric-l', 'teczine'],
     purpose: 'Non-sedating antihistamine for allergic rhinitis',
     purposeBn: 'নন-সিডেটিভ অ্যালার্জি ও সর্দি প্রতিরোধক',
     whyPrescribed: 'Prescribed for continuous relief from persistent seasonal allergies and allergic skin hives.',
@@ -101,9 +122,38 @@ const CLINICAL_CATALOG: Record<string, ClinicalMedDef> = {
     defaultTiming: 'after_food',
     defaultFreq: '0-0-1',
   },
+  montelukast: {
+    name: 'Montelukast + Levocetirizine',
+    generic: 'Montelukast Sodium & Levocetirizine Hydrochloride',
+    aliases: ['montair-lc', 'montek-lc', 'telekast-l', 'romilast-l', 'montair', 'montek'],
+    purpose: 'Dual action for airway congestion, asthma & allergic rhinitis',
+    purposeBn: 'শ্বাসকষ্ট, শ্বাসনালীর টান ও মারাত্মক অ্যালার্জি নিয়ন্ত্রণ',
+    whyPrescribed: 'Prescribed to prevent wheezing, shortness of breath, and night-time coughing fits.',
+    whyPrescribedBn: 'রাতের তীব্র কাশি, শ্বাসনালীর টান এবং বুকে কফ জমার সমস্যা দূর করতে দেওয়া হয়েছে।',
+    howItWorks: 'Combines leukotriene receptor blockade with peripheral H1 antihistamine action.',
+    howItWorksBn: 'শ্বাসনালীর লিউকোট্রিন রিসেপ্টর ব্লক করে শ্বাসপ্রশ্বাস সহজ করে এবং হিস্টামিন বন্ধ করে অ্যালার্জি থামায়।',
+    defaultDosage: '10 mg',
+    defaultTiming: 'after_food',
+    defaultFreq: '0-0-1',
+  },
+  azithromycin: {
+    name: 'Azithromycin',
+    generic: 'Azithromycin Dihydrate',
+    aliases: ['azithromycin', 'azithral', 'azee', 'zady', 'aziwok'],
+    purpose: 'Macrolide antibiotic for respiratory & throat infections',
+    purposeBn: 'শ্বাসতন্ত্র, গলা ও ফুসফুসের ব্যাকটেরিয়াল সংক্রমণ প্রতিরোধক',
+    whyPrescribed: 'Prescribed to clear bacterial bronchitis, pharyngitis, and sinusitis.',
+    whyPrescribedBn: 'গলা ও ফুসফুসের ব্যাকটেরিয়াল সংক্রমণ নির্মূল করতে দেওয়া হয়েছে।',
+    howItWorks: 'Binds to the 50S ribosomal subunit of susceptible microorganisms, interfering with microbial protein synthesis.',
+    howItWorksBn: 'ব্যাকটেরিয়ার প্রোটিন তৈরিতে বাধা দিয়ে জীবাণু ধ্বংস করে।',
+    defaultDosage: '500 mg',
+    defaultTiming: 'before_food',
+    defaultFreq: '1-0-0',
+  },
   metformin: {
     name: 'Metformin SR',
     generic: 'Metformin Hydrochloride Sustained Release',
+    aliases: ['metformin', 'glycomet', 'glyciphage', 'cetapin', 'glucophage'],
     purpose: 'Blood glucose regulation & glycemic control',
     purposeBn: 'রক্তের শর্করা (সুগার) নিয়ন্ত্রণ ও ডায়াবেটিস ব্যবস্থাপনা',
     whyPrescribed: 'Prescribed to maintain healthy fasting and postprandial blood sugar levels in type 2 diabetes.',
@@ -114,22 +164,10 @@ const CLINICAL_CATALOG: Record<string, ClinicalMedDef> = {
     defaultTiming: 'after_food',
     defaultFreq: '1-0-1',
   },
-  atorvastatin: {
-    name: 'Atorvastatin',
-    generic: 'Atorvastatin Calcium',
-    purpose: 'Lipid lowering, reduction of bad LDL cholesterol & triglycerides',
-    purposeBn: 'রক্তের ক্ষতিকর কোলেস্টেরল ও ট্রাইগ্লিসারাইড দ্রুত হ্রাস',
-    whyPrescribed: 'Prescribed to prevent cardiovascular events and clear lipid arterial plaque formation.',
-    whyPrescribedBn: 'হৃদরোগের ঝুঁকি কমানো এবং রক্তনালীতে চর্বি জমে ব্লক তৈরি হওয়া প্রতিরোধে দেওয়া হয়েছে।',
-    howItWorks: 'Inhibits HMG-CoA reductase, the rate-limiting enzyme in hepatic cholesterol synthesis.',
-    howItWorksBn: 'লিভারে ক্ষতিকর কোলেস্টেরল তৈরির প্রধান এনজাইম HMG-CoA রিডাক্টেস নিষ্ক্রিয় করে কোলেস্টেরল উৎপাদন বন্ধ করে।',
-    defaultDosage: '20 mg',
-    defaultTiming: 'after_food',
-    defaultFreq: '0-0-1',
-  },
   telmisartan: {
     name: 'Telmisartan',
     generic: 'Telmisartan',
+    aliases: ['telmisartan', 'telma', 'telmikind', 'telpres', 'telsartan'],
     purpose: 'Blood pressure control & cardiovascular protection',
     purposeBn: 'উচ্চ রক্তচাপ নিয়ন্ত্রণ ও কিডনি সুরক্ষা',
     whyPrescribed: 'Prescribed to keep arterial blood pressure normal and reduce workload on the heart.',
@@ -143,6 +181,7 @@ const CLINICAL_CATALOG: Record<string, ClinicalMedDef> = {
   amlodipine: {
     name: 'Amlodipine',
     generic: 'Amlodipine Besylate',
+    aliases: ['amlodipine', 'amlong', 'stamlo', 'amlopres', 'amlovas'],
     purpose: 'Calcium channel blocker for hypertension & angina',
     purposeBn: 'উচ্চ রক্তচাপ ও বুকের ব্যথা প্রতিরোধক',
     whyPrescribed: 'Prescribed to relax arterial vascular muscles and decrease peripheral arterial resistance.',
@@ -153,46 +192,256 @@ const CLINICAL_CATALOG: Record<string, ClinicalMedDef> = {
     defaultTiming: 'after_food',
     defaultFreq: '1-0-0',
   },
-  azithromycin: {
-    name: 'Azithromycin',
-    generic: 'Azithromycin Dihydrate',
-    purpose: 'Macrolide antibiotic for respiratory & throat infections',
-    purposeBn: 'শ্বাসতন্ত্র ও ফুসফুসের ব্যাকটেরিয়াল সংক্রমণ প্রতিরোধক',
-    whyPrescribed: 'Prescribed to clear bacterial bronchitis, pharyngitis, and sinusitis.',
-    whyPrescribedBn: 'গলা ও ফুসফুসের ব্যাকটেরিয়াল সংক্রমণ নির্মূল করতে দেওয়া হয়েছে।',
-    howItWorks: 'Binds to the 50S ribosomal subunit of susceptible microorganisms, interfering with microbial protein synthesis.',
-    howItWorksBn: 'ব্যাকটেরিয়ার প্রোটিন তৈরিতে বাধা দিয়ে জীবাণু ধ্বংস করে।',
-    defaultDosage: '500 mg',
-    defaultTiming: 'before_food',
-    defaultFreq: '1-0-0',
+  atorvastatin: {
+    name: 'Atorvastatin',
+    generic: 'Atorvastatin Calcium',
+    aliases: ['atorvastatin', 'atorva', 'atorlip', 'lipitor', 'storvas'],
+    purpose: 'Lipid lowering, reduction of bad LDL cholesterol & triglycerides',
+    purposeBn: 'রক্তের ক্ষতিকর কোলেস্টেরল ও ট্রাইগ্লিসারাইড দ্রুত হ্রাস',
+    whyPrescribed: 'Prescribed to prevent cardiovascular events and clear lipid arterial plaque formation.',
+    whyPrescribedBn: 'হৃদরোগের ঝুঁকি কমানো এবং রক্তনালীতে চর্বি জমে ব্লক তৈরি হওয়া প্রতিরোধে দেওয়া হয়েছে।',
+    howItWorks: 'Inhibits HMG-CoA reductase, the rate-limiting enzyme in hepatic cholesterol synthesis.',
+    howItWorksBn: 'লিভারে ক্ষতিকর কোলেস্টেরল তৈরির প্রধান এনজাইম HMG-CoA রিডাক্টেস নিষ্ক্রিয় করে কোলেস্টেরল উৎপাদন বন্ধ করে।',
+    defaultDosage: '20 mg',
+    defaultTiming: 'after_food',
+    defaultFreq: '0-0-1',
   },
-  montelukast: {
-    name: 'Montelukast',
-    generic: 'Montelukast Sodium',
-    purpose: 'Leukotriene receptor antagonist for asthma & allergies',
-    purposeBn: 'শ্বাসকষ্ট, হাঁপানি ও দীর্ঘস্থায়ী অ্যালার্জি নিয়ন্ত্রণ',
-    whyPrescribed: 'Prescribed to prevent wheezing, shortness of breath, and allergic airway inflammation.',
-    whyPrescribedBn: 'শ্বাসনালীর সংকোচন ও অ্যালার্জির টান কমাতে দেওয়া হয়েছে।',
-    howItWorks: 'Selectively blocks cysteinyl leukotriene CysLT1 receptors in the airways.',
-    howItWorksBn: 'শ্বাসনালীতে প্রদাহ সৃষ্টিকারী লিউকোট্রিন হরমোনকে নিষ্ক্রিয় করে শ্বাসপ্রশ্বাস সহজ করে।',
+  rosuvastatin: {
+    name: 'Rosuvastatin',
+    generic: 'Rosuvastatin Calcium',
+    aliases: ['rosuvastatin', 'rosuvas', 'rozavel', 'razel'],
+    purpose: 'Potent cholesterol management and arterial protection',
+    purposeBn: 'উচ্চ কোলেস্টেরল নিয়ন্ত্রণ ও রক্তনালী সুরক্ষা',
+    whyPrescribed: 'Prescribed to clear high cholesterol levels and stabilize cardiac blood vessels.',
+    whyPrescribedBn: 'রক্তের চর্বি দ্রুত কমিয়ে হৃদপিণ্ড সুরক্ষিত রাখতে দেওয়া হয়েছে।',
+    howItWorks: 'Competitively inhibits HMG-CoA reductase to stimulate LDL receptor clearance.',
+    howItWorksBn: 'লিভারে কোলেস্টেরল উৎপাদন থামিয়ে ক্ষতিকর চর্বি দূর করে।',
     defaultDosage: '10 mg',
     defaultTiming: 'after_food',
     defaultFreq: '0-0-1',
   },
+  aspirin: {
+    name: 'Ecosprin (Aspirin)',
+    generic: 'Aspirin Gastro-resistant',
+    aliases: ['ecosprin', 'aspirin', 'loprin', 'delisprin'],
+    purpose: 'Antiplatelet cardiac shield to prevent blood clots',
+    purposeBn: 'রক্ত জমাট বাঁধা প্রতিরোধ ও হার্ট অ্যাটাকের সুরক্ষা কবচ',
+    whyPrescribed: 'Prescribed as daily cardiac protection to maintain smooth arterial blood flow.',
+    whyPrescribedBn: 'রক্তনালীতে রক্ত যেন জমাট না বাঁধে এবং হার্ট সুস্থ থাকে সেজন্য দেওয়া হয়েছে।',
+    howItWorks: 'Irreversibly inhibits platelet cyclooxygenase-1 to prevent thromboxane A2 formation.',
+    howItWorksBn: 'রক্তের প্লেটলেটকে জমাট বাঁধতে না দিয়ে রক্ত পাতলা ও সচল রাখে।',
+    defaultDosage: '75 mg',
+    defaultTiming: 'after_food',
+    defaultFreq: '0-0-1',
+  },
+  levothyroxine: {
+    name: 'Thyronorm (Levothyroxine)',
+    generic: 'Levothyroxine Sodium',
+    aliases: ['thyronorm', 'eltroxin', 'thyrox', 'levothyroxine'],
+    purpose: 'Thyroid hormone replacement for hypothyroidism',
+    purposeBn: 'থাইরয়েড হরমোনের ঘাটতি পূরণ ও বিপাক নিয়ন্ত্রণ',
+    whyPrescribed: 'Prescribed to restore normal thyroid levels and treat sluggish metabolism, fatigue, and weight gain.',
+    whyPrescribedBn: 'থাইরয়েডের স্বাভাবিক মাত্রা বজায় রাখতে এবং ক্লান্তি ও ওজন বৃদ্ধি রোধ করতে দেওয়া হয়েছে।',
+    howItWorks: 'Supplements synthetic T4 which converts to active T3 in peripheral tissues.',
+    howItWorksBn: 'শরীরে প্রয়োজনীয় থাইরক্সিন হরমোন পূরণ করে স্বাভাবিক মেটাবলিজম ফিরিয়ে আনে।',
+    defaultDosage: '50 mcg',
+    defaultTiming: 'before_food',
+    defaultFreq: '1-0-0',
+  },
   ibuprofen: {
-    name: 'Ibuprofen',
-    generic: 'Ibuprofen',
-    purpose: 'NSAID for inflammatory pain, fever, and swelling',
-    purposeBn: 'প্রদাহজনিত তীব্র ব্যথা ও ফোলা নিরাময়',
-    whyPrescribed: 'Prescribed for quick relief of musculoskeletal ache, toothache, and headache.',
-    whyPrescribedBn: 'পেশি, দাঁত বা হাড়ের তীব্র ব্যথা কমাতে দেওয়া হয়েছে।',
-    howItWorks: 'Non-selectively inhibits cyclooxygenase-1 and -2 enzymes.',
-    howItWorksBn: 'শরীরে ব্যথা সৃষ্টিকারী এনজাইম নিষ্ক্রিয় করে ব্যথা কমায়।',
+    name: 'Combiflam (Ibuprofen + Paracetamol)',
+    generic: 'Ibuprofen & Paracetamol',
+    aliases: ['combiflam', 'brufen', 'ibugesic', 'flexon', 'ibuprofen'],
+    purpose: 'Dual action for musculoskeletal pain, inflammation & swelling',
+    purposeBn: 'তীব্র পেশি ব্যথা, ফোলা ও প্রদাহ নিরাময়',
+    whyPrescribed: 'Prescribed for rapid relief of severe joint pain, dental ache, or injury swelling.',
+    whyPrescribedBn: 'হাড় ও পেশির তীব্র যন্ত্রণা এবং ফোলা উপশমের জন্য দেওয়া হয়েছে।',
+    howItWorks: 'Inhibits COX enzymes to eliminate prostaglandins at inflammatory sites.',
+    howItWorksBn: 'প্রদাহ সৃষ্টিকারী প্রোস্টাগ্ল্যান্ডিন উৎপাদন বন্ধ করে ব্যথা ও ফোলা কমায়।',
     defaultDosage: '400 mg',
     defaultTiming: 'after_food',
     defaultFreq: '1-0-1',
   },
+  aceclofenac: {
+    name: 'Zerodol-SP',
+    generic: 'Aceclofenac, Paracetamol & Serratiopeptidase',
+    aliases: ['zerodol', 'zerodol-sp', 'zerodol-p', 'aceclo-sp', 'aceclo', 'hifenac'],
+    purpose: 'Triple action anti-inflammatory, pain relief & tissue healing',
+    purposeBn: 'তীব্র আঘাত, অস্ত্রোপচার পরবর্তী ব্যথা ও ফোলা নিরাময়',
+    whyPrescribed: 'Prescribed to rapidly resolve severe acute pain and promote tissue healing enzyme action.',
+    whyPrescribedBn: 'শরীরের গভীর ব্যথা ও ফোলা দ্রুত কমাতে এবং টিস্যু সুস্থ করতে দেওয়া হয়েছে।',
+    howItWorks: 'Blocks inflammatory prostaglandins while serratiopeptidase dissolves fibrous exudate.',
+    howItWorksBn: 'ব্যথানাশক উপাদানের পাশাপাশি এনজাইম ফোলা রক্তরস দ্রুত শোষণ করে ব্যথা দূর করে।',
+    defaultDosage: '1 tab',
+    defaultTiming: 'after_food',
+    defaultFreq: '1-0-1',
+  },
+  mefenamic: {
+    name: 'Meftal-Spas',
+    generic: 'Mefenamic Acid & Dicyclomine Hydrochloride',
+    aliases: ['meftal', 'meftal-spas', 'meftagesic'],
+    purpose: 'Antispasmodic for acute abdominal colic & intestinal cramps',
+    purposeBn: 'তীব্র পেটের মোচড়, পেট ব্যথা ও ক্র্যাম্প নিরাময়',
+    whyPrescribed: 'Prescribed for swift relief from severe abdominal cramps, stomach spasms, and colic.',
+    whyPrescribedBn: 'পেটের তীব্র মোচড় ও মাংসপেশির খিঁচুনি বন্ধ করতে দেওয়া হয়েছে।',
+    howItWorks: 'Relaxes smooth muscle spasm in gut wall while mefenamic acid curbs local pain.',
+    howItWorksBn: 'পাকস্থলী ও অন্ত্রের মাংসপেশির খিঁচুনি শিথিল করে পেটের ব্যথা থামায়।',
+    defaultDosage: '1 tab',
+    defaultTiming: 'after_food',
+    defaultFreq: '1-0-1',
+  },
+  diclofenac: {
+    name: 'Voveran',
+    generic: 'Diclofenac Sodium',
+    aliases: ['voveran', 'volini', 'dynapar', 'diclogel', 'diclofenac'],
+    purpose: 'Potent analgesic for severe joint, bone & spine pain',
+    purposeBn: 'হাড়, জয়েন্ট ও মেরুদণ্ডের তীব্র ব্যথা নিরাময়',
+    whyPrescribed: 'Prescribed to manage severe arthritis flare-ups, back pain, and orthopedic conditions.',
+    whyPrescribedBn: 'বাতব্যথা, কোমর ও পিঠের তীব্র যন্ত্রণা নিয়ন্ত্রণে দেওয়া হয়েছে।',
+    howItWorks: 'Strongly inhibits arachidonic acid cascade to halt pain neurotransmission.',
+    howItWorksBn: 'ব্যথার সংকেত সৃষ্টিকারী রাসায়নিকের প্রবাহ বন্ধ করে তীব্র ব্যথা কমায়।',
+    defaultDosage: '50 mg',
+    defaultTiming: 'after_food',
+    defaultFreq: '1-0-1',
+  },
+  vitamin_b: {
+    name: 'Becosules / Neurobion Forte',
+    generic: 'Vitamin B-Complex & Vitamin C with Zinc',
+    aliases: ['becosules', 'neurobion', 'neurobion-forte', 'b-complex', 'cobadex'],
+    purpose: 'Nerve rejuvenation, mouth ulcer healing & daily energy boost',
+    purposeBn: 'স্নায়ু শক্তি বৃদ্ধি, মুখের ঘা নিরাময় ও শারীরিক দুর্বলতা দূর',
+    whyPrescribed: 'Prescribed to support nerve health, heal mucosal tissues, and recover from fatigue.',
+    whyPrescribedBn: 'স্নায়ুর কার্যক্ষমতা বৃদ্ধি, মুখের ক্ষত সারানো ও দুর্বলতা দূর করতে দেওয়া হয়েছে।',
+    howItWorks: 'Essential coenzymes in cellular metabolic pathways and myelin sheath maintenance.',
+    howItWorksBn: 'কোষে শক্তি উৎপাদনের পাশাপাশি স্নায়ুর প্রতিরক্ষামূলক আবরণ সুরক্ষিত রাখে।',
+    defaultDosage: '1 cap',
+    defaultTiming: 'after_food',
+    defaultFreq: '0-1-0',
+  },
+  calcium: {
+    name: 'Shelcal 500',
+    generic: 'Calcium & Vitamin D3',
+    aliases: ['shelcal', 'gemcal', 'calcimax', 'cipcal', 'calcium'],
+    purpose: 'Bone mineral density enhancement & calcium supplementation',
+    purposeBn: 'হাড় ও দাঁত মজবুতকরণ এবং ক্যালসিয়ামের ঘাটতি পূরণ',
+    whyPrescribed: 'Prescribed to maintain strong bone mass and prevent bone thinning or osteoporosis.',
+    whyPrescribedBn: 'হাড়ের ঘনত্ব বাড়াতে এবং ক্যালসিয়ামের ঘাটতি দূর করতে দেওয়া হয়েছে।',
+    howItWorks: 'Provides elemental calcium while Vitamin D3 facilitates active intestinal calcium transport.',
+    howItWorksBn: 'ভিটামিন ডি-৩ অন্ত্র থেকে রক্তে ক্যালসিয়াম শোষণ বাড়িয়ে হাড়ে জমা করে।',
+    defaultDosage: '500 mg',
+    defaultTiming: 'after_food',
+    defaultFreq: '0-0-1',
+  },
+  ranitidine: {
+    name: 'Rantac / Aciloc',
+    generic: 'Ranitidine Hydrochloride',
+    aliases: ['rantac', 'aciloc', 'zinetac', 'ranitidine'],
+    purpose: 'H2 receptor blocker for acid indigestion and sour stomach',
+    purposeBn: 'বুকজ্বালা, টক ঢেকুর ও বদহজম নিরাময়',
+    whyPrescribed: 'Prescribed for rapid relief of stomach burning sensation and gastric reflux.',
+    whyPrescribedBn: 'বুকজ্বালা ও টক ঢেকুরের কষ্ট দ্রুত দূর করতে দেওয়া হয়েছে।',
+    howItWorks: 'Blocks H2 receptors in gastric parietal cells to curb nocturnal and daytime acid output.',
+    howItWorksBn: 'পাকস্থলীর এইচ২ রিসেপ্টর ব্লক করে অতিরিক্ত অ্যাসিড নিঃসরণ থামায়।',
+    defaultDosage: '150 mg',
+    defaultTiming: 'before_food',
+    defaultFreq: '1-0-1',
+  },
+  ciprofloxacin: {
+    name: 'Cifran 500',
+    generic: 'Ciprofloxacin Hydrochloride',
+    aliases: ['cifran', 'ciplox', 'ciprofloxacin'],
+    purpose: 'Broad spectrum fluoroquinolone antibiotic',
+    purposeBn: 'পেটের ইনফেকশন ও ব্যাকটেরিয়াল সংক্রমণ নির্মূল',
+    whyPrescribed: 'Prescribed to treat acute gastroenteritis, urinary tract, and systemic infections.',
+    whyPrescribedBn: 'পেটের ডায়রিয়া ও মূত্রনালীর মারাত্মক ইনফেকশন দূর করতে দেওয়া হয়েছে।',
+    howItWorks: 'Inhibits bacterial DNA gyrase and topoisomerase IV to stop bacterial cell division.',
+    howItWorksBn: 'ব্যাকটেরিয়ার বংশবৃদ্ধি ও ডিএনএ বিভাজন ধ্বংস করে জীবাণু মারে।',
+    defaultDosage: '500 mg',
+    defaultTiming: 'after_food',
+    defaultFreq: '1-0-1',
+  },
+  ofloxacin: {
+    name: 'Oflox-OZ / Zenflox',
+    generic: 'Ofloxacin & Ornidazole',
+    aliases: ['oflox', 'zenflox', 'oflox-oz', 'norflox'],
+    purpose: 'Potent dual antibiotic & antiprotozoal for acute diarrhea',
+    purposeBn: 'আমাশয়, পাতলা পায়খানা ও পেটের জীবাণু সংক্রমণ নিরাময়',
+    whyPrescribed: 'Prescribed for rapid control of severe gastrointestinal infections, loose motions, and cramps.',
+    whyPrescribedBn: 'মারাত্মক পাতলা পায়খানা ও আমাশয়ের জীবাণু নির্মূলের জন্য দেওয়া হয়েছে।',
+    howItWorks: 'Dual action against aerobic bacteria and anaerobic protozoan parasites.',
+    howItWorksBn: 'ব্যাকটেরিয়া ও প্রোটোজোয়া উভয় জীবাণুকে একসাথে ধ্বংস করে পেট ভালো করে।',
+    defaultDosage: '1 tab',
+    defaultTiming: 'after_food',
+    defaultFreq: '1-0-1',
+  },
+  cefixime: {
+    name: 'Taxim-O 200',
+    generic: 'Cefixime Trihydrate',
+    aliases: ['taxim-o', 'cefix', 'mahacef', 'zipod', 'cefixime'],
+    purpose: '3rd generation cephalosporin antibiotic for typhoid & chest infections',
+    purposeBn: 'টাইফয়েড, ফুসফুস ও শ্বাসতন্ত্রের সংক্রমণ নিরাময়',
+    whyPrescribed: 'Prescribed to eradicate resistant bacterial respiratory and urinary infections.',
+    whyPrescribedBn: 'টাইফয়েড ও জটিল ব্যাকটেরিয়াল সংক্রমণ সম্পূর্ণ নির্মূল করতে দেওয়া হয়েছে।',
+    howItWorks: 'Inhibits bacterial cell wall synthesis with superior beta-lactamase stability.',
+    howItWorksBn: 'প্রতিরোধক ব্যাকটেরিয়ার কোষপ্রাচীর ভেঙে জীবাণু ধ্বংস করে।',
+    defaultDosage: '200 mg',
+    defaultTiming: 'after_food',
+    defaultFreq: '1-0-1',
+  },
+  cough_syrup: {
+    name: 'Ascoril-LS / Benadryl',
+    generic: 'Levosalbutamol, Ambroxol & Guaiphenesin Expectorant',
+    aliases: ['ascoril', 'benadryl', 'zedex', 'grilinctus', 'koflet', 'syrup'],
+    purpose: 'Bronchodilator and mucolytic cough expectorant syrup',
+    purposeBn: 'বুকে জমা কফ তরলীকরণ ও খুসখুসে কাশি উপশম',
+    whyPrescribed: 'Prescribed to liquefy thick mucus phlegm, ease breathing, and stop coughing spasms.',
+    whyPrescribedBn: 'বুকে জমে থাকা কফ নরম করে বের করে দিতে এবং শ্বাসপ্রশ্বাস সহজ করতে দেওয়া হয়েছে।',
+    howItWorks: 'Dilates airways while ambroxol breaks down dense mucus polymers for effortless expectoration.',
+    howItWorksBn: 'শ্বাসনালী প্রসারিত করে এবং জমাট কফ ভেঙে সহজে কাশি দূর করে।',
+    defaultDosage: '10 ml',
+    defaultTiming: 'after_food',
+    defaultFreq: '1-1-1',
+  },
 };
+
+// Algorithmic Fuzzy Matching Engine for Messy Doctor Handwriting
+function levenshteinDistance(a: string, b: string): number {
+  const m = a.length, n = b.length;
+  const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+    }
+  }
+  return dp[m][n];
+}
+
+function isAbbrMatch(abbr: string, target: string): boolean {
+  if (abbr.length < 3 || target.length < 3) return false;
+  if (abbr[0] !== target[0]) return false;
+  let i = 0, j = 0;
+  while (i < abbr.length && j < target.length) {
+    if (abbr[i] === target[j]) i++;
+    j++;
+  }
+  return i === abbr.length && (abbr.length / target.length >= 0.45);
+}
+
+function matchFuzzyWord(rawWord: string, alias: string): boolean {
+  const w = rawWord.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const a = alias.toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (!w || !a) return false;
+  if (w === a || w.includes(a) || a.includes(w)) return true;
+  if (isAbbrMatch(w, a)) return true;
+  if (w.length >= 4 && a.length >= 4) {
+    const dist = levenshteinDistance(w, a);
+    const maxLen = Math.max(w.length, a.length);
+    if (dist <= 2 && dist / maxLen <= 0.3) return true;
+  }
+  return false;
+}
 
 export const ocrService = {
   /**
@@ -605,29 +854,38 @@ export const ocrService = {
     let extractedDoctorName = '';
     let extractedSpecialty = '';
     for (const line of lines) {
-      // Clean tokens
-      const words = line.split(/[\s,.:]+/).filter((w) => w.length > 0);
-      const shortWordCount = words.filter((w) => w.length <= 2).length;
-      const isNoise = words.length > 0 && shortWordCount > words.length * 0.45;
+      // Specialty detection
+      if (/Cardio/i.test(line)) extractedSpecialty = isBengali ? 'হৃদরোগ বিশেষজ্ঞ' : 'Cardiologist';
+      else if (/Pediatric|Child/i.test(line)) extractedSpecialty = isBengali ? 'শিশু বিশেষজ্ঞ' : 'Pediatrician';
+      else if (/Ortho/i.test(line)) extractedSpecialty = isBengali ? 'অস্থি ও জয়েন্ট বিশেষজ্ঞ' : 'Orthopedic Surgeon';
+      else if (/Gynae|Obs/i.test(line)) extractedSpecialty = isBengali ? 'স্ত্রী ও প্রসূতি বিশেষজ্ঞ' : 'Gynecologist';
+      else if (/ENT/i.test(line)) extractedSpecialty = isBengali ? 'নাক, কান ও গলা বিশেষজ্ঞ' : 'ENT Specialist';
+      else if (/Dermatolog/i.test(line)) extractedSpecialty = isBengali ? 'চর্মরোগ বিশেষজ্ঞ' : 'Dermatologist';
+      else if (/Consultant\s*Physician/i.test(line)) extractedSpecialty = isBengali ? 'কনসালটেন্ট ফিজিশিয়ান' : 'Consultant Physician';
+      else if (/\b(Physician|Surgeon|Consultant)\b/i.test(line) && !extractedSpecialty) {
+        extractedSpecialty = isBengali ? 'চিকিৎসক ও কনসালটেন্ট' : 'Consultant Physician';
+      }
 
-      // Must explicitly have Dr. or Doctor or clear physician title, and NOT be OCR noise
-      const hasDrPrefix = /^Dr[\.\s]/i.test(line) || /\bDr\.?\s+[A-Za-z]{3,}/i.test(line) || /\bDoctor\s+[A-Za-z]{3,}/i.test(line);
-      const hasDoctorTitle = /\b(Consultant|Physician|Surgeon|Cardiologist|Pediatrician|Gynecologist)\b/i.test(line);
-
-      if ((hasDrPrefix || (hasDoctorTitle && words.length >= 2)) && !isNoise) {
-        extractedDoctorName = line.replace(/^[=\-—\s:.]+/g, '').trim();
-        if (/Cardio/i.test(line)) extractedSpecialty = isBengali ? 'হৃদরোগ বিশেষজ্ঞ' : 'Cardiologist';
-        else if (/Pediatric|Child/i.test(line)) extractedSpecialty = isBengali ? 'শিশু বিশেষজ্ঞ' : 'Pediatrician';
-        else if (/Ortho/i.test(line)) extractedSpecialty = isBengali ? 'অস্থি ও জয়েন্ট বিশেষজ্ঞ' : 'Orthopedic Surgeon';
-        else if (/Gynae|Obs/i.test(line)) extractedSpecialty = isBengali ? 'স্ত্রী ও প্রসূতি বিশেষজ্ঞ' : 'Gynecologist';
-        else if (/ENT/i.test(line)) extractedSpecialty = isBengali ? 'নাক, কান ও গলা বিশেষজ্ঞ' : 'ENT Specialist';
-        else extractedSpecialty = isBengali ? 'চিকিৎসক ও কনসালটেন্ট' : 'Consultant Physician';
-        break;
+      // Doctor name MUST explicitly have Dr. or Doctor followed by a legitimate name
+      // NEVER accept OCR noise lines like "MS gt BA Crt, xt BE a"
+      const drMatch = line.match(/\b(?:Dr\.?|Doctor)\s+([A-Z][a-zA-Z\.\s]{2,30})/i);
+      if (drMatch && !extractedDoctorName) {
+        const candidate = drMatch[0].trim();
+        const afterPrefix = candidate.replace(/^(?:Dr\.?|Doctor)\s+/i, '').trim();
+        const candidateWords = afterPrefix.split(/[\s,.:]+/).filter((w) => w.length > 0);
+        // Valid doctor name has at least 1 word with >= 3 characters (e.g. "Dr. Roy", "Dr. S. K. Roy")
+        const hasValidWord = candidateWords.some((w) => w.length >= 3 && /^[A-Za-z]+$/.test(w));
+        const hasOnlyShortFragments = candidateWords.every((w) => w.length <= 2);
+        if (hasValidWord && !hasOnlyShortFragments) {
+          extractedDoctorName = candidate;
+        }
       }
     }
 
     if (!extractedDoctorName) {
       extractedDoctorName = isBengali ? 'চিকিৎসক (প্রেসক্রিপশন অনুযায়ী)' : 'Doctor (From Prescription)';
+    }
+    if (!extractedSpecialty) {
       extractedSpecialty = isBengali ? 'প্রেসক্রিপশন অনুযায়ী চিকিৎসা' : 'Clinical Consultation';
     }
 
@@ -710,12 +968,31 @@ export const ocrService = {
     // 6. Medication Entities Parsing
     const extractedMedicines: Medication[] = [];
 
-    // Helper to find catalog definition
-    const findInCatalog = (str: string): ClinicalMedDef | null => {
-      const lower = str.toLowerCase();
-      for (const [key, def] of Object.entries(CLINICAL_CATALOG)) {
-        if (lower.includes(key)) return def;
+    // Helper to find catalog definition with fuzzy and abbreviation matching
+    const findInCatalog = (str: string): { def: ClinicalMedDef; matchedAlias?: string } | null => {
+      const cleanedTokens = str
+        .split(/[\s,.:;+\-\/]+/)
+        .filter((w) => w.length >= 3 && !/^(tab|cap|syr|inj|drops|mg|mcg|gm|ml|day|days|od|bd|tds|qid|hs|sos)$/i.test(w));
+
+      for (const token of cleanedTokens) {
+        for (const def of Object.values(CLINICAL_CATALOG)) {
+          for (const alias of def.aliases) {
+            if (matchFuzzyWord(token, alias)) {
+              return { def, matchedAlias: alias };
+            }
+          }
+        }
       }
+
+      const lowerStr = str.toLowerCase();
+      for (const def of Object.values(CLINICAL_CATALOG)) {
+        for (const alias of def.aliases) {
+          if (lowerStr.includes(alias.toLowerCase())) {
+            return { def, matchedAlias: alias };
+          }
+        }
+      }
+
       return null;
     };
 
@@ -724,10 +1001,11 @@ export const ocrService = {
       const nextLine = i + 1 < lines.length ? lines[i + 1] : '';
       const combined = `${line} ${nextLine}`;
 
+      const catMatch = findInCatalog(combined);
       const isMedLine = 
+        Boolean(catMatch) ||
         /\b(Tab|Tablet|Cap|Capsule|Syr|Syrup|Inj|Injection|Drops|Ointment)\b/i.test(line) ||
-        /\b\d+\s*(mg|mcg|gm|g|ml)\b/i.test(line) ||
-        Object.keys(CLINICAL_CATALOG).some((k) => line.toLowerCase().includes(k));
+        /\b\d+\s*(mg|mcg|gm|g|ml)\b/i.test(line);
 
       if (isMedLine) {
         // Extract dosage
@@ -776,16 +1054,20 @@ export const ocrService = {
         else if (/Drop/i.test(line)) form = 'drops';
 
         // Check catalog match for medical dictionary explanation
-        const cat = findInCatalog(combined);
         const medNameClean = line.replace(/^[=\-—\d.:\s]+/, '').replace(/\b(Tab|Cap|Syr|Inj)\b\.?/gi, '').trim();
 
-        if (cat) {
+        if (catMatch) {
+          const cat = catMatch.def;
+          const displayMedName = catMatch.matchedAlias && catMatch.matchedAlias.length >= 4
+            ? catMatch.matchedAlias.charAt(0).toUpperCase() + catMatch.matchedAlias.slice(1)
+            : cat.name;
+
           // Avoid duplicate entry
-          if (!extractedMedicines.some((m) => m.name.toLowerCase() === cat.name.toLowerCase())) {
+          if (!extractedMedicines.some((m) => m.name.toLowerCase() === displayMedName.toLowerCase() || m.name.toLowerCase() === cat.name.toLowerCase())) {
             extractedMedicines.push({
               id: 'med-' + Math.random().toString(36).substring(2, 9),
-              name: isBengali && cat.name === 'Paracetamol' ? 'প্যারাসিটামল' : cat.name,
-              shortName: `${form === 'capsule' ? 'Cap.' : 'Tab.'} ${cat.name} ${dosage || cat.defaultDosage}`,
+              name: isBengali && cat.name === 'Paracetamol' ? 'প্যারাসিটামল' : displayMedName,
+              shortName: `${form === 'capsule' ? 'Cap.' : 'Tab.'} ${displayMedName} ${dosage || cat.defaultDosage}`,
               fullForm: `${cat.generic} ${dosage || cat.defaultDosage}`,
               purpose: isBengali ? cat.purposeBn : cat.purpose,
               whyPrescribed: isBengali ? cat.whyPrescribedBn : cat.whyPrescribed,
@@ -800,31 +1082,35 @@ export const ocrService = {
                 : (isBengali ? 'খাবারের পর পানির সাথে সেব্য' : 'Take with water after meals'),
             });
           }
-        } else if (medNameClean.length >= 3) {
-          // General uncatalogued medicine from paper
-          const cleanDisplayName = medNameClean.split(/[-—(]/)[0].trim();
-          if (!extractedMedicines.some((m) => m.name.toLowerCase() === cleanDisplayName.toLowerCase())) {
-            extractedMedicines.push({
-              id: 'med-' + Math.random().toString(36).substring(2, 9),
-              name: cleanDisplayName,
-              shortName: `${form === 'capsule' ? 'Cap.' : 'Tab.'} ${cleanDisplayName} ${dosage}`,
-              fullForm: `${cleanDisplayName} ${dosage}`.trim(),
-              purpose: isBengali ? 'প্রেসক্রিপশন অনুযায়ী নিরাময় চিকিৎসা' : 'Physician-prescribed therapeutic treatment',
-              whyPrescribed: isBengali
-                ? 'ডাক্তারের প্রেসক্রিপশন অনুযায়ী রোগীর দ্রুত সুস্থতার জন্য নির্দেশিত।'
-                : 'Prescribed by the doctor for symptom resolution and patient recovery.',
-              howItWorks: isBengali
-                ? 'শারীরিক উপসর্গ নিয়ন্ত্রণ করে আরোগ্য লাভে সহায়তা করে।'
-                : 'Acts on target biological pathways to manage health symptoms.',
-              dosage: dosage || '1 tab',
-              form,
-              frequency,
-              timing,
-              duration,
-              instructions: timing === 'before_food'
-                ? (isBengali ? 'খাবারের পূর্বে সেব্য' : 'Take before food')
-                : (isBengali ? 'খাবারের পর সেব্য' : 'Take after food'),
-            });
+        } else if (medNameClean.length >= 4) {
+          // General uncatalogued medicine: verify it is NOT noise or patient/doctor metadata
+          const isMetadataWord = /^(Patient|Doctor|Hospital|Clinic|Address|Phone|Booking|Date|Signature|Years|Male|Female|Weight|Blood)$/i.test(medNameClean);
+          const hasRealLetters = /^[A-Za-z\s\-]+$/.test(medNameClean) && medNameClean.split(/\s+/).some((w) => w.length >= 4);
+          if (!isMetadataWord && hasRealLetters) {
+            const cleanDisplayName = medNameClean.split(/[-—(]/)[0].trim();
+            if (!extractedMedicines.some((m) => m.name.toLowerCase() === cleanDisplayName.toLowerCase())) {
+              extractedMedicines.push({
+                id: 'med-' + Math.random().toString(36).substring(2, 9),
+                name: cleanDisplayName,
+                shortName: `${form === 'capsule' ? 'Cap.' : 'Tab.'} ${cleanDisplayName} ${dosage || '1 tab'}`,
+                fullForm: `${cleanDisplayName} ${dosage || '1 tab'}`.trim(),
+                purpose: isBengali ? 'প্রেসক্রিপশন অনুযায়ী নিরাময় চিকিৎসা' : 'Physician-prescribed therapeutic treatment',
+                whyPrescribed: isBengali
+                  ? 'ডাক্তারের প্রেসক্রিপশন অনুযায়ী রোগীর দ্রুত সুস্থতার জন্য নির্দেশিত।'
+                  : 'Prescribed by the doctor for symptom resolution and patient recovery.',
+                howItWorks: isBengali
+                  ? 'শারীরিক উপসর্গ নিয়ন্ত্রণ করে আরোগ্য লাভে সহায়তা করে।'
+                  : 'Acts on target biological pathways to manage health symptoms.',
+                dosage: dosage || '1 tab',
+                form,
+                frequency,
+                timing,
+                duration,
+                instructions: timing === 'before_food'
+                  ? (isBengali ? 'খাবারের পূর্বে সেব্য' : 'Take before food')
+                  : (isBengali ? 'খাবারের পর সেব্য' : 'Take after food'),
+              });
+            }
           }
         }
       }
