@@ -9,7 +9,6 @@ import {
   Printer,
   Download,
   ArrowLeft,
-  Layers,
   Pill,
   ShieldCheck,
   Timer
@@ -23,7 +22,6 @@ interface DoctorReviewScreenProps {
   allPrescriptions: ScannedPrescription[];
   onSelectPrescription: (prescription: ScannedPrescription) => void;
   onBackToPrevious: () => void;
-  onBackToCabinet?: () => void;
   onOpenReminders?: () => void;
   onOpenPillsMenu?: () => void;
 }
@@ -36,7 +34,6 @@ export const DoctorReviewScreen: React.FC<DoctorReviewScreenProps> = ({
   allPrescriptions,
   onSelectPrescription,
   onBackToPrevious,
-  onBackToCabinet,
   onOpenReminders,
   onOpenPillsMenu,
 }) => {
@@ -118,32 +115,16 @@ export const DoctorReviewScreen: React.FC<DoctorReviewScreenProps> = ({
           <button
             type="button"
             onClick={onBackToPrevious}
-            className={`px-3 py-2 rounded-xl border text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm ${
+            className={`px-3.5 py-2 rounded-xl border text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm ${
               isLight
-                ? 'border-slate-300 bg-white hover:bg-slate-100 text-slate-800'
+                ? 'border-2 border-slate-300 bg-white hover:bg-slate-100 text-slate-900'
                 : 'border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-300'
             }`}
-            title={t.backToPrescriptionButton}
+            title={t.backButton}
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>{t.backToPrescriptionButton}</span>
+            <span>{t.backButton}</span>
           </button>
-
-          {onBackToCabinet && allPrescriptions.length > 1 && (
-            <button
-              type="button"
-              onClick={onBackToCabinet}
-              className={`px-3 py-2 rounded-xl border text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm ${
-                isLight
-                  ? 'border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-900'
-                  : 'border-blue-700/60 bg-blue-950/60 hover:bg-blue-900 text-blue-200'
-              }`}
-              title={t.backToCabinetButton}
-            >
-              <Layers className="w-4 h-4 text-blue-500" />
-              <span>{t.backToCabinetButton}</span>
-            </button>
-          )}
 
           {onOpenReminders && (
             <button

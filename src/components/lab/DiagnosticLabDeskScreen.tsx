@@ -17,7 +17,6 @@ import {
   Plus,
   Trash2,
   ArrowLeft,
-  Layers,
   Sparkles,
   Check,
   RotateCcw,
@@ -35,7 +34,6 @@ interface DiagnosticLabDeskScreenProps {
   allPrescriptions: ScannedPrescription[];
   onSelectPrescription: (prescription: ScannedPrescription) => void;
   onBackToPrevious: () => void;
-  onBackToCabinet?: () => void;
   onOpenVault?: (prescription: ScannedPrescription) => void;
 }
 
@@ -47,7 +45,6 @@ export const DiagnosticLabDeskScreen: React.FC<DiagnosticLabDeskScreenProps> = (
   allPrescriptions,
   onSelectPrescription,
   onBackToPrevious,
-  onBackToCabinet,
   onOpenVault,
 }) => {
   const isLight = theme === 'light';
@@ -305,38 +302,36 @@ export const DiagnosticLabDeskScreen: React.FC<DiagnosticLabDeskScreenProps> = (
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-6 sm:py-8 animate-in fade-in duration-300 space-y-6">
       {/* Top Navigation Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
+      <div className={`flex flex-wrap items-center justify-between gap-3 pb-3 border-b ${
+        isLight ? 'border-slate-200' : 'border-slate-800/80'
+      }`}>
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             onClick={onBackToPrevious}
-            className="px-3 py-2 rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-300 text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm"
-            title={t.backToPrescriptionButton}
+            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm ${
+              isLight
+                ? 'bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-300'
+                : 'border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-300'
+            }`}
+            title={t.backButton}
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>{t.backToPrescriptionButton}</span>
+            <span>{t.backButton}</span>
           </button>
-
-          {onBackToCabinet && allPrescriptions.length > 1 && (
-            <button
-              type="button"
-              onClick={onBackToCabinet}
-              className="px-3 py-2 rounded-xl border border-blue-700/60 bg-blue-950/60 hover:bg-blue-900 text-blue-200 text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm"
-              title={t.backToCabinetButton}
-            >
-              <Layers className="w-4 h-4 text-blue-400" />
-              <span>{t.backToCabinetButton}</span>
-            </button>
-          )}
 
           {onOpenVault && (
             <button
               type="button"
               onClick={() => onOpenVault(currentDoc)}
-              className="px-3 py-2 rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-300 text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm"
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm ${
+                isLight
+                  ? 'bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-300'
+                  : 'border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-300'
+              }`}
               title={t.openVaultButton}
             >
-              <FileCheck2 className="w-4 h-4 text-emerald-400" />
+              <FileCheck2 className={`w-4 h-4 ${isLight ? 'text-emerald-700' : 'text-emerald-400'}`} />
               <span>{t.openVaultButton}</span>
             </button>
           )}

@@ -20,7 +20,8 @@ import {
   FileCheck2,
   Settings,
   Check,
-  Edit3
+  Edit3,
+  ArrowLeft
 } from 'lucide-react';
 
 interface AccountsListScreenProps {
@@ -37,6 +38,7 @@ interface AccountsListScreenProps {
   onOpenSettings?: () => void;
   onAddNewPrescription: () => void;
   onDeleteAccount: (prescriptionId: string) => void;
+  onBackToPrevious?: () => void;
 }
 
 export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
@@ -53,6 +55,7 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
   onOpenSettings,
   onAddNewPrescription,
   onDeleteAccount,
+  onBackToPrevious,
 }) => {
   const isLight = theme === 'light';
   const t = getTranslation(currentLanguage);
@@ -92,15 +95,37 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
       </div>
 
       {/* Settings & Add Prescription Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-3 border-b border-slate-800">
+      <div className={`flex flex-wrap items-center justify-between gap-3 mb-6 pb-3 border-b ${
+        isLight ? 'border-slate-200' : 'border-slate-800'
+      }`}>
         <div className="flex items-center gap-2">
+          {onBackToPrevious && (
+            <button
+              type="button"
+              onClick={onBackToPrevious}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition-all ${
+                isLight
+                  ? 'bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-300'
+                  : 'bg-slate-900 border border-slate-700 hover:bg-slate-800 text-slate-200'
+              }`}
+              title={t.backButton}
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>{t.backButton}</span>
+            </button>
+          )}
+
           {onOpenSettings && (
             <button
               type="button"
               onClick={onOpenSettings}
-              className="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 hover:border-blue-500/50 hover:bg-slate-800 text-slate-200 text-xs sm:text-sm font-bold flex items-center gap-2 shadow-sm transition-all"
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shadow-sm transition-all ${
+                isLight
+                  ? 'bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-300'
+                  : 'bg-slate-900 border border-slate-700 hover:border-blue-500/50 hover:bg-slate-800 text-slate-200'
+              }`}
             >
-              <Settings className="w-4 h-4 text-blue-400" />
+              <Settings className={`w-4 h-4 ${isLight ? 'text-blue-700' : 'text-blue-400'}`} />
               <span>{t.settingsTitle}</span>
             </button>
           )}

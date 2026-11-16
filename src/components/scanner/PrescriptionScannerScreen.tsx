@@ -315,7 +315,11 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
           <button
             type="button"
             onClick={onBackToAccounts}
-            className="p-2 sm:px-3 sm:py-1.5 rounded-xl border border-blue-600/60 bg-blue-950/60 hover:bg-blue-900 text-blue-200 text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm"
+            className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm ${
+              isLight
+                ? 'bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-300'
+                : 'border border-blue-600/60 bg-blue-950/60 hover:bg-blue-900 text-blue-200'
+            }`}
             title={t.allAccountsButton}
           >
             <ArrowLeft className="w-4 h-4" />
@@ -325,15 +329,15 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
           <button
             type="button"
             onClick={onBackToTutorial}
-            className={`p-2 sm:px-3 sm:py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 ${
+            className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm ${
               isLight
-                ? 'bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-300 shadow-sm'
+                ? 'bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-300'
                 : 'border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300'
             }`}
-            title="Back"
+            title={t.backButton}
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">{t.backButton}</span>
+            <span>{t.backButton}</span>
           </button>
         )}
 

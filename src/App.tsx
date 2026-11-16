@@ -45,9 +45,50 @@ export const App: React.FC = () => {
   });
 
   // App Phase: Always open directly onto the Welcome Landing Screen for anyone starting or reloading the app!
-  const [appPhase, setAppPhase] = useState<'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'accounts_hub' | 'vault' | 'lab' | 'pills_inventory' | 'reminders' | 'doctor_review' | 'page3_completed'>('welcome');
+  type AppPhase = 'welcome' | 'language_select' | 'preferred_name' | 'tutorial' | 'scanner' | 'accounts_hub' | 'vault' | 'lab' | 'pills_inventory' | 'reminders' | 'doctor_review' | 'page3_completed';
+  const [appPhase, setAppPhase] = useState<AppPhase>('welcome');
 
-  const [previousPhase, setPreviousPhase] = useState<'scanner' | 'accounts_hub' | 'lab' | 'vault' | 'pills_inventory' | 'reminders' | 'doctor_review'>('scanner');
+  // Navigation History Stack so Back buttons always navigate smoothly without getting stuck or looping
+  const [, setNavHistory] = useState<AppPhase[]>([]);
+
+  const navigateTo = (nextPhase: AppPhase) => {
+    if (nextPhase === appPhase) return;
+    setNavHistory((prev) => [...prev, appPhase]);
+    setAppPhase(nextPhase);
+  };
+
+  const navigateBack = () => {
+    setNavHistory((prev) => {
+      const history = [...prev];
+      // Discard any entries that match the current screen
+      while (history.length > 0 && history[history.length - 1] === appPhase) {
+        history.pop();
+      }
+      if (history.length > 0) {
+        const target = history.pop()!;
+        setAppPhase(target);
+        return history;
+      }
+
+      // Logical fallback if history stack is empty
+      if (['vault', 'lab', 'pills_inventory', 'reminders', 'doctor_review'].includes(appPhase)) {
+        setAppPhase(prescriptions.length > 1 ? 'accounts_hub' : 'scanner');
+      } else if (appPhase === 'accounts_hub') {
+        setAppPhase('scanner');
+      } else if (appPhase === 'scanner') {
+        setAppPhase(prescriptions.length > 1 ? 'accounts_hub' : 'tutorial');
+      } else if (appPhase === 'tutorial') {
+        setAppPhase('preferred_name');
+      } else if (appPhase === 'preferred_name') {
+        setAppPhase('language_select');
+      } else if (appPhase === 'language_select') {
+        setAppPhase('welcome');
+      } else {
+        setAppPhase('welcome');
+      }
+      return [];
+    });
+  };
   
   // Theme state: 'dark' | 'emerald' | 'light' | 'contrast'
   const [theme, setTheme] = useState<AppTheme>(() => storageService.getTheme());
@@ -114,46 +155,47 @@ export const App: React.FC = () => {
   };
 
   const handleStart = () => {
-    setAppPhase('language_select');
+    navigateTo('language_select');
   };
 
   // When Page 1 (Language) is completed -> move to Page 2 (Preferred Name)
   const handleSelectLanguage = (code: string) => {
     storageService.setLanguage(code);
     setCurrentLanguage(code);
-    setAppPhase('preferred_name');
+    navigateTo('preferred_name');
   };
 
   // When Page 2 (Name) is completed -> move directly to Page 3 (10-Second Guidance Video Tutorial)
   const handleSaveName = (name: string) => {
     storageService.setUserName(name);
     setUserName(name);
-    setAppPhase('tutorial');
+    navigateTo('tutorial');
   };
 
   const handleSkipName = () => {
     storageService.setUserName('');
     setUserName('');
-    setAppPhase('tutorial');
+    navigateTo('tutorial');
   };
 
   const handleBackToLanguage = () => {
-    setAppPhase('language_select');
+    navigateBack();
   };
 
   const handleBackToName = () => {
-    setAppPhase('preferred_name');
+    navigateBack();
   };
 
   const handleCompleteTutorial = () => {
-    setAppPhase('scanner');
+    navigateTo('scanner');
   };
 
   const handleSkipTutorial = () => {
-    setAppPhase('scanner');
+    navigateTo('scanner');
   };
 
   const handleResetToWelcome = () => {
+    setNavHistory([]);
     setAppPhase('welcome');
   };
 
@@ -347,43 +389,39 @@ export const App: React.FC = () => {
                 onSelectAccount={(prescription) => {
                   setSelectedPrescription(prescription);
                   storageService.setActiveAccountId(prescription.id);
-                  setAppPhase('scanner');
+                  navigateTo('scanner');
                 }}
                 onOpenVault={(prescription: ScannedPrescription) => {
                   setSelectedPrescription(prescription);
                   storageService.setActiveAccountId(prescription.id);
-                  setPreviousPhase('accounts_hub');
-                  setAppPhase('vault');
+                  navigateTo('vault');
                 }}
                 onOpenLabDesk={(prescription: ScannedPrescription) => {
                   setSelectedPrescription(prescription);
                   storageService.setActiveAccountId(prescription.id);
-                  setPreviousPhase('accounts_hub');
-                  setAppPhase('lab');
+                  navigateTo('lab');
                 }}
                 onOpenPillsMenu={(prescription: ScannedPrescription) => {
                   setSelectedPrescription(prescription);
                   storageService.setActiveAccountId(prescription.id);
-                  setPreviousPhase('accounts_hub');
-                  setAppPhase('pills_inventory');
+                  navigateTo('pills_inventory');
                 }}
                 onOpenReminders={(prescription: ScannedPrescription) => {
                   setSelectedPrescription(prescription);
                   storageService.setActiveAccountId(prescription.id);
-                  setPreviousPhase('accounts_hub');
-                  setAppPhase('reminders');
+                  navigateTo('reminders');
                 }}
                 onOpenDoctorReview={(prescription: ScannedPrescription) => {
                   setSelectedPrescription(prescription);
                   storageService.setActiveAccountId(prescription.id);
-                  setPreviousPhase('accounts_hub');
-                  setAppPhase('doctor_review');
+                  navigateTo('doctor_review');
                 }}
                 onOpenSettings={() => setShowSettingsModal(true)}
                 onAddNewPrescription={() => {
                   setSelectedPrescription(null);
-                  setAppPhase('scanner');
+                  navigateTo('scanner');
                 }}
+                onBackToPrevious={navigateBack}
                 onDeleteAccount={(id) => {
                   storageService.deletePrescription(id);
                   const remaining = storageService.getPrescriptions();
@@ -405,34 +443,29 @@ export const App: React.FC = () => {
                 theme={theme}
                 initialPrescription={selectedPrescription}
                 hasMultipleAccounts={prescriptions.length > 1}
-                onBackToAccounts={() => setAppPhase('accounts_hub')}
-                onBackToTutorial={() => setAppPhase('tutorial')}
+                onBackToAccounts={navigateBack}
+                onBackToTutorial={navigateBack}
                 onOpenVault={() => {
-                  setPreviousPhase('scanner');
-                  setAppPhase('vault');
+                  navigateTo('vault');
                 }}
                 onOpenLabDesk={() => {
-                  setPreviousPhase('scanner');
-                  setAppPhase('lab');
+                  navigateTo('lab');
                 }}
                 onOpenPillsMenu={() => {
-                  setPreviousPhase('scanner');
-                  setAppPhase('pills_inventory');
+                  navigateTo('pills_inventory');
                 }}
                 onOpenReminders={() => {
-                  setPreviousPhase('scanner');
-                  setAppPhase('reminders');
+                  navigateTo('reminders');
                 }}
                 onOpenDoctorReview={() => {
-                  setPreviousPhase('scanner');
-                  setAppPhase('doctor_review');
+                  navigateTo('doctor_review');
                 }}
                 onSavedToCabinet={(savedPrescription) => {
                   setSelectedPrescription(savedPrescription);
                   storageService.setActiveAccountId(savedPrescription.id);
                   const currentList = storageService.getPrescriptions();
                   if (currentList.length > 1) {
-                    setAppPhase('accounts_hub');
+                    navigateTo('accounts_hub');
                   }
                 }}
               />
@@ -452,10 +485,7 @@ export const App: React.FC = () => {
                   setSelectedPrescription(p);
                   storageService.setActiveAccountId(p.id);
                 }}
-                onBackToPrevious={() => {
-                  setAppPhase(previousPhase || (prescriptions.length > 1 ? 'accounts_hub' : 'scanner'));
-                }}
-                onBackToCabinet={prescriptions.length > 1 ? () => setAppPhase('accounts_hub') : undefined}
+                onBackToPrevious={navigateBack}
               />
             </div>
           )}
@@ -473,15 +503,11 @@ export const App: React.FC = () => {
                   setSelectedPrescription(p);
                   storageService.setActiveAccountId(p.id);
                 }}
-                onBackToPrevious={() => {
-                  setAppPhase(previousPhase || (prescriptions.length > 1 ? 'accounts_hub' : 'scanner'));
-                }}
-                onBackToCabinet={prescriptions.length > 1 ? () => setAppPhase('accounts_hub') : undefined}
+                onBackToPrevious={navigateBack}
                 onOpenVault={(p) => {
                   setSelectedPrescription(p);
                   storageService.setActiveAccountId(p.id);
-                  setPreviousPhase('lab');
-                  setAppPhase('vault');
+                  navigateTo('vault');
                 }}
               />
             </div>
@@ -500,17 +526,12 @@ export const App: React.FC = () => {
                   setSelectedPrescription(p);
                   storageService.setActiveAccountId(p.id);
                 }}
-                onBackToPrevious={() => {
-                  setAppPhase(previousPhase || (prescriptions.length > 1 ? 'accounts_hub' : 'scanner'));
-                }}
-                onBackToCabinet={prescriptions.length > 1 ? () => setAppPhase('accounts_hub') : undefined}
+                onBackToPrevious={navigateBack}
                 onOpenReminders={() => {
-                  setPreviousPhase('pills_inventory');
-                  setAppPhase('reminders');
+                  navigateTo('reminders');
                 }}
                 onOpenDoctorReview={() => {
-                  setPreviousPhase('pills_inventory');
-                  setAppPhase('doctor_review');
+                  navigateTo('doctor_review');
                 }}
               />
             </div>
@@ -529,17 +550,12 @@ export const App: React.FC = () => {
                   setSelectedPrescription(p);
                   storageService.setActiveAccountId(p.id);
                 }}
-                onBackToPrevious={() => {
-                  setAppPhase(previousPhase || (prescriptions.length > 1 ? 'accounts_hub' : 'scanner'));
-                }}
-                onBackToCabinet={prescriptions.length > 1 ? () => setAppPhase('accounts_hub') : undefined}
+                onBackToPrevious={navigateBack}
                 onOpenPillsMenu={() => {
-                  setPreviousPhase('reminders');
-                  setAppPhase('pills_inventory');
+                  navigateTo('pills_inventory');
                 }}
                 onOpenDoctorReview={() => {
-                  setPreviousPhase('reminders');
-                  setAppPhase('doctor_review');
+                  navigateTo('doctor_review');
                 }}
               />
             </div>
@@ -558,17 +574,12 @@ export const App: React.FC = () => {
                   setSelectedPrescription(p);
                   storageService.setActiveAccountId(p.id);
                 }}
-                onBackToPrevious={() => {
-                  setAppPhase(previousPhase || (prescriptions.length > 1 ? 'accounts_hub' : 'scanner'));
-                }}
-                onBackToCabinet={prescriptions.length > 1 ? () => setAppPhase('accounts_hub') : undefined}
+                onBackToPrevious={navigateBack}
                 onOpenReminders={() => {
-                  setPreviousPhase('doctor_review');
-                  setAppPhase('reminders');
+                  navigateTo('reminders');
                 }}
                 onOpenPillsMenu={() => {
-                  setPreviousPhase('doctor_review');
-                  setAppPhase('pills_inventory');
+                  navigateTo('pills_inventory');
                 }}
               />
             </div>
@@ -634,8 +645,7 @@ export const App: React.FC = () => {
         onOpenLanguageModal={() => setShowLanguageModal(true)}
         onOpenNameModal={() => setShowNameModal(true)}
         onReplayTutorial={() => {
-          setPreviousPhase(appPhase as any);
-          setAppPhase('tutorial');
+          navigateTo('tutorial');
         }}
       />
     </div>

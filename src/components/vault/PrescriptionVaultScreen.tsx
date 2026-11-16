@@ -18,7 +18,6 @@ import {
   ShieldAlert,
   ArrowLeft,
   FileCheck2,
-  Layers,
   UserCheck
 } from 'lucide-react';
 
@@ -30,7 +29,6 @@ interface PrescriptionVaultScreenProps {
   allPrescriptions: ScannedPrescription[];
   onSelectPrescription: (prescription: ScannedPrescription) => void;
   onBackToPrevious: () => void;
-  onBackToCabinet?: () => void;
 }
 
 export const PrescriptionVaultScreen: React.FC<PrescriptionVaultScreenProps> = ({
@@ -41,7 +39,6 @@ export const PrescriptionVaultScreen: React.FC<PrescriptionVaultScreenProps> = (
   allPrescriptions,
   onSelectPrescription,
   onBackToPrevious,
-  onBackToCabinet,
 }) => {
   const isLight = theme === 'light';
   const t = getTranslation(currentLanguage);
@@ -154,33 +151,31 @@ export const PrescriptionVaultScreen: React.FC<PrescriptionVaultScreenProps> = (
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-6 sm:py-8 animate-in fade-in duration-300">
       {/* Top Navigation Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800/80 mb-5">
+      <div className={`flex flex-wrap items-center justify-between gap-3 pb-3 border-b mb-5 ${
+        isLight ? 'border-slate-200' : 'border-slate-800/80'
+      }`}>
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             onClick={onBackToPrevious}
-            className="px-3 py-2 rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-300 text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm"
-            title={t.backToPrescriptionButton}
+            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm ${
+              isLight
+                ? 'bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-300'
+                : 'border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-300'
+            }`}
+            title={t.backButton}
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>{t.backToPrescriptionButton}</span>
+            <span>{t.backButton}</span>
           </button>
-
-          {onBackToCabinet && allPrescriptions.length > 1 && (
-            <button
-              type="button"
-              onClick={onBackToCabinet}
-              className="px-3 py-2 rounded-xl border border-blue-700/60 bg-blue-950/60 hover:bg-blue-900 text-blue-200 text-xs sm:text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm"
-              title={t.backToCabinetButton}
-            >
-              <Layers className="w-4 h-4 text-blue-400" />
-              <span>{t.backToCabinetButton}</span>
-            </button>
-          )}
         </div>
 
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-700/60 text-blue-300 text-xs font-bold">
-          <FileCheck2 className="w-3.5 h-3.5 text-blue-400" />
+        <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+          isLight
+            ? 'bg-blue-50 border border-blue-200 text-blue-900'
+            : 'bg-blue-950/80 border border-blue-700/60 text-blue-300'
+        }`}>
+          <FileCheck2 className={`w-3.5 h-3.5 ${isLight ? 'text-blue-700' : 'text-blue-400'}`} />
           <span>{t.highQualityScanBadge}</span>
         </div>
       </div>
