@@ -130,7 +130,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
     if (!scannedData) return;
     setEditHospital(scannedData.hospitalName || '');
     setEditDoctor(scannedData.doctorName || '');
-    setEditPatient(userName || scannedData.patientName || '');
+    setEditPatient(scannedData.patientName || userName || '');
     setEditDate(scannedData.date || '');
     setIsEditHeaderOpen(true);
   };
@@ -145,7 +145,7 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
       patientName: editPatient.trim() || scannedData.patientName,
       date: editDate.trim(),
     };
-    if (editPatient.trim()) {
+    if (editPatient.trim() && !userName) {
       storageService.setUserName(editPatient.trim());
     }
     setScannedData(updated);
@@ -833,7 +833,10 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
                 <UserCheck className={`w-4 h-4 ${isLight ? 'text-emerald-700' : 'text-emerald-400'}`} />
                 <span className={`font-semibold ${isLight ? 'text-slate-700' : 'text-slate-400'}`}>{t.patientName}:</span>
                 <span className={`font-bold ${isLight ? 'text-slate-950 font-black' : 'text-white'}`}>
-                  {userName || (scannedData.patientName !== 'Patient' ? scannedData.patientName : '') || (currentLangObj.code === 'bn' ? 'নাম লিখুন ✎' : 'Tap to enter name ✎')}
+                  {(scannedData.patientName && scannedData.patientName !== 'Patient') 
+                    ? scannedData.patientName 
+                    : (userName || (currentLangObj.code === 'bn' ? 'নাম লিখুন ✎' : 'Tap to enter name ✎'))}
+                  {scannedData.patientAge ? ` (${scannedData.patientAge} Y${scannedData.patientGender ? ` / ${scannedData.patientGender}` : ''})` : ''}
                 </span>
               </div>
 

@@ -968,18 +968,34 @@ export const ocrService = {
       }
     }
 
-    // 4. Patient Name Extraction
-    let extractedPatientName = patientNameFallback || '';
+    // 4. Patient Name, Age & Gender Extraction
+    let extractedPatientName = '';
+    let extractedPatientAge = '';
+    let extractedPatientGender = '';
+
     for (const line of lines) {
+      // Patient Name
       const ptMatch = line.match(/(?:Patient\s*Name|Pt\.?\s*Name|Patient|Pt)[\s:=]+([A-Za-z\s]{3,30})(?:\s+Age|\s+Date|\s+Sex|\s+BP|\s+Y\/M|$)/i);
-      if (ptMatch) {
+      if (ptMatch && !extractedPatientName) {
         const candidate = ptMatch[1].trim();
         const words = candidate.split(/\s+/).filter((w) => w.length > 0);
         const hasValidWords = words.length > 0 && words.every((w) => w.length >= 2 && !/^(Age|Date|Sex|Years|Year|Yrs|Yr|Male|Female)$/i.test(w));
         if (hasValidWords && candidate.length >= 3 && !/^patient$/i.test(candidate)) {
           extractedPatientName = candidate;
-          break;
         }
+      }
+
+      // Age extraction (e.g. "Age: 48", "48 Yrs", "48 Y / M")
+      const ageMatch = line.match(/\b(?:Age|Aged?)[\s:=]+(\d{1,3})\b/i) || line.match(/\b(\d{1,3})\s*(?:Y\/M|Y\/F|Yrs?|Years?)\b/i);
+      if (ageMatch && !extractedPatientAge) {
+        extractedPatientAge = ageMatch[1];
+      }
+
+      // Gender extraction (e.g. "Sex: Male", "M", "Female", "F")
+      const genderMatch = line.match(/\b(?:Sex|Gender)[\s:=]+(Male|Female|M|F)\b/i) || line.match(/\b\d{1,3}\s*[Yy]rs?[\s\/\\]+(Male|Female|M|F)\b/i);
+      if (genderMatch && !extractedPatientGender) {
+        const g = genderMatch[1].toUpperCase();
+        extractedPatientGender = (g === 'M' || g === 'MALE') ? 'M' : (g === 'F' || g === 'FEMALE') ? 'F' : g;
       }
     }
 
@@ -1232,6 +1248,8 @@ export const ocrService = {
       doctorName: extractedDoctorName,
       doctorSpecialty: extractedSpecialty,
       patientName: extractedPatientName,
+      patientAge: extractedPatientAge,
+      patientGender: extractedPatientGender,
       date: extractedDate,
       recheckInterval: getLocalizedClinicalText(languageCode, {
         en: 'As advised by doctor',

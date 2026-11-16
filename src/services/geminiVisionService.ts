@@ -1,5 +1,6 @@
 import type { ScannedPrescription, Medication, ContactPhone, DiagnosticTest } from '../types/prescription';
 import { storageService } from './storageService';
+import { getLanguageDisplayName, getClinicalDictionary } from '../i18n/clinicalLocalization';
 
 export interface GeminiAnalysisResult {
   hospitalName: string;
@@ -60,8 +61,8 @@ export const geminiVisionService = {
     const mimeType = match[1];
     const base64Data = match[2];
 
-    const isBengali = languageCode === 'bn';
-    const targetLangName = isBengali ? 'Bengali (বাংলা)' : 'English';
+    const targetLangName = getLanguageDisplayName(languageCode);
+    const clinicalDict = getClinicalDictionary(languageCode);
 
     const prompt = `You are a licensed Senior Clinical Pharmacist and Medical Transcription AI with expertise in deciphering messy, handwritten, and cursive Indian doctor prescriptions.
 
@@ -70,11 +71,11 @@ Analyze the uploaded prescription photo with extreme medical care, visual dilige
 CRITICAL INSTRUCTIONS:
 1. DOCTOR DETAILS:
    - Decipher the doctor's name, qualifications (e.g. MBBS, MD, MS, DNB), and clinical specialty.
-   - If not found or ambiguous, use "Doctor (From Prescription)".
+   - If not found or ambiguous, use "${clinicalDict.doctorFallback}".
 
 2. HOSPITAL / CLINIC:
    - Decipher the hospital, nursing home, or clinic letterhead name and address.
-   - If not found, use "Medical Clinic".
+   - If not found, use "${clinicalDict.hospitalFallback}".
 
 3. PATIENT DETAILS:
    - Decipher the patient name, age, and sex if written on the paper.
@@ -198,23 +199,23 @@ Return strictly a valid JSON object matching this schema (do not wrap in markdow
           name: m.name || 'Medication',
           shortName: `${m.form === 'capsule' ? 'Cap.' : 'Tab.'} ${m.name}`,
           fullForm: m.generic ? `${m.name} (${m.generic})` : m.name,
-          purpose: m.purpose || (isBengali ? 'প্রেসক্রিপশন অনুযায়ী চিকিৎসা' : 'Clinical Treatment'),
-          whyPrescribed: m.whyPrescribed || (isBengali ? 'ডাক্তারের নির্দেশিত ওষুধ' : 'Doctor prescribed medication'),
-          howItWorks: isBengali ? 'শারীরিক উপসর্গ নিয়ন্ত্রণ করে' : 'Regulates physiological symptoms',
+          purpose: m.purpose || clinicalDict.therapeuticPurpose,
+          whyPrescribed: m.whyPrescribed || clinicalDict.therapeuticWhy,
+          howItWorks: clinicalDict.therapeuticHow,
           dosage: m.dosage || '1 tab',
           form: m.form || 'tablet',
           frequency: m.frequency || '1-0-1',
           timing: m.timing || 'after_food',
-          duration: m.duration || (isBengali ? '৫ দিন' : '5 days'),
+          duration: m.duration || clinicalDict.defaultDurationDays(5),
           instructions: m.instructions || (m.timing === 'before_food' 
-            ? (isBengali ? 'খাবারের পূর্বে সেব্য' : 'Take before food')
-            : (isBengali ? 'খাবারের পর সেব্য' : 'Take after food')),
+            ? clinicalDict.beforeFoodInstructions 
+            : clinicalDict.afterFoodInstructions),
         }));
 
         const mappedPhones: ContactPhone[] = (parsed.phoneNumbers || []).map((p) => ({
           number: p.number,
           type: p.type || 'booking',
-          label: p.label || (isBengali ? 'যোগাযোগ নম্বর' : 'Contact Phone'),
+          label: p.label || clinicalDict.contactPhone,
         }));
 
         const mappedTests: DiagnosticTest[] = (parsed.diagnosticTests || []).map((t) => ({
@@ -222,19 +223,21 @@ Return strictly a valid JSON object matching this schema (do not wrap in markdow
           prescriptionId: uniqueRxId,
           testName: t.testName,
           category: t.category || 'blood',
-          instructions: t.instructions || (isBengali ? 'ল্যাবরেটরি থেকে পরীক্ষা করান' : 'Complete at clinical laboratory'),
+          instructions: t.instructions || clinicalDict.labTestInstructions,
           status: 'pending',
         }));
 
         return {
           id: uniqueRxId,
           imageDataUrl: imageDataUrl, // Strictly preserve authentic user photo
-          hospitalName: parsed.hospitalName || (isBengali ? 'চিকিৎসা প্রতিষ্ঠান' : 'Medical Health Facility'),
-          doctorName: parsed.doctorName || (isBengali ? 'চিকিৎসক (প্রেসক্রিপশন অনুযায়ী)' : 'Doctor (From Prescription)'),
-          doctorSpecialty: parsed.doctorSpecialty || (isBengali ? 'ক্লিনিক্যাল পরামর্শ' : 'Clinical Consultation'),
+          hospitalName: parsed.hospitalName || clinicalDict.hospitalFallback,
+          doctorName: parsed.doctorName || clinicalDict.doctorFallback,
+          doctorSpecialty: parsed.doctorSpecialty || clinicalDict.specialtyFallback,
           patientName: parsed.patientName || userPreferredName || '',
+          patientAge: parsed.patientAge || '',
+          patientGender: parsed.patientGender || '',
           date: parsed.date || '',
-          recheckInterval: parsed.recheckInterval || (isBengali ? 'ডাক্তারের পরামর্শ অনুযায়ী' : 'As advised by doctor'),
+          recheckInterval: parsed.recheckInterval || clinicalDict.asAdvisedByDoctor,
           medicines: mappedMedicines,
           phoneNumbers: mappedPhones,
           diagnosticTests: mappedTests,

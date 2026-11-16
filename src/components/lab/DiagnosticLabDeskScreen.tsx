@@ -430,7 +430,7 @@ export const DiagnosticLabDeskScreen: React.FC<DiagnosticLabDeskScreenProps> = (
             <div className="flex items-center gap-3 mt-2 text-[11px] text-slate-400">
               <span className="flex items-center gap-1">
                 <UserCheck className="w-3.5 h-3.5 text-slate-500" />
-                <span>{userName || currentDoc.patientName}</span>
+                <span>{currentDoc.patientName || userName}</span>
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">

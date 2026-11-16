@@ -387,7 +387,7 @@ export const PrescriptionVaultScreen: React.FC<PrescriptionVaultScreenProps> = (
                     <span>{t.patientName}</span>
                   </span>
                   <p className="font-bold text-white text-xs sm:text-sm">
-                    {userName || currentDoc?.patientName}
+                    {currentDoc?.patientName || userName}
                   </p>
                 </div>
 

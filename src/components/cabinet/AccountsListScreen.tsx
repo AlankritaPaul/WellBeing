@@ -22,7 +22,8 @@ import {
   Settings,
   Check,
   Edit3,
-  ArrowLeft
+  ArrowLeft,
+  UserCheck
 } from 'lucide-react';
 
 interface AccountsListScreenProps {
@@ -229,8 +230,20 @@ export const AccountsListScreen: React.FC<AccountsListScreenProps> = ({
                 </div>
               </div>
 
-              {/* Visit Date & Re-Appointment / Re-Check Details Block */}
+              {/* Visit Date & Patient Details Block */}
               <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2.5">
+                {/* Patient Name & Age */}
+                <div className="flex items-center justify-between text-xs pb-2 border-b border-slate-800/80">
+                  <span className="font-bold text-slate-300 flex items-center gap-1.5">
+                    <UserCheck className="w-4 h-4 text-emerald-400" />
+                    <span>{t.patientName || 'Patient'}:</span>
+                  </span>
+                  <span className="font-black text-emerald-300 px-2.5 py-0.5 rounded-lg bg-emerald-950/80 border border-emerald-700/60 text-[11px]">
+                    {prescription.patientName || userName || t.patientName || 'Patient'}
+                    {prescription.patientAge ? ` (${prescription.patientAge} Y${prescription.patientGender ? ` / ${prescription.patientGender}` : ''})` : ''}
+                  </span>
+                </div>
+
                 {/* Date of Visit */}
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-bold text-slate-300 flex items-center gap-1.5">

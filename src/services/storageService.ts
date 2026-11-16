@@ -99,7 +99,7 @@ function getPrescriptionAccountKey(p: ScannedPrescription): string {
   }
 
   // Real user prescription: preserve distinct identity so it is NEVER merged into a sample!
-  if (id.startsWith('rx-user-')) {
+  if (id.startsWith('rx-user-') || id.startsWith('rx-ai-')) {
     return id;
   }
 
