@@ -17,7 +17,6 @@ import {
   Plus,
   Trash2,
   CheckCircle2,
-  RotateCcw,
   Save,
   ArrowLeft,
   Eye,
@@ -202,11 +201,18 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
     }, 3000);
   };
 
-  // Retake / Scan Another
-  const handleRetake = () => {
-    setPreviewImage(null);
-    setScannedData(null);
-    setIsSaved(false);
+  // Back navigation handler: returns to previous screen / accounts / tutorial
+  const handleBack = () => {
+    if (scannedData) {
+      setPreviewImage(null);
+      setScannedData(null);
+      setIsSaved(false);
+    }
+    if (hasMultipleAccounts && onBackToAccounts) {
+      onBackToAccounts();
+    } else if (onBackToTutorial) {
+      onBackToTutorial();
+    }
   };
 
   // Add Another Prescription (Resets scanner for 2nd prescription while keeping previous saved)
@@ -1379,15 +1385,16 @@ export const PrescriptionScannerScreen: React.FC<PrescriptionScannerScreenProps>
           }`}>
             <button
               type="button"
-              onClick={handleRetake}
+              onClick={handleBack}
               className={`w-full sm:w-auto px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors ${
                 isLight
                   ? 'bg-slate-100 hover:bg-slate-200 text-slate-900 border-2 border-slate-300'
                   : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
               }`}
+              title={t.backButton}
             >
-              <RotateCcw className={`w-4 h-4 ${isLight ? 'text-amber-700' : 'text-amber-400'}`} />
-              <span>{t.retakeButton}</span>
+              <ArrowLeft className={`w-4 h-4 ${isLight ? 'text-slate-700' : 'text-slate-300'}`} />
+              <span>{t.backButton}</span>
             </button>
 
             <button
